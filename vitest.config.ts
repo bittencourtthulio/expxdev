@@ -28,7 +28,10 @@ export default defineConfig({
             "src/doctor/**/*.test.ts",
           ],
           environment: "node",
-          testTimeout: 30000,
+          // Estes testes clonam repositorios git de verdade em pasta temporaria.
+          // Sob a carga da suite completa em paralelo, 30s nao bastam: o teste
+          // falhava por timeout, nunca por assercao.
+          testTimeout: 120000,
         },
       },
       {

@@ -63,12 +63,12 @@
     "painel"
   ],
   "author": "Expx",
-  "homepage": "https://github.com/bittencourtthulio/expx-painel#readme",
+  "homepage": "https://github.com/bittencourtthulio/expxdev#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bittencourtthulio/expx-painel.git"
+    "url": "git+https://github.com/bittencourtthulio/expxdev.git"
   },
   "bugs": {
-    "url": "https://github.com/bittencourtthulio/expx-painel/issues"
+    "url": "https://github.com/bittencourtthulio/expxdev/issues"
   }
 }

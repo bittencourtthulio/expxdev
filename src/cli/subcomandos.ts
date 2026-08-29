@@ -19,7 +19,7 @@ export type Roteamento =
 const AJUDA = `
 expx — CLI do metodo Expx
 
-  npx expx <subcomando> [opcoes]
+  npx expxdev <subcomando> [opcoes]
 
   expx init                 instala as skills escolhidas neste projeto
   expx panel                sobe o painel de operacao lendo o docs/ do projeto
