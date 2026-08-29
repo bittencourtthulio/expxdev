@@ -1,0 +1,74 @@
+{
+  "name": "expxdev",
+  "version": "0.1.1",
+  "description": "CLI do metodo Expx: instala, atualiza e opera o ecossistema de skills, e sobe o painel de operacao",
+  "type": "module",
+  "bin": {
+    "expx": "dist/cli/expx-bin.js",
+    "expxdev": "dist/cli/expx-bin.js",
+    "expx-painel": "dist/cli/principal.js"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "build": "npm run build:server && npm run build:ui",
+    "build:server": "tsc -p tsconfig.json",
+    "build:ui": "vite build",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p ui/tsconfig.json --noEmit",
+    "start": "node dist/cli/principal.js",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "files": [
+    "dist",
+    "ui/dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "chokidar": "^5.0.0",
+    "ws": "^8.18.0",
+    "yaml": "^2.5.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.0",
+    "@types/node": "^20.19.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@types/ws": "^8.5.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "gray-matter": "^4.0.3",
+    "jsdom": "^25.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.6.0",
+    "vite": "^8.0.0",
+    "vitest": "^4.0.0"
+  },
+  "keywords": [
+    "expx",
+    "sprintx",
+    "runx",
+    "legadox",
+    "stackx",
+    "mergex",
+    "cli",
+    "claude-code",
+    "opencode",
+    "skills",
+    "painel"
+  ],
+  "author": "Expx",
+  "homepage": "https://github.com/bittencourtthulio/expx-painel#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bittencourtthulio/expx-painel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bittencourtthulio/expx-painel/issues"
+  }
+}

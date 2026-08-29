@@ -1,0 +1,15 @@
+# O pacote publicado leva só o build (ver "files" no package.json).
+# Este arquivo é a segunda barreira, caso "files" mude.
+src/
+ui/src/
+ui/index.html
+ui/tsconfig.json
+fixtures/
+docs/
+scripts/
+node_modules/
+*.tgz
+tsconfig.json
+vite.config.ts
+vitest.config.ts
+.gitignore

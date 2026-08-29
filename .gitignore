@@ -1,0 +1,9 @@
+node_modules/
+dist/
+ui/dist/
+*.log
+.DS_Store
+
+# Notas de trabalho: a especificacao original que originou o CLI.
+promptcli1.md
+promptcli2.md

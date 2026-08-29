@@ -1,0 +1,6 @@
+{
+  "extraKnownMarketplaces": {
+    "expx-local": { "source": { "source": "directory", "path": "/tmp/projeto/.expx/marketplace" } }
+  },
+  "enabledPlugins": { "expx@expx-local": true }
+}

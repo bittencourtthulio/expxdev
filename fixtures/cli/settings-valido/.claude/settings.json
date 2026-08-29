@@ -1,0 +1,5 @@
+{
+  "permissions": { "allow": ["Bash(npm test)"] },
+  "env": { "MINHA_VAR": "valor-do-usuario" },
+  "enabledPlugins": ["outro-plugin@outro-marketplace"]
+}

@@ -1,0 +1,6 @@
+{
+  "lock_version": 1,
+  "cli_version": "99.0.0",
+  "harness": ["claude"],
+  "skills": {}
+}

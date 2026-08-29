@@ -1,0 +1,15 @@
+{
+  "lock_version": 1,
+  "cli_version": "0.1.0",
+  "harness": ["claude"],
+  "skills": {
+    "sprintx": {
+      "repositorio": "https://github.com/bittencourtthulio/sprintx",
+      "referencia": "main",
+      "travado": false,
+      "commit": "4e3570c9bb19b8e336a5ca9c22ea17e7394dc6e8",
+      "resolvido_em": "2026-08-29",
+      "arquivos": { "skills/sprintx/SKILL.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="250" viewBox="0 0 1000 250" role="img" aria-label="expxdev — o CLI do metodo Expx">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0969da"/><stop offset="100%" stop-color="#0969da" stop-opacity="0.5"/>
+    </linearGradient>
+    <pattern id="p" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M26 0H0v26" fill="none" stroke="#f6f8fa" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1000" height="250" rx="14" fill="#ffffff"/>
+  <rect width="1000" height="250" rx="14" fill="url(#p)"/>
+  <rect x="0" y="0" width="6" height="250" rx="3" fill="url(#g)"/>
+
+  <text x="56" y="98" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="64" font-weight="700" fill="#1f2328">expx</text>
+  <rect x="236" y="62" width="120" height="30" rx="15" fill="none" stroke="#0969da" stroke-width="1.5"/>
+  <text x="296" y="82" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13.5" fill="#0969da">metodo Expx</text>
+
+  <text x="57" y="134" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="17" fill="#59636e">Instala, atualiza e opera o ecossistema de skills</text>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12.5">
+    <rect x="56"  y="162" width="118" height="34" rx="6" fill="#f6f8fa" stroke="#d1d9e0"/>
+    <text x="115" y="184" text-anchor="middle" fill="#59636e">expx init</text>
+    <rect x="184" y="162" width="130" height="34" rx="6" fill="#f6f8fa" stroke="#d1d9e0"/>
+    <text x="249" y="184" text-anchor="middle" fill="#59636e">expx update</text>
+    <rect x="324" y="162" width="130" height="34" rx="6" fill="#f6f8fa" stroke="#d1d9e0"/>
+    <text x="389" y="184" text-anchor="middle" fill="#59636e">expx doctor</text>
+    <rect x="464" y="162" width="126" height="34" rx="6" fill="#f6f8fa" stroke="#d1d9e0"/>
+    <text x="527" y="184" text-anchor="middle" fill="#59636e">expx panel</text>
+  </g>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#0969da" opacity="0.85">
+    <text x="944" y="184" text-anchor="end">/expx:sprintx-sprints</text>
+  </g>
+  <text x="944" y="160" text-anchor="end" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="11.5" fill="#59636e">comandos com namespace</text>
+</svg>
