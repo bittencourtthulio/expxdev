@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Documentação do método Expx</title>
-<meta name="description" content="Referência completa do CLI expxdev e das sete skills do método Expx: instalação, contratos, painel, watch e a arquitetura interna.">
+<meta name="description" content="Referência completa do CLI expxdev e das oito skills do método Expx: instalação, contratos, painel, watch e a arquitetura interna.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -24,7 +24,7 @@
       <path d="M7.6 7.4 L16.4 16.6 M16.4 7.4 L7.6 16.6" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/>
     </svg>
     <span class="marca__nome">expx<b>dev</b></span>
-    <span class="marca__versao" id="versao">v0.5.0</span>
+    <span class="marca__versao" id="versao">v0.5.1</span>
   </a>
 
   <div class="busca">
@@ -56,7 +56,7 @@
   </div>
 
   <div class="nav__grupo">
-    <p class="nav__titulo">As sete skills</p>
+    <p class="nav__titulo">As oito skills</p>
     <ul class="nav__lista">
       <li><a class="nav__link" href="#sprintx" data-secao="sprintx"><span class="nav__ponto" style="background:var(--accent)"></span>sprintx</a></li>
       <li><a class="nav__link" href="#runx" data-secao="runx"><span class="nav__ponto" style="background:var(--accent)"></span>runx</a></li>
@@ -65,6 +65,7 @@
       <li><a class="nav__link" href="#stackx" data-secao="stackx"><span class="nav__ponto" style="background:var(--layer)"></span>stackx</a></li>
       <li><a class="nav__link" href="#memox" data-secao="memox"><span class="nav__ponto" style="background:var(--layer)"></span>memox</a></li>
       <li><a class="nav__link" href="#prodx" data-secao="prodx"><span class="nav__ponto" style="background:var(--layer)"></span>prodx</a></li>
+      <li><a class="nav__link" href="#buildx" data-secao="buildx"><span class="nav__ponto" style="background:var(--accent)"></span>buildx</a></li>
     </ul>
   </div>
 
@@ -112,7 +113,7 @@
     o bastante para o agente decidir sozinho no meio da implementação, e ele decide: escolhe um padrão
     que não é o do projeto, escreve o teste na pasta que o runner não olha, refatora três arquivos que
     ninguém pediu. O método Expx é o conjunto das restrições que evitam isso, escrito. Este site é a
-    referência completa do <code>expxdev</code> — o CLI que instala e mantém as sete skills — e de cada
+    referência completa do <code>expxdev</code> — o CLI que instala e mantém as oito skills — e de cada
     uma delas.
   </p>
 
@@ -158,7 +159,8 @@
     <div class="figura__tela" data-diagrama="metodo"></div>
     <figcaption><strong>prodx</strong> diz se vale fazer, <strong>stackx</strong> diz como este projeto escreve
     código, <strong>legadox</strong> diz o quanto ter medo, <strong>sprintx</strong> e <strong>runx</strong>
-    fazem o trabalho, <strong>mergex</strong> entrega, e o <strong>expxdev</strong> instala todos e mostra o andamento.</figcaption>
+    fazem o trabalho, <strong>mergex</strong> entrega, e o <strong>expxdev</strong> instala todos e mostra o andamento.
+    Quando o projeto é novo e inteiro, a <strong>buildx</strong> conduz essa cadeia sozinha, feature a feature.</figcaption>
   </figure>
 
   <h3>Build e Run são a mesma disciplina</h3>
@@ -271,16 +273,18 @@
 <section class="secao" id="ecossistema">
   <p class="eyebrow">Começar</p>
   <h1>O ecossistema</h1>
-  <p class="lede">Sete skills que não se conhecem por código: elas se encontram em contratos escritos.
-  É isso que permite instalar três delas e não as outras quatro, ou atualizar uma sem tocar nas demais.</p>
+  <p class="lede">Oito skills que não se conhecem por código: elas se encontram em contratos escritos.
+  É isso que permite instalar três delas e não as outras cinco, ou atualizar uma sem tocar nas demais.</p>
 
   <figure class="figura">
     <div class="figura__tela" data-diagrama="ecossistema"></div>
     <figcaption>O CLI busca cada skill no seu repositório, empacota só as escolhidas num plugin local e
-    configura os harnesses. Os comandos ficam com namespace no Claude Code e sem namespace no OpenCode.</figcaption>
+    configura os harnesses. Os comandos ficam com namespace no Claude Code e sem namespace no OpenCode.
+    A <code>buildx</code> é a única que exige companhia: sem <code>prodx</code>, <code>sprintx</code> e
+    <code>mergex</code> ela não tem o que orquestrar.</figcaption>
   </figure>
 
-  <h2 id="as-sete">As sete skills</h2>
+  <h2 id="as-oito">As oito skills</h2>
   <div class="cartoes">
     <a class="cartao" href="#sprintx"><div class="cartao__topo"><span class="cartao__nome">sprintx</span><span class="selo selo--base">base</span></div><p class="cartao__texto">Planeja e executa features novas em seis fases. Construir algo que não existe.</p></a>
     <a class="cartao" href="#runx"><div class="cartao__topo"><span class="cartao__nome">runx</span><span class="selo selo--base">base</span></div><p class="cartao__texto">Ocorrências de manutenção em produção, em cinco estágios. Corrigir o que já está no ar.</p></a>
@@ -289,13 +293,18 @@
     <a class="cartao" href="#stackx"><div class="cartao__topo"><span class="cartao__nome">stackx</span><span class="selo selo--camada">camada</span></div><p class="cartao__texto">Descobre o dialeto técnico do repositório para o código novo parecer com o que já existe.</p></a>
     <a class="cartao" href="#memox"><div class="cartao__topo"><span class="cartao__nome">memox</span><span class="selo selo--camada">camada</span></div><p class="cartao__texto">Indexa os artefatos fechados e responde o que já se sabe sobre um arquivo.</p></a>
     <a class="cartao" href="#prodx"><div class="cartao__topo"><span class="cartao__nome">prodx</span><span class="selo selo--camada">camada</span></div><p class="cartao__texto">Recebe o pedido cru e emite um veredito com evidência. Decide se vale fazer.</p></a>
+    <a class="cartao" href="#buildx"><div class="cartao__topo"><span class="cartao__nome">buildx</span><span class="selo selo--base">orquestra</span></div><p class="cartao__texto">Conduz um projeto inteiro, da descrição ao sistema pronto. Chama as outras na ordem certa.</p></a>
   </div>
 
   <div class="nota nota--info">
     <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
     <div><p><strong>Camadas sozinhas não fazem nada.</strong> <code>legadox</code>, <code>stackx</code>,
     <code>memox</code> e <code>prodx</code> modificam o comportamento de <code>sprintx</code> e <code>runx</code>
-    em vez de agir por conta própria. O CLI avisa se você selecionar uma camada sem base, mas nunca impede.</p></div>
+    em vez de agir por conta própria. O CLI avisa se você selecionar uma camada sem base, mas nunca impede.</p>
+    <p>A <code>buildx</code> é o caso oposto e a única exceção do método: ela não modifica ninguém — <strong>invoca</strong>.
+    Sem <code>prodx</code>, <code>sprintx</code> e <code>mergex</code> instaladas ela não roda, e diz o que falta.
+    É a única peça com dependência dura, porque rodar sem elas significaria reimplementar quatro skills mal,
+    dentro de uma quinta.</p></div>
   </div>
 
   <h2 id="composicao">Como as camadas compõem</h2>
@@ -355,10 +364,12 @@
       <tr><td><code>mergex</code></td><td class="num">10</td><td class="num">7</td><td class="num">2</td><td class="num">6</td><td><code>docs/entregas/</code></td></tr>
       <tr><td><code>memox</code></td><td class="num">5</td><td class="num">5</td><td class="num">0</td><td class="num">2</td><td><code>.expx/memoria/</code></td></tr>
       <tr><td><code>prodx</code></td><td class="num">6</td><td class="num">6</td><td class="num">0</td><td class="num">0</td><td><code>docs/produto/</code></td></tr>
+      <tr><td><code>buildx</code></td><td class="num">6</td><td class="num">4</td><td class="num">0</td><td class="num">0</td><td><code>docs/projeto/</code></td></tr>
     </tbody>
   </table></div>
   <p>A <code>memox</code> é a única que não grava nada em <code>docs/</code>: o índice dela é derivado,
-  descartável e gitignorado. A <code>prodx</code> é a única sem hooks.</p>
+  descartável e gitignorado. A <code>prodx</code> e a <code>buildx</code> são as únicas sem hooks — e a
+  <code>buildx</code> é a única cujos artefatos descrevem um <strong>projeto</strong>, não um trabalho.</p>
 </section>
 
 <!-- ============================ GARANTIAS ============================ -->
@@ -1076,6 +1087,199 @@ docs/legado/comparacao/&lt;trabalho_id&gt;.md  <span class="tok-com"># C9</span>
   </ol>
 </section>
 
+<!-- ============================ BUILDX ============================ -->
+<section class="secao" id="buildx">
+  <p class="eyebrow">Skill · orquestração</p>
+  <h1>buildx</h1>
+  <p class="lede">Recebe a descrição de um projeto inteiro em linguagem natural, faz <strong>uma única
+  pergunta</strong>, e conduz as outras skills até o sistema estar construído, testado e validado.
+  <strong>Uma descrição entra, um sistema sai.</strong></p>
+
+  <div class="pilulas">
+    <span class="selo selo--base">orquestra</span><span class="selo">6 etapas</span>
+    <span class="selo">4 comandos</span><span class="selo">0 agentes</span><span class="selo">0 hooks</span>
+  </div>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Ela não implementa, não planeja e não escreve teste nenhum.</strong> Toda a competência
+    mora nas camadas irmãs. A única coisa que a <code>buildx</code> faz e nenhuma outra faz é a
+    <strong>decomposição</strong>: quebrar um projeto em features. É o vão entre “quero um sistema de gestão
+    de contratos” e “planejar a feature de upload de PDF” — a <code>sprintx</code> planeja <em>uma</em>
+    feature com rigor e não sabe recortar um sistema.</p></div>
+  </div>
+
+  <h2 id="buildx-pergunta">A pergunta única</h2>
+  <p>É a primeira coisa que acontece, antes de qualquer arquivo:</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Modo</th><th>O que significa</th></tr></thead>
+    <tbody>
+      <tr><td><span class="selo selo--base">autônomo total</span></td><td>Nenhuma outra pergunta chega ao usuário até o fim — nem da <code>buildx</code>, nem de nenhuma camada que ela invocar. Cada decisão tomada em nome dele vira uma <strong>premissa registrada</strong>, com o fato que a invalidaria</td></tr>
+      <tr><td><span class="selo selo--base">briefing</span></td><td>Uma rodada de perguntas, no máximo dez, só as que mudam a arquitetura. Respondidas, o comportamento é idêntico ao autônomo: silêncio até o fim</td></tr>
+    </tbody>
+  </table></div>
+  <p>Relatar progresso não é perguntar: nos dois modos o usuário vê onde a cadeia está, sem precisar
+  responder nada.</p>
+
+  <h2 id="buildx-etapas">As seis etapas</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Etapa</th><th>Nome</th><th>O que acontece</th><th>Quem trabalha</th></tr></thead>
+    <tbody>
+      <tr><td><code>B1</code></td><td>Concepção</td><td>mapeia o escopo e <strong>varre o que não foi pedido</strong>; cada lacuna vira premissa</td><td><code>prodx</code>, modo greenfield</td></tr>
+      <tr><td><code>B2</code></td><td>Fundação</td><td>escolhe a stack, instala a suíte, monta o esqueleto que sobe e testa</td><td><code>stackx</code>, invertido</td></tr>
+      <tr><td><code>B3</code></td><td>Decomposição</td><td><strong>quebra o projeto em features</strong>, com ordem de dependência</td><td>só a <code>buildx</code></td></tr>
+      <tr><td><code>B4</code></td><td>Construção</td><td>o laço: por feature, branch → plano → auditoria → execução TDD → PR</td><td><code>sprintx</code>, <code>mergex</code></td></tr>
+      <tr><td><code>B5</code></td><td>Recursão</td><td>classifica o que ficou pelo caminho e devolve ao laço o que a máquina resolve</td><td><code>buildx</code></td></tr>
+      <tr><td><code>B6</code></td><td>Validação</td><td>confere o construído contra o mapa, item a item, e relata</td><td><code>prodx</code>, como auditor</td></tr>
+    </tbody>
+  </table></div>
+  <p>O ciclo <code>B4</code> → <code>B5</code> repete enquanto houver pendência que a máquina resolve, com
+  <strong>teto de três ciclos</strong>. O ciclo 2 resolve o que o <code>B3</code> recortou mal; o 3 resolve o
+  que o 2 criou. Do quarto em diante o que sobra normalmente não é falta de trabalho, é falta de decisão.</p>
+
+  <h2 id="buildx-lacunas">O que ela descobre que você não pediu</h2>
+  <p>A varredura do <code>B1</code> é a razão de a <code>buildx</code> existir em vez de você falar direto com
+  a <code>sprintx</code>. Trinta e um eixos, percorridos sempre — cada um sai como <strong>pedido</strong>,
+  <strong>descoberto</strong> ou <strong>descartado com o porquê registrado</strong>. Nenhum é pulado em silêncio.</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Grupo</th><th>Exemplos do que entra sem ninguém pedir</th></tr></thead>
+    <tbody>
+      <tr><td>Segurança</td><td>autorização por papéis desde a primeira feature, hash de senha, rate limit nas rotas de autenticação, validação de entrada no servidor</td></tr>
+      <tr><td>Dado e conformidade</td><td>LGPD com exclusão que apaga de fato e exportação do titular, trilha de auditoria, backup <strong>com restauração testada</strong></td></tr>
+      <tr><td>Operação</td><td>log sem dado pessoal, erro que não vaza rastro de pilha, rota de saúde, variável obrigatória que falha no start e não em produção</td></tr>
+      <tr><td>Interface</td><td>as duas variantes de tema completas, estados de vazio, carregando e erro, responsividade, contraste conferido</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="buildx-premissas">Toda decisão fica auditável</h2>
+  <p>Cada escolha feita em nome do usuário vira uma premissa com cinco campos, e o quinto é o que importa:</p>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">PREMISSAS.md</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>PR-07 — Autorização por papéis
+
+Decisão:  papéis admin e usuario desde a primeira feature,
+          verificados no servidor.
+Por quê:  o sistema tem dado de mais de um usuário; sem papel,
+          qualquer conta alcança o dado de qualquer outra.
+O que
+invalida: se todo usuário tiver exatamente o mesmo acesso aos
+          mesmos dados, de forma permanente.</code></pre>
+  </div>
+  <p><strong>Como revisar vinte e três decisões em cinco minutos:</strong> leia só o campo <em>o que invalida</em>.
+  Se aquilo é verdade no seu caso, a premissa merece atenção. Se não é, siga.</p>
+
+  <h2 id="buildx-fronteira">A fronteira que ela não atravessa</h2>
+  <div class="nota nota--aviso">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.2 14.6 13.4H1.4z" stroke-linejoin="round"/><path d="M8 6.6v3.1M8 11.6v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>A buildx decide como o sistema se protege, não o que o sistema faz.</strong></p>
+    <p>Requisito não-funcional tem padrão defensável por classe de sistema — um sistema sem rate limit tem um
+    defeito conhecido. Regra de negócio não tem padrão: ela <em>é</em> o negócio. Um sistema com a regra de
+    cálculo errada <strong>funciona e está errado</strong>, que é o pior resultado possível, porque parece
+    pronto e ninguém procura o defeito.</p>
+    <p>Regra de negócio não declarada nunca é chutada: vira pendência, a <code>buildx</code> segue com a
+    decisão mais reversível possível, e o relatório final <strong>abre</strong> com ela.</p></div>
+  </div>
+
+  <h2 id="buildx-quebras">O que ela quebra de propósito</h2>
+  <p>O modo autônomo viola regras que existem por bons motivos nas irmãs. Cada violação é restrita ao modo e
+  registrada no artefato que ela toca.</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Regra violada</th><th>De quem</th><th>Como fica</th></tr></thead>
+    <tbody>
+      <tr><td>“a skill não decide, humano assina”</td><td><code>prodx</code> R1</td><td>a <code>buildx</code> assina, com <code>provisorio: true</code> e <code>aprovado_por: buildx (modo autonomo)</code></td></tr>
+      <tr><td>“nada vai à sprintx sem veredito assinado”</td><td><code>prodx</code> R2</td><td>a auto-assinatura satisfaz o portão</td></tr>
+      <tr><td>“a F2 é obrigada a perguntar ao humano”</td><td><code>sprintx</code> R10</td><td>a <code>buildx</code> responde em quatro degraus — <code>PROJETO.md</code>, <code>PREMISSAS.md</code>, <code>CONVENCOES.md</code>, e só então uma premissa nova — tudo em <code>00-DECISOES.md</code> com <code>respondido_por: buildx</code></td></tr>
+      <tr><td>“convenção só se registra com evidência”</td><td><code>stackx</code></td><td>no <code>B2</code> a origem é <code>decidido_pelo_buildx</code>; depois da primeira feature entregue, o <code>stackx-detectar</code> converte cada regra para a evidência real</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="nota nota--ok">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 8.4l3.2 3.2L13 4.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><p><strong>O que ela nunca quebra.</strong> O <strong>merge continua humano</strong>: a
+    <code>buildx</code> nunca invoca <code>mergex-revisar</code>, nunca oferece, nunca sugere. Todas as outras
+    coisas que ela faz sozinha são reversíveis — uma premissa errada se corrige, um plano ruim se replaneja.
+    Merge é onde o trabalho vira o sistema. Um buildx que faz merge sozinho não é mais autônomo: é
+    irreversível, e são coisas diferentes.</p>
+    <p>Também intactos: o TDD da <code>sprintx</code>, a regra de que task só conclui com os dois testes
+    passando, e a auditoria da <code>F5</code> — execução autônoma sem auditoria respeitada é dano autônomo.</p></div>
+  </div>
+
+  <h2 id="buildx-padroes">Os padrões da casa</h2>
+  <p>O que a <code>buildx</code> assume quando o usuário não diz nada. O usuário sempre ganha do padrão.</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th></th><th>Padrão</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td><code>P-1</code></td><td>três camadas, fronteira explícita</td><td>é o desenho que o <code>stackx</code> sabe verificar e a <code>sprintx</code> sabe recortar em tasks</td></tr>
+      <tr><td><code>P-2</code></td><td>Next.js, TypeScript, App Router</td><td>cobre as três camadas num único projeto e num único deploy</td></tr>
+      <tr><td><code>P-3</code></td><td>SQLite local</td><td><strong>dependência mínima é requisito de execução autônoma</strong>: um banco que exige serviço, credencial e rede é um ponto onde o laço trava esperando algo que a máquina não resolve</td></tr>
+      <tr><td><code>P-4</code></td><td>autenticação própria, JWT, hash forte</td><td>não depende de provedor externo nem de credencial que a <code>buildx</code> não tem</td></tr>
+      <tr><td><code>P-5</code></td><td>usuário de demonstração com dados de exemplo</td><td>um sistema que sobe numa tela de login vazia é indistinguível de um sistema quebrado</td></tr>
+      <tr><td><code>P-6</code></td><td>o design system do <strong>VS Code</strong></td><td>tokens semânticos e par claro/escuro já resolvidos — e uma regra verificável: nenhuma cor literal em componente</td></tr>
+      <tr><td><code>P-7</code></td><td>a skill de frontend design da Anthropic</td><td>trabalha <em>dentro</em> desses tokens; a competência de design mora numa skill feita para isso</td></tr>
+      <tr><td><code>P-8</code></td><td>o projeto nasce com a suíte Expx instalada</td><td>o <code>B4</code> precisa dela, e quem receber o sistema continua usando o método — o <code>memox</code> só vale se estiver lá desde o primeiro commit</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="buildx-comandos">Comandos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>/buildx &lt;descrição&gt;</code></td><td>o comando único: recebe a descrição, faz a pergunta do modo, e conduz tudo até o fim</td></tr>
+      <tr><td><code>/buildx</code></td><td>roteador: mostra em que etapa o projeto está, e o estado de cada feature</td></tr>
+      <tr><td><code>/buildx-mapa</code></td><td><code>B3</code> isolada — mostra ou regera o <code>MAPA.md</code></td></tr>
+      <tr><td><code>/buildx-retomar</code></td><td>retoma um projeto interrompido, a partir do estado em disco</td></tr>
+      <tr><td><code>/buildx-status</code></td><td>painel seco: features, ciclos de recursão, pendências, premissas</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="buildx-disco">Artefatos em disco</h2>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">árvore</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>docs/projeto/
+  PROJETO.md      <span class="tok-com">o escopo: o pedido, o descoberto, o descartado</span>
+  PREMISSAS.md    <span class="tok-com">toda decisão tomada em nome do humano</span>
+  MAPA.md         <span class="tok-com">as features, em ordem de dependência</span>
+  RECURSAO.md     <span class="tok-com">pendências por ciclo, e o teto</span>
+  VALIDACAO.md    <span class="tok-com">a conferência final</span>
+  RELATORIO.md    <span class="tok-com">o que o usuário lê no fim</span></code></pre>
+  </div>
+  <p>São os únicos artefatos do método que descrevem um <strong>projeto</strong> e não um trabalho: usam
+  <code>projeto_id</code> no lugar de <code>trabalho_id</code>. A ponte entre os dois níveis são as chaves
+  <code>origem_buildx</code> e <code>feature_id</code>, que a cadeia acrescenta ao artefato de cada feature —
+  é o que permite abrir um plano de sprint qualquer e saber de qual projeto ele veio.</p>
+
+  <h2 id="buildx-relatorio">O que o usuário lê no fim</h2>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">RELATORIO.md</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>1. O QUE VOCÊ PRECISA DECIDIR       as regras de negócio não declaradas
+2. O QUE VOCÊ PRECISA PROVIDENCIAR  credenciais, acessos, contas
+3. O QUE FOI DECIDIDO POR VOCÊ      as premissas, com o que invalida cada uma
+4. O QUE FICOU PRONTO               features entregues, com os PRs
+5. O QUE NÃO FICOU                  pendências, com o porquê
+6. COMO RODAR                       instalar, subir, entrar com o usuário demo
+7. O QUE FAZER AGORA                revisar os PRs e fazer merge</code></pre>
+  </div>
+  <p>A ordem é deliberada: <strong>o que exige ação vem antes do que foi feito.</strong> Um relatório que abre
+  com onze features entregues e esconde na página três que a regra de cálculo foi chutada é desonesto na
+  estrutura, mesmo dizendo tudo.</p>
+
+  <h2 id="buildx-regras">Regras invioláveis</h2>
+  <ol>
+    <li>“Uma única pergunta ao usuário: o modo. No autônomo, nenhuma outra chega a ele, de nenhuma camada.”</li>
+    <li>“Toda decisão tomada no lugar do humano é registrada em <code>PREMISSAS.md</code> <strong>antes</strong> de ser usada, com o que a invalidaria.”</li>
+    <li>“A buildx não implementa, não planeja e não testa. Ela invoca a camada dona e verifica a saída.”</li>
+    <li>“Bloqueio nunca para o laço: registra, marca a feature, segue para a próxima.”</li>
+    <li>“O ciclo B4 → B5 tem teto declarado. Atingido, para e reporta.”</li>
+    <li>“Nenhuma feature entra no mapa sem entrega verificável e dependências explícitas.”</li>
+    <li>“Feature de fundação vem primeiro; nenhuma feature precede aquilo de que depende.”</li>
+    <li>“Merge é humano. Nunca invoca <code>mergex-revisar</code>, nem oferece.”</li>
+    <li>“O que não for derivável do projeto, das premissas ou das convenções vira premissa nova — nunca invenção silenciosa.”</li>
+    <li>“Todo artefato usa o frontmatter <code>expx-schema v1</code>.”</li>
+    <li>“Caminhos sempre relativos.”</li>
+    <li>“O relatório final declara toda pendência.”</li>
+  </ol>
+</section>
+
 <!-- ============================ COMANDOS ============================ -->
 <section class="secao" id="comandos">
   <p class="eyebrow">Referência do CLI</p>
@@ -1283,7 +1487,7 @@ docs/legado/comparacao/&lt;trabalho_id&gt;.md  <span class="tok-com"># C9</span>
 }</code></pre>
   </div>
   <p><code>travado: false</code> significa que a skill segue uma branch, e não uma tag publicada — é o estado
-  atual de todas as sete, porque nenhum dos repositórios publica tag ainda. O <code>doctor</code> reporta isso
+  atual de todas as oito, porque nenhum dos repositórios publica tag ainda. O <code>doctor</code> reporta isso
   como <strong>aviso</strong>, nunca como erro.</p>
 
   <h2 id="update-fluxo">O que o update faz</h2>
@@ -1959,7 +2163,7 @@ docs/legado/comparacao/&lt;trabalho_id&gt;.md  <span class="tok-com"># C9</span>
   watch/      <span class="tok-com">o watch: fontes, visão, desenho puro e terminal</span>
   cli/        <span class="tok-com">roteamento de subcomando, flags e seleção interativa</span>
 ui/           <span class="tok-com">a interface do painel (React + Vite)</span>
-docs/contrato/  <span class="tok-com">os contratos compartilhados pelas sete skills</span></code></pre>
+docs/contrato/  <span class="tok-com">os contratos compartilhados pelas oito skills</span></code></pre>
   </div>
 
   <h2 id="arq-decisoes">Padrões que atravessam o código</h2>
@@ -2087,7 +2291,7 @@ docs/contrato/  <span class="tok-com">os contratos compartilhados pelas sete ski
     <thead><tr><th>Ponto</th><th>Situação</th></tr></thead>
     <tbody>
       <tr><td>O <code>kind: decisoes</code></td><td>existe no código e nas skills, mas não está descrito no contrato <code>expx-schema v1</code></td></tr>
-      <tr><td>O enum <code>ferramenta</code> do rastro</td><td>o código aceita as sete skills; o contrato ainda lista seis, sem a <code>prodx</code></td></tr>
+      <tr><td>Os <code>kind</code> da <code>prodx</code></td><td>a skill grava <code>produto</code>, <code>pedido</code>, <code>veredito</code> e <code>briefing</code>, mas o contrato não os descreve — o parser rejeita kind desconhecido, então os artefatos dela ainda não aparecem no painel</td></tr>
       <tr><td>A regra R8 (texto de uma linha)</td><td>tem validador escrito, mas ele não está aplicado a nenhum campo</td></tr>
       <tr><td>A violação <code>chave_omitida</code></td><td>não tem rótulo em português na tela de Conformidade, e aparece pelo identificador</td></tr>
       <tr><td>O <code>CONTRATO-expx-estado.md</code></td><td>numera as regras de 1 a 7, sem o prefixo <code>R</code> que as convenções exigem</td></tr>

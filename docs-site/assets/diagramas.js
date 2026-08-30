@@ -10,7 +10,7 @@ const D = {};
 
 /* O ecossistema: repositorios -> CLI -> plugin -> harnesses. */
 D.ecossistema = `
-<svg viewBox="0 0 900 340" role="img" aria-label="O CLI busca as sete skills nos repositorios, empacota como plugin local e configura os dois harnesses">
+<svg viewBox="0 0 900 380" role="img" aria-label="O CLI busca as oito skills nos repositorios, empacota como plugin local e configura os dois harnesses">
   <defs>
     <marker id="sf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
       <path d="M0 0 L10 5 L0 10 z" fill="var(--ink-faint)"/>
@@ -20,66 +20,70 @@ D.ecossistema = `
 
     <text x="14" y="20" font-size="10.5" fill="var(--ink-faint)" letter-spacing="1.1">1 · OS REPOSITORIOS</text>
     <g font-family="var(--mono)" font-size="12.5">
-      <rect x="14"  y="32" width="118" height="38" rx="6" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
-      <text x="73"  y="50" text-anchor="middle" fill="var(--ink)">sprintx</text>
-      <text x="73"  y="63" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)" font-family="var(--sans)">features novas</text>
+      <rect x="14"  y="32" width="212" height="38" rx="6" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
+      <text x="120" y="50" text-anchor="middle" fill="var(--ink)">sprintx</text>
+      <text x="120" y="63" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)" font-family="var(--sans)">features novas</text>
 
-      <rect x="140" y="32" width="118" height="38" rx="6" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
-      <text x="199" y="50" text-anchor="middle" fill="var(--ink)">runx</text>
-      <text x="199" y="63" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)" font-family="var(--sans)">manutencao</text>
+      <rect x="234" y="32" width="212" height="38" rx="6" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
+      <text x="340" y="50" text-anchor="middle" fill="var(--ink)">runx</text>
+      <text x="340" y="63" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)" font-family="var(--sans)">manutencao</text>
 
-      <rect x="266" y="32" width="118" height="38" rx="6" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
-      <text x="325" y="50" text-anchor="middle" fill="var(--ink)">mergex</text>
-      <text x="325" y="63" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)" font-family="var(--sans)">entrega e PR</text>
+      <rect x="454" y="32" width="212" height="38" rx="6" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
+      <text x="560" y="50" text-anchor="middle" fill="var(--ink)">mergex</text>
+      <text x="560" y="63" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)" font-family="var(--sans)">entrega e PR</text>
 
-      <rect x="392" y="32" width="118" height="38" rx="6" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".5"/>
-      <text x="451" y="50" text-anchor="middle" fill="var(--ink)">legadox</text>
-      <text x="451" y="63" text-anchor="middle" font-size="9.5" fill="var(--layer)" font-family="var(--sans)">camada</text>
+      <rect x="674" y="32" width="212" height="38" rx="6" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".5"/>
+      <text x="780" y="50" text-anchor="middle" fill="var(--ink)">buildx</text>
+      <text x="780" y="63" text-anchor="middle" font-size="9.5" fill="var(--accent)" font-family="var(--sans)">orquestra as outras</text>
 
-      <rect x="518" y="32" width="118" height="38" rx="6" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".5"/>
-      <text x="577" y="50" text-anchor="middle" fill="var(--ink)">stackx</text>
-      <text x="577" y="63" text-anchor="middle" font-size="9.5" fill="var(--layer)" font-family="var(--sans)">camada</text>
+      <rect x="14"  y="78" width="212" height="38" rx="6" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".5"/>
+      <text x="120" y="96" text-anchor="middle" fill="var(--ink)">legadox</text>
+      <text x="120" y="109" text-anchor="middle" font-size="9.5" fill="var(--layer)" font-family="var(--sans)">camada</text>
 
-      <rect x="644" y="32" width="118" height="38" rx="6" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".5"/>
-      <text x="703" y="50" text-anchor="middle" fill="var(--ink)">memox</text>
-      <text x="703" y="63" text-anchor="middle" font-size="9.5" fill="var(--layer)" font-family="var(--sans)">camada</text>
+      <rect x="234" y="78" width="212" height="38" rx="6" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".5"/>
+      <text x="340" y="96" text-anchor="middle" fill="var(--ink)">stackx</text>
+      <text x="340" y="109" text-anchor="middle" font-size="9.5" fill="var(--layer)" font-family="var(--sans)">camada</text>
 
-      <rect x="770" y="32" width="116" height="38" rx="6" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".5"/>
-      <text x="828" y="50" text-anchor="middle" fill="var(--ink)">prodx</text>
-      <text x="828" y="63" text-anchor="middle" font-size="9.5" fill="var(--layer)" font-family="var(--sans)">camada</text>
+      <rect x="454" y="78" width="212" height="38" rx="6" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".5"/>
+      <text x="560" y="96" text-anchor="middle" fill="var(--ink)">memox</text>
+      <text x="560" y="109" text-anchor="middle" font-size="9.5" fill="var(--layer)" font-family="var(--sans)">camada</text>
+
+      <rect x="674" y="78" width="212" height="38" rx="6" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".5"/>
+      <text x="780" y="96" text-anchor="middle" fill="var(--ink)">prodx</text>
+      <text x="780" y="109" text-anchor="middle" font-size="9.5" fill="var(--layer)" font-family="var(--sans)">camada</text>
     </g>
 
-    <path d="M450 76 L450 104" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#sf)"/>
-    <text x="462" y="95" font-size="10" fill="var(--ink-faint)" font-family="var(--mono)">git clone --depth 1</text>
+    <path d="M450 122 L450 150" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#sf)"/>
+    <text x="462" y="141" font-size="10" fill="var(--ink-faint)" font-family="var(--mono)">git clone --depth 1</text>
 
-    <text x="14" y="128" font-size="10.5" fill="var(--ink-faint)" letter-spacing="1.1">2 · O CLI</text>
-    <rect x="14" y="138" width="872" height="52" rx="7" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".45"/>
-    <text x="30" y="160" font-family="var(--mono)" font-size="13.5" fill="var(--accent)" font-weight="600">npx expxdev init</text>
-    <text x="30" y="177" font-size="11" fill="var(--ink-muted)">resolve a versao · detecta o layout · verifica caminhos · calcula o hash de cada arquivo · monta atomicamente</text>
+    <text x="14" y="174" font-size="10.5" fill="var(--ink-faint)" letter-spacing="1.1">2 · O CLI</text>
+    <rect x="14" y="184" width="872" height="52" rx="7" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".45"/>
+    <text x="30" y="206" font-family="var(--mono)" font-size="13.5" fill="var(--accent)" font-weight="600">npx expxdev init</text>
+    <text x="30" y="223" font-size="11" fill="var(--ink-muted)">resolve a versao · detecta o layout · verifica caminhos · calcula o hash de cada arquivo · monta atomicamente</text>
 
-    <path d="M450 192 L450 220" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#sf)"/>
+    <path d="M450 238 L450 266" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#sf)"/>
 
-    <text x="14" y="242" font-size="10.5" fill="var(--ink-faint)" letter-spacing="1.1">3 · O QUE FICA NO PROJETO</text>
-    <rect x="14" y="252" width="424" height="74" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
-    <text x="30" y="272" font-family="var(--mono)" font-size="12" fill="var(--ink)">.expx/marketplace/plugins/expx/</text>
-    <text x="30" y="290" font-size="11" fill="var(--ink-muted)">o plugin local com so as skills escolhidas</text>
-    <text x="30" y="309" font-family="var(--mono)" font-size="11" fill="var(--ink-muted)">.expx/expx-lock.json  · versao, commit e hash</text>
+    <text x="14" y="288" font-size="10.5" fill="var(--ink-faint)" letter-spacing="1.1">3 · O QUE FICA NO PROJETO</text>
+    <rect x="14" y="298" width="424" height="74" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
+    <text x="30" y="318" font-family="var(--mono)" font-size="12" fill="var(--ink)">.expx/marketplace/plugins/expx/</text>
+    <text x="30" y="336" font-size="11" fill="var(--ink-muted)">o plugin local com so as skills escolhidas</text>
+    <text x="30" y="355" font-family="var(--mono)" font-size="11" fill="var(--ink-muted)">.expx/expx-lock.json  · versao, commit e hash</text>
 
-    <rect x="452" y="252" width="205" height="74" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
-    <text x="554" y="277" text-anchor="middle" font-size="12" fill="var(--ink)" font-weight="600">Claude Code</text>
-    <text x="554" y="295" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="var(--ink-muted)">/expx:sprintx-sprints</text>
-    <text x="554" y="312" text-anchor="middle" font-size="10" fill="var(--ink-faint)">com namespace</text>
+    <rect x="452" y="298" width="205" height="74" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
+    <text x="554" y="323" text-anchor="middle" font-size="12" fill="var(--ink)" font-weight="600">Claude Code</text>
+    <text x="554" y="341" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="var(--ink-muted)">/expx:sprintx-sprints</text>
+    <text x="554" y="358" text-anchor="middle" font-size="10" fill="var(--ink-faint)">com namespace</text>
 
-    <rect x="671" y="252" width="215" height="74" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
-    <text x="778" y="277" text-anchor="middle" font-size="12" fill="var(--ink)" font-weight="600">OpenCode</text>
-    <text x="778" y="295" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="var(--ink-muted)">/sprintx-sprints</text>
-    <text x="778" y="312" text-anchor="middle" font-size="10" fill="var(--ink-faint)">sem namespace</text>
+    <rect x="671" y="298" width="215" height="74" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
+    <text x="778" y="323" text-anchor="middle" font-size="12" fill="var(--ink)" font-weight="600">OpenCode</text>
+    <text x="778" y="341" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="var(--ink-muted)">/sprintx-sprints</text>
+    <text x="778" y="358" text-anchor="middle" font-size="10" fill="var(--ink-faint)">sem namespace</text>
   </g>
 </svg>`;
 
 /* O metodo de ponta a ponta. */
 D.metodo = `
-<svg viewBox="0 0 900 400" role="img" aria-label="O metodo de ponta a ponta: prodx decide se ha trabalho, sprintx ou runx executam, as camadas modificam as duas, e a mergex entrega">
+<svg viewBox="0 0 900 456" role="img" aria-label="O metodo de ponta a ponta: a buildx conduz a cadeia inteira quando o projeto e novo; prodx decide se ha trabalho, sprintx ou runx executam, as camadas modificam as duas, e a mergex entrega">
   <defs>
     <marker id="mf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
       <path d="M0 0 L10 5 L0 10 z" fill="var(--ink-faint)"/>
@@ -87,67 +91,74 @@ D.metodo = `
   </defs>
   <g font-family="var(--sans)" font-size="12">
 
-    <rect x="14" y="60" width="130" height="60" rx="7" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".55"/>
-    <text x="79" y="83" text-anchor="middle" font-family="var(--mono)" font-size="13" fill="var(--ink)">prodx</text>
-    <text x="79" y="99" text-anchor="middle" font-size="10" fill="var(--ink-muted)">vale a pena fazer?</text>
-    <text x="79" y="112" text-anchor="middle" font-size="9" fill="var(--layer)">3 de 4 vereditos param aqui</text>
+    <rect x="14" y="8" width="872" height="40" rx="7" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".45" stroke-dasharray="5 3"/>
+    <text x="30" y="26" font-family="var(--mono)" font-size="12.5" fill="var(--accent)">buildx</text>
+    <text x="30" y="40" font-size="10" fill="var(--ink-muted)">projeto novo, do zero: conduz a cadeia inteira sozinha, feature a feature, ate o sistema estar pronto</text>
+    <text x="872" y="26" text-anchor="end" font-family="var(--mono)" font-size="9.5" fill="var(--accent)">B1 B2 B3 B4 B5 B6</text>
+    <text x="872" y="40" text-anchor="end" font-size="9" fill="var(--ink-faint)">uma unica pergunta ao usuario</text>
 
-    <path d="M148 90 L188 90" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#mf)"/>
-    <text x="168" y="82" text-anchor="middle" font-size="9" fill="var(--ink-faint)">fazer</text>
+    <path d="M79 52 L79 112" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#mf)" opacity=".65"/>
+    <rect x="14" y="116" width="130" height="60" rx="7" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".55"/>
+    <text x="79" y="139" text-anchor="middle" font-family="var(--mono)" font-size="13" fill="var(--ink)">prodx</text>
+    <text x="79" y="155" text-anchor="middle" font-size="10" fill="var(--ink-muted)">vale a pena fazer?</text>
+    <text x="79" y="168" text-anchor="middle" font-size="9" fill="var(--layer)">3 de 4 vereditos param aqui</text>
 
-    <rect x="192" y="26" width="196" height="58" rx="7" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".5"/>
-    <text x="290" y="47" text-anchor="middle" font-family="var(--mono)" font-size="13" fill="var(--accent)">sprintx</text>
-    <text x="290" y="63" text-anchor="middle" font-size="10" fill="var(--ink-muted)">BUILD · feature nova</text>
-    <text x="290" y="76" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--ink-faint)">F1 F2 F3 F4 F5 F6</text>
+    <path d="M148 146 L188 146" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#mf)"/>
+    <text x="168" y="138" text-anchor="middle" font-size="9" fill="var(--ink-faint)">fazer</text>
 
-    <rect x="192" y="96" width="196" height="58" rx="7" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".5"/>
-    <text x="290" y="117" text-anchor="middle" font-family="var(--mono)" font-size="13" fill="var(--accent)">runx</text>
-    <text x="290" y="133" text-anchor="middle" font-size="10" fill="var(--ink-muted)">RUN · ocorrencia em producao</text>
-    <text x="290" y="146" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--ink-faint)">E1 E2 E3 E4 E5</text>
+    <rect x="192" y="82" width="196" height="58" rx="7" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".5"/>
+    <text x="290" y="103" text-anchor="middle" font-family="var(--mono)" font-size="13" fill="var(--accent)">sprintx</text>
+    <text x="290" y="119" text-anchor="middle" font-size="10" fill="var(--ink-muted)">BUILD · feature nova</text>
+    <text x="290" y="132" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--ink-faint)">F1 F2 F3 F4 F5 F6</text>
 
-    <path d="M392 90 L432 90" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#mf)"/>
+    <rect x="192" y="152" width="196" height="58" rx="7" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".5"/>
+    <text x="290" y="173" text-anchor="middle" font-family="var(--mono)" font-size="13" fill="var(--accent)">runx</text>
+    <text x="290" y="189" text-anchor="middle" font-size="10" fill="var(--ink-muted)">RUN · ocorrencia em producao</text>
+    <text x="290" y="202" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--ink-faint)">E1 E2 E3 E4 E5</text>
 
-    <rect x="436" y="60" width="150" height="60" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
-    <text x="511" y="83" text-anchor="middle" font-family="var(--mono)" font-size="13" fill="var(--ink)">mergex</text>
-    <text x="511" y="99" text-anchor="middle" font-size="10" fill="var(--ink-muted)">branch, commit, PR</text>
-    <text x="511" y="112" text-anchor="middle" font-size="9" fill="var(--ink-faint)">E0 ate E9</text>
+    <path d="M392 146 L432 146" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#mf)"/>
 
-    <path d="M590 90 L630 90" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#mf)"/>
+    <rect x="436" y="116" width="150" height="60" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
+    <text x="511" y="139" text-anchor="middle" font-family="var(--mono)" font-size="13" fill="var(--ink)">mergex</text>
+    <text x="511" y="155" text-anchor="middle" font-size="10" fill="var(--ink-muted)">branch, commit, PR</text>
+    <text x="511" y="168" text-anchor="middle" font-size="9" fill="var(--ink-faint)">E0 ate E9</text>
 
-    <rect x="634" y="52" width="252" height="76" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
-    <text x="760" y="74" text-anchor="middle" font-size="12" fill="var(--ink)" font-weight="600">revisor humano</text>
-    <text x="760" y="92" text-anchor="middle" font-size="10" fill="var(--ink-muted)">recebe o diff ja classificado</text>
-    <text x="760" y="110" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--ink-faint)">OLHO OBRIGATORIO · RAPIDA · DISPENSAVEL</text>
+    <path d="M590 146 L630 146" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#mf)"/>
 
-    <text x="14" y="192" font-size="10.5" fill="var(--ink-faint)" letter-spacing="1.1">AS CAMADAS MODIFICAM O RIGOR DAS DUAS BASES</text>
-    <path d="M290 160 L290 206" stroke="var(--layer)" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#mf)" opacity=".7"/>
+    <rect x="634" y="108" width="252" height="76" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
+    <text x="760" y="130" text-anchor="middle" font-size="12" fill="var(--ink)" font-weight="600">revisor humano</text>
+    <text x="760" y="148" text-anchor="middle" font-size="10" fill="var(--ink-muted)">recebe o diff ja classificado</text>
+    <text x="760" y="166" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--ink-faint)">OLHO OBRIGATORIO · RAPIDA · DISPENSAVEL</text>
 
-    <rect x="14" y="206" width="284" height="66" rx="7" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".45"/>
-    <text x="30" y="227" font-family="var(--mono)" font-size="12" fill="var(--layer)">stackx</text>
-    <text x="30" y="243" font-size="10.5" fill="var(--ink-muted)">como este projeto escreve codigo</text>
-    <text x="30" y="261" font-family="var(--mono)" font-size="10" fill="var(--ink-faint)">docs/stack/CONVENCOES.md</text>
+    <text x="14" y="248" font-size="10.5" fill="var(--ink-faint)" letter-spacing="1.1">AS CAMADAS MODIFICAM O RIGOR DAS DUAS BASES</text>
+    <path d="M290 216 L290 262" stroke="var(--layer)" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#mf)" opacity=".7"/>
 
-    <rect x="308" y="206" width="284" height="66" rx="7" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".45"/>
-    <text x="324" y="227" font-family="var(--mono)" font-size="12" fill="var(--layer)">legadox</text>
-    <text x="324" y="243" font-size="10.5" fill="var(--ink-muted)">o quanto ter medo · raio de impacto</text>
-    <text x="324" y="261" font-family="var(--mono)" font-size="10" fill="var(--ink-faint)">docs/legado/PERFIL.md</text>
+    <rect x="14" y="262" width="284" height="66" rx="7" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".45"/>
+    <text x="30" y="283" font-family="var(--mono)" font-size="12" fill="var(--layer)">stackx</text>
+    <text x="30" y="299" font-size="10.5" fill="var(--ink-muted)">como este projeto escreve codigo</text>
+    <text x="30" y="317" font-family="var(--mono)" font-size="10" fill="var(--ink-faint)">docs/stack/CONVENCOES.md</text>
 
-    <rect x="602" y="206" width="284" height="66" rx="7" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".45"/>
-    <text x="618" y="227" font-family="var(--mono)" font-size="12" fill="var(--layer)">memox</text>
-    <text x="618" y="243" font-size="10.5" fill="var(--ink-muted)">o que ja se sabe sobre este arquivo</text>
-    <text x="618" y="261" font-family="var(--mono)" font-size="10" fill="var(--ink-faint)">.expx/memoria/indice.json</text>
+    <rect x="308" y="262" width="284" height="66" rx="7" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".45"/>
+    <text x="324" y="283" font-family="var(--mono)" font-size="12" fill="var(--layer)">legadox</text>
+    <text x="324" y="299" font-size="10.5" fill="var(--ink-muted)">o quanto ter medo · raio de impacto</text>
+    <text x="324" y="317" font-family="var(--mono)" font-size="10" fill="var(--ink-faint)">docs/legado/PERFIL.md</text>
 
-    <text x="14" y="312" font-size="10.5" fill="var(--ink-faint)" letter-spacing="1.1">TODAS ESCREVEM O MESMO CONTRATO · O PAINEL SO LE</text>
-    <rect x="14" y="322" width="578" height="56" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
-    <text x="30" y="343" font-family="var(--mono)" font-size="11.5" fill="var(--ink)">expx-schema v1</text>
-    <text x="30" y="360" font-size="10" fill="var(--ink-muted)">frontmatter YAML do estado — onde o trabalho esta</text>
-    <text x="320" y="343" font-family="var(--mono)" font-size="11.5" fill="var(--ink)">expx-eventos v1</text>
-    <text x="320" y="360" font-size="10" fill="var(--ink-muted)">rastro append-only — o que aconteceu e quando</text>
+    <rect x="602" y="262" width="284" height="66" rx="7" fill="var(--layer-wash)" stroke="var(--layer)" stroke-opacity=".45"/>
+    <text x="618" y="283" font-family="var(--mono)" font-size="12" fill="var(--layer)">memox</text>
+    <text x="618" y="299" font-size="10.5" fill="var(--ink-muted)">o que ja se sabe sobre este arquivo</text>
+    <text x="618" y="317" font-family="var(--mono)" font-size="10" fill="var(--ink-faint)">.expx/memoria/indice.json</text>
 
-    <path d="M596 350 L634 350" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#mf)"/>
-    <rect x="638" y="322" width="248" height="56" rx="7" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".45"/>
-    <text x="762" y="345" text-anchor="middle" font-family="var(--mono)" font-size="12.5" fill="var(--accent)">expx panel · expx watch</text>
-    <text x="762" y="363" text-anchor="middle" font-size="10" fill="var(--ink-muted)">somente leitura, 127.0.0.1</text>
+    <text x="14" y="368" font-size="10.5" fill="var(--ink-faint)" letter-spacing="1.1">TODAS ESCREVEM O MESMO CONTRATO · O PAINEL SO LE</text>
+    <rect x="14" y="378" width="578" height="56" rx="7" fill="var(--surface-alt)" stroke="var(--line-strong)"/>
+    <text x="30" y="399" font-family="var(--mono)" font-size="11.5" fill="var(--ink)">expx-schema v1</text>
+    <text x="30" y="416" font-size="10" fill="var(--ink-muted)">frontmatter YAML do estado — onde o trabalho esta</text>
+    <text x="320" y="399" font-family="var(--mono)" font-size="11.5" fill="var(--ink)">expx-eventos v1</text>
+    <text x="320" y="416" font-size="10" fill="var(--ink-muted)">rastro append-only — o que aconteceu e quando</text>
+
+    <path d="M596 406 L634 406" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#mf)"/>
+    <rect x="638" y="378" width="248" height="56" rx="7" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".45"/>
+    <text x="762" y="401" text-anchor="middle" font-family="var(--mono)" font-size="12.5" fill="var(--accent)">expx panel · expx watch</text>
+    <text x="762" y="419" text-anchor="middle" font-size="10" fill="var(--ink-muted)">somente leitura, 127.0.0.1</text>
   </g>
 </svg>`;
 
