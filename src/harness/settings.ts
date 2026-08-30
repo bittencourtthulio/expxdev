@@ -48,6 +48,11 @@ function mesclarEvento(atual: unknown, comando: string): GrupoHook[] {
 /** O evento de cada hook, deduzido do nome do arquivo. */
 function eventoDoHook(relativo: string): "UserPromptSubmit" | "Stop" | null {
   if (relativo.includes("injetar")) return "UserPromptSubmit";
+  // O lembrete de skill: `UserPromptSubmit` é o único evento que roda ANTES
+  // da primeira ação do modelo, e é disso que ele depende — o problema que ele
+  // resolve é a etapa de escolher o processo simplesmente não acontecer
+  // quando já existe uma hipótese técnica formada.
+  if (relativo.includes("lembrete")) return "UserPromptSubmit";
   if (relativo.includes("reindexar")) return "Stop";
   return null;
 }

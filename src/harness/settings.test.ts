@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach } from "vitest";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { projetoTemporario, type ProjetoTemporario } from "../teste/projeto-temporario.js";
-import { mesclarSettings, lerPluginsHabilitados } from "./settings.js";
+import { mesclarSettings, lerPluginsHabilitados, caminhoDoSettings } from "./settings.js";
 
 let p: ProjetoTemporario | undefined;
 afterEach(() => {
@@ -107,5 +107,32 @@ describe("registro dos hooks no settings", () => {
     expect(d["hooks"]["UserPromptSubmit"]).toHaveLength(1);
     expect(d["hooks"]["Stop"]).toHaveLength(1);
     expect(JSON.stringify(d)).toBe(primeira);
+  });
+});
+
+/**
+ * O lembrete de skill precisa chegar ao `settings.json` como UserPromptSubmit.
+ *
+ * É o único evento que roda ANTES da primeira ação do modelo — e o problema
+ * que ele resolve é exatamente a etapa de escolher o processo não acontecer.
+ */
+describe("hook de lembrete das skills", () => {
+  it("funcional: expx-lembrete é registrado em UserPromptSubmit", () => {
+    const p = projetoTemporario();
+    try {
+      const r = mesclarSettings(p.raiz, "/tmp/mkt", [
+        { skill: "runx", relativo: ".claude/hooks/expx-lembrete.sh" },
+      ]);
+      expect(r.ok).toBe(true);
+      const s = JSON.parse(readFileSync(caminhoDoSettings(p.raiz), "utf8")) as {
+        hooks: Record<string, Array<{ hooks: Array<{ command: string }> }>>;
+      };
+      const cmds = (s.hooks["UserPromptSubmit"] ?? []).flatMap((g) =>
+        g.hooks.map((h) => h.command),
+      );
+      expect(cmds.some((c) => c.includes("expx-lembrete.sh"))).toBe(true);
+    } finally {
+      p.descartar();
+    }
   });
 });
