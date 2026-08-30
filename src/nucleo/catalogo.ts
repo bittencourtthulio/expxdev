@@ -2,12 +2,18 @@ import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 /**
- * As sete skills do ecossistema Expx.
+ * As oito skills do ecossistema Expx.
  *
  * Fonte única do que o CLI sabe instalar. `papel` é o texto mostrado na seleção
  * do `init`; `camada` marca as skills que, sozinhas, não fazem nada — elas
  * modificam o comportamento da sprintx/runx em vez de agir por conta própria
  * (ver `docs/expx-cli/base/08-repositorios-reais.md`).
+ *
+ * A buildx não é camada, e também não é irmã das outras: ela ORQUESTRA a
+ * sprintx e a mergex feature a feature. Sem elas instaladas não roda — mas o
+ * `init` não modela dependência entre skills, e criar esse conceito por uma
+ * única aresta custaria mais do que a skill avisar em tempo de execução, que é
+ * o que ela faz.
  */
 
 export type Skill = {
@@ -59,6 +65,12 @@ export const CATALOGO: readonly Skill[] = [
     repositorio: "https://github.com/bittencourtthulio/prodx",
     papel: "camada de produto, decide se o pedido vira trabalho",
     camada: true,
+  },
+  {
+    nome: "buildx",
+    repositorio: "https://github.com/bittencourtthulio/buildx",
+    papel: "orquestra um projeto inteiro, da descricao ao sistema pronto",
+    camada: false,
   },
 ] as const;
 

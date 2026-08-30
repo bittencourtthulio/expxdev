@@ -4,6 +4,7 @@ import {
   Estagio,
   Evidencia,
   ExpxTool,
+  ModoBuildx,
   ModoCausaRaiz,
   Severidade,
   StatusDecisao,
@@ -14,6 +15,7 @@ import {
   TipoOcorrencia,
   TipoTrabalho,
   Veredito,
+  VereditoBuildx,
 } from "./enums.js";
 import { Kind, VERSAO_SUPORTADA } from "./cabecalho.js";
 
@@ -257,6 +259,90 @@ export const RelatoriosIndice = z.object({
     .default([]),
 });
 
+/**
+ * Os seis kinds da buildx — estado do PROJETO, um nível acima de trabalho.
+ *
+ * Nenhum usa `comum`: aquele bloco exige `trabalho_id`, e a buildx costura os
+ * artefatos por `projeto_id`. Um projeto tem N trabalhos (um por feature do
+ * mapa), então tratar os dois como a mesma chave apagaria justamente a relação
+ * que a buildx existe para manter.
+ */
+const comumProjeto = {
+  expx_schema: z.literal(VERSAO_SUPORTADA),
+  expx_tool: ExpxTool,
+  projeto_id: z.string().trim().min(1),
+};
+
+/** O escopo completo: o que foi pedido, o que foi descoberto, o que foi descartado. */
+export const Projeto = z.object({
+  ...comumProjeto,
+  kind: z.literal("projeto"),
+  titulo: z.string(),
+  modo: ModoBuildx,
+  criado_em: DataIso,
+  atualizado_em: DataIso,
+  etapa: Estagio,
+  total_features: nulavel(z.number().int()).optional(),
+  features_entregues: z.number().int().default(0),
+  features_bloqueadas: z.number().int().default(0),
+  ciclos_recursao: z.number().int().default(0),
+});
+
+/** Toda decisão tomada em nome do humano, com o que a invalidaria. */
+export const Premissas = z.object({
+  ...comumProjeto,
+  kind: z.literal("premissas"),
+  atualizado_em: DataIso,
+  total: z.number().int().default(0),
+});
+
+/** As features, em ordem de dependência. */
+export const Mapa = z.object({
+  ...comumProjeto,
+  kind: z.literal("mapa"),
+  atualizado_em: DataIso,
+  total_features: z.number().int().default(0),
+  pendentes: z.number().int().default(0),
+  em_andamento: z.number().int().default(0),
+  entregues: z.number().int().default(0),
+  bloqueadas: z.number().int().default(0),
+});
+
+/** Pendências por ciclo, e o teto que impede o laço B4 → B5 de girar em falso. */
+export const Recursao = z.object({
+  ...comumProjeto,
+  kind: z.literal("recursao"),
+  atualizado_em: DataIso,
+  ciclo_atual: z.number().int().default(1),
+  teto_ciclos: z.number().int().default(3),
+  pendencias_abertas: z.number().int().default(0),
+  pendencias_resolvidas: z.number().int().default(0),
+});
+
+/** A conferência final do construído contra o mapa. */
+export const Validacao = z.object({
+  ...comumProjeto,
+  kind: z.literal("validacao"),
+  data: DataIso,
+  veredito: VereditoBuildx,
+  itens_conferidos: z.number().int().default(0),
+  itens_atendidos: z.number().int().default(0),
+  itens_pendentes: z.number().int().default(0),
+});
+
+/** O que o usuário lê no fim — a primeira coisa desde a pergunta única. */
+export const Relatorio = z.object({
+  ...comumProjeto,
+  kind: z.literal("relatorio"),
+  data: DataIso,
+  modo: ModoBuildx,
+  features_entregues: z.number().int().default(0),
+  prs_abertos: z.number().int().default(0),
+  pendencias_declaradas: z.number().int().default(0),
+  premissas_registradas: z.number().int().default(0),
+  ciclos_recursao: z.number().int().default(0),
+});
+
 const POR_KIND = {
   orquestrador: Orquestrador,
   sprint: Sprint,
@@ -271,6 +357,12 @@ const POR_KIND = {
   relatorio_tecnico: RelatorioTecnico,
   relatorio_uso: RelatorioUso,
   relatorios_indice: RelatoriosIndice,
+  projeto: Projeto,
+  premissas: Premissas,
+  mapa: Mapa,
+  recursao: Recursao,
+  validacao: Validacao,
+  relatorio: Relatorio,
 } as const;
 
 export function esquemaDoKind(kind: Kind): (typeof POR_KIND)[Kind] {

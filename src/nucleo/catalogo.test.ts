@@ -5,11 +5,20 @@ import { join } from "node:path";
 import { CATALOGO, buscarNoCatalogo, ehCamada, NOMES } from "./catalogo.js";
 
 describe("catálogo das skills", () => {
-  it("integração: tem as sete skills do catalogo e nenhuma URL repetida", () => {
-    expect(CATALOGO).toHaveLength(7);
+  it("integração: tem as oito skills do catalogo e nenhuma URL repetida", () => {
+    expect(CATALOGO).toHaveLength(8);
     const urls = CATALOGO.map((s) => s.repositorio);
-    expect(new Set(urls).size).toBe(7);
-    expect(NOMES).toEqual(["sprintx", "runx", "legadox", "stackx", "mergex", "memox", "prodx"]);
+    expect(new Set(urls).size).toBe(8);
+    expect(NOMES).toEqual([
+      "sprintx",
+      "runx",
+      "legadox",
+      "stackx",
+      "mergex",
+      "memox",
+      "prodx",
+      "buildx",
+    ]);
   });
 
   it("funcional: memox aponta para o repositório do MemoX e é camada", () => {
@@ -35,6 +44,16 @@ describe("catálogo das skills", () => {
     expect(ehCamada("stackx")).toBe(true);
     expect(ehCamada("sprintx")).toBe(false);
     expect(ehCamada("runx")).toBe(false);
+  });
+
+  it("funcional: buildx aponta para o repositório do buildx e não é camada", () => {
+    // a buildx ORQUESTRA sprintx e mergex feature a feature — não modifica o
+    // comportamento delas, que é o que define uma camada. Sem elas ela não roda,
+    // e é a própria skill que avisa: o `init` não modela dependência entre skills.
+    expect(buscarNoCatalogo("buildx")?.repositorio).toBe(
+      "https://github.com/bittencourtthulio/buildx",
+    );
+    expect(ehCamada("buildx")).toBe(false);
   });
 });
 

@@ -23,6 +23,9 @@
 		},
 		{
 			"path": "../ProdX"
+		},
+		{
+			"path": "../BuildX"
 		}
 	],
 	"settings": {}

@@ -36,6 +36,60 @@ describe("esquemas dos kinds", () => {
     }
   });
 
+  it("integração: os seis kinds da buildx são aceitos, com projeto_id no lugar de trabalho_id", () => {
+    // Kind desconhecido é REJEITADO pelo parser, não lido com o defeito à vista.
+    // Sem estes seis registrados, todo artefato de projeto da buildx seria
+    // descartado em silêncio pelo painel.
+    const base = { expx_schema: 1, expx_tool: "buildx", projeto_id: "gestao-de-contratos" };
+    const casos: Array<[string, Record<string, unknown>]> = [
+      ["projeto", {
+        ...base, kind: "projeto", titulo: "Sistema de gestao de contratos",
+        modo: "autonomo", criado_em: "2026-08-30", atualizado_em: "2026-08-30",
+        etapa: "b3", total_features: 9, features_entregues: 3,
+        features_bloqueadas: 0, ciclos_recursao: 0,
+      }],
+      ["premissas", { ...base, kind: "premissas", atualizado_em: "2026-08-30", total: 23 }],
+      ["mapa", {
+        ...base, kind: "mapa", atualizado_em: "2026-08-30", total_features: 9,
+        pendentes: 5, em_andamento: 1, entregues: 3, bloqueadas: 0,
+      }],
+      ["recursao", {
+        ...base, kind: "recursao", atualizado_em: "2026-08-30", ciclo_atual: 2,
+        teto_ciclos: 3, pendencias_abertas: 2, pendencias_resolvidas: 5,
+      }],
+      ["validacao", {
+        ...base, kind: "validacao", data: "2026-08-30",
+        veredito: "aprovado_com_pendencia", itens_conferidos: 34,
+        itens_atendidos: 32, itens_pendentes: 2,
+      }],
+      ["relatorio", {
+        ...base, kind: "relatorio", data: "2026-08-30", modo: "autonomo",
+        features_entregues: 11, prs_abertos: 11, pendencias_declaradas: 2,
+        premissas_registradas: 23, ciclos_recursao: 2,
+      }],
+    ];
+
+    for (const [kind, dados] of casos) {
+      const r = esquemaDoKind(kind as never).safeParse(dados);
+      expect(r.success, `${kind}: ${r.success ? "" : JSON.stringify(r.error.issues.slice(0, 3))}`).toBe(true);
+    }
+  });
+
+  it("funcional: o veredito da buildx tem três valores, e o veredito geral não os aceita", () => {
+    // aprovado_com_pendencia é a distinção que o relatório final existe para
+    // mostrar: entrega íntegra e entrega com pendência declarada não são a
+    // mesma coisa. O enum geral de dois valores apagaria isso.
+    const validacao = {
+      expx_schema: 1, expx_tool: "buildx", kind: "validacao",
+      projeto_id: "p", data: "2026-08-30", itens_conferidos: 1,
+      itens_atendidos: 1, itens_pendentes: 0,
+    };
+    for (const v of ["aprovado", "aprovado_com_pendencia", "reprovado"]) {
+      expect(esquemaDoKind("validacao").safeParse({ ...validacao, veredito: v }).success).toBe(true);
+    }
+    expect(esquemaDoKind("validacao").safeParse({ ...validacao, veredito: "talvez" }).success).toBe(false);
+  });
+
   it("funcional: o campo arquivos aceita as duas formas e normaliza para cria/altera", () => {
     // forma das skills (mapa) — o que existe de fato no disco
     const mapa = Arquivos.parse({ cria: ["a.ts"], altera: ["b.ts"] });

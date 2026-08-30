@@ -110,9 +110,9 @@ Quem valida uma linha verifica que as doze estão **contidas** nela — nunca ig
 
 ### Valores de `ferramenta`
 
-`sprintx` · `runx` · `mergex` · `legadox` · `stackx` · `memox`
+`sprintx` · `runx` · `mergex` · `legadox` · `stackx` · `memox` · `prodx` · `buildx`
 
-**Não confundir com `expx_tool`**, do `expx-schema`, que aceita só `sprintx` e `runx`. São campos de domínios diferentes: `expx_tool` diz que skill *escreveu um artefato de estado* — e só essas duas escrevem; `ferramenta` diz que skill *emitiu um evento* — e todas emitem. Um leitor que trate os dois como o mesmo enum rejeita o rastro de quatro skills.
+**Não confundir com `expx_tool`**, do `expx-schema`, que aceita só `sprintx`, `runx` e `buildx`. São campos de domínios diferentes: `expx_tool` diz que skill *escreveu um artefato de estado* — e só essas três escrevem; `ferramenta` diz que skill *emitiu um evento* — e todas emitem. Um leitor que trate os dois como o mesmo enum rejeita o rastro de cinco skills.
 
 ### Vocabulário de `evento`
 

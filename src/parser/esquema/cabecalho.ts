@@ -4,7 +4,7 @@ import { ExpxTool } from "./enums.js";
 /** Versão do contrato que este painel sabe ler (decisão D-09). */
 export const VERSAO_SUPORTADA = 1;
 
-/** Os treze kinds que o painel reconhece. */
+/** Os dezenove kinds que o painel reconhece. */
 export const KINDS = [
   "orquestrador",
   "sprint",
@@ -19,17 +19,36 @@ export const KINDS = [
   "relatorio_tecnico",
   "relatorio_uso",
   "relatorios_indice",
+  // buildx — estado do PROJETO, não de um trabalho. Por isso nenhum deles tem
+  // `trabalho_id`: a chave que os costura é `projeto_id`.
+  "projeto",
+  "premissas",
+  "mapa",
+  "recursao",
+  "validacao",
+  "relatorio",
 ] as const;
 
 export const Kind = z.enum(KINDS);
 export type Kind = z.infer<typeof Kind>;
 
 /**
- * `relatorios_indice` é o único kind sem `trabalho_id`: o índice é do sistema
- * inteiro, não de um trabalho. Exigir as quatro chaves cegamente rejeitaria
- * justamente a fonte da linha do tempo do histórico.
+ * Kinds sem `trabalho_id`. Exigir as quatro chaves cegamente rejeitaria
+ * justamente as fontes que descrevem o sistema inteiro.
+ *
+ * Dois casos distintos: `relatorios_indice` é o índice de todos os trabalhos;
+ * os seis da buildx são o estado do PROJETO, um nível acima de trabalho, e
+ * usam `projeto_id` como chave.
  */
-export const KINDS_SEM_TRABALHO_ID: readonly Kind[] = ["relatorios_indice"];
+export const KINDS_SEM_TRABALHO_ID: readonly Kind[] = [
+  "relatorios_indice",
+  "projeto",
+  "premissas",
+  "mapa",
+  "recursao",
+  "validacao",
+  "relatorio",
+];
 
 /**
  * O cabeçalho comum. `expx_schema` é validado como número; a rejeição por

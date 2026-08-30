@@ -14,15 +14,21 @@ import { z } from "zod";
  */
 
 /**
- * `expx_tool` — quem ESCREVEU um artefato de estado. Só a sprintx e a runx
- * escrevem frontmatter `expx-schema`; as demais skills do método não têm kind
- * próprio nesse contrato.
+ * `expx_tool` — quem ESCREVEU um artefato de estado. A sprintx, a runx e a
+ * buildx escrevem frontmatter `expx-schema`; as demais skills do método não têm
+ * kind próprio nesse contrato.
+ *
+ * A buildx entrou depois das outras duas: ela grava o estado do PROJETO
+ * (`projeto`, `mapa`, `premissas`, `recursao`, `validacao`, `relatorio`),
+ * enquanto sprintx e runx gravam o estado de um TRABALHO. São níveis
+ * diferentes, e por isso a buildx tem estágios próprios (`b1`..`b6`) em vez de
+ * reusar os de feature ou de ocorrência.
  *
  * Não confundir com `ferramenta`, do rastro de eventos (`Ferramenta`, abaixo),
- * que aceita as sete. Tratar os dois como o mesmo enum rejeita o rastro de
+ * que aceita as oito. Tratar os dois como o mesmo enum rejeita o rastro de
  * cinco skills.
  */
-export const ExpxTool = z.enum(["sprintx", "runx"]);
+export const ExpxTool = z.enum(["sprintx", "runx", "buildx"]);
 export type ExpxTool = z.infer<typeof ExpxTool>;
 
 /** `ferramenta` — quem EMITIU um evento no rastro. Todas as skills emitem. */
@@ -34,6 +40,7 @@ export const Ferramenta = z.enum([
   "stackx",
   "memox",
   "prodx",
+  "buildx",
 ]);
 export type Ferramenta = z.infer<typeof Ferramenta>;
 
@@ -57,7 +64,10 @@ export const ESTAGIOS_SPRINTX = ["f1", "f2", "f3", "f4", "f5", "f6"] as const;
 /** Estágios da runx: E1 investigação → E5 relatório. */
 export const ESTAGIOS_RUNX = ["e1", "e2", "e3", "e4", "e5"] as const;
 
-export const Estagio = z.enum([...ESTAGIOS_SPRINTX, ...ESTAGIOS_RUNX]);
+/** Estágios da buildx: B1 concepção → B6 validação. */
+export const ESTAGIOS_BUILDX = ["b1", "b2", "b3", "b4", "b5", "b6"] as const;
+
+export const Estagio = z.enum([...ESTAGIOS_SPRINTX, ...ESTAGIOS_RUNX, ...ESTAGIOS_BUILDX]);
 export type Estagio = z.infer<typeof Estagio>;
 
 /** Status de trabalho, sprint e fase — vocabulário masculino. */
@@ -77,6 +87,22 @@ export type Suite = z.infer<typeof Suite>;
 
 export const Veredito = z.enum(["aprovado", "reprovado"]);
 export type Veredito = z.infer<typeof Veredito>;
+
+/**
+ * `modo` da buildx — como o projeto inteiro é conduzido. Escolhido na pergunta
+ * única, que é a única que a buildx faz ao usuário.
+ */
+export const ModoBuildx = z.enum(["autonomo", "briefing"]);
+export type ModoBuildx = z.infer<typeof ModoBuildx>;
+
+/**
+ * `veredito` da validação da buildx (B6). Enum próprio, e não o `Veredito` de
+ * dois valores: a buildx precisa distinguir a entrega íntegra da entrega com
+ * pendência declarada, e apagar essa diferença esconderia justamente o que o
+ * relatório final existe para mostrar.
+ */
+export const VereditoBuildx = z.enum(["aprovado", "aprovado_com_pendencia", "reprovado"]);
+export type VereditoBuildx = z.infer<typeof VereditoBuildx>;
 
 export const Severidade = z.enum(["alta", "media", "baixa"]);
 export type Severidade = z.infer<typeof Severidade>;
@@ -106,9 +132,19 @@ export const TextoUmaLinha = z.string().trim().min(1).refine((s) => !s.includes(
   message: "campo de texto do YAML e de uma linha",
 });
 
+/**
+ * Os estágios de cada ferramenta. Mapa explícito, e não um ternário: com três
+ * ferramentas, `tool === "sprintx" ? ... : ...` mandaria a buildx para os
+ * estágios da runx em silêncio, e a violação apareceria como estágio incoerente
+ * num arquivo correto.
+ */
+const ESTAGIOS_POR_TOOL: Record<ExpxTool, readonly string[]> = {
+  sprintx: ESTAGIOS_SPRINTX,
+  runx: ESTAGIOS_RUNX,
+  buildx: ESTAGIOS_BUILDX,
+};
+
 /** Um estágio pertence à ferramenta que gravou o arquivo? (decisão D-10) */
 export function estagioCoerenteCom(tool: ExpxTool, estagio: Estagio): boolean {
-  return tool === "sprintx"
-    ? (ESTAGIOS_SPRINTX as readonly string[]).includes(estagio)
-    : (ESTAGIOS_RUNX as readonly string[]).includes(estagio);
+  return ESTAGIOS_POR_TOOL[tool].includes(estagio);
 }

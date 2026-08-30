@@ -1,10 +1,12 @@
 # Contrato `expx-schema` v1
 
-Este é o contrato entre as skills (`sprintx`, `runx`) e o painel. As skills **escrevem** este frontmatter; o painel **lê** e nunca escreve.
+Este é o contrato entre as skills (`sprintx`, `runx`, `buildx`) e o painel. As skills **escrevem** este frontmatter; o painel **lê** e nunca escreve.
 
 Guarde este arquivo no repositório do painel. Ele é a fonte da verdade sobre **os `kind`, seus campos e seus enums** quando skill e parser divergirem. As convenções que valem para todo artefato do método — nomes de chave, enums, datas, chave omitida — vêm do documento raiz [`CONVENCOES.md`](./CONVENCOES.md).
 
-`expx_tool` aceita `sprintx` e `runx`: só essas duas escrevem artefato de estado. Não confundir com `ferramenta`, do rastro de eventos, que aceita as seis skills — são campos de domínios diferentes.
+`expx_tool` aceita `sprintx`, `runx` e `buildx`: só essas três escrevem artefato de estado. Não confundir com `ferramenta`, do rastro de eventos, que aceita as oito skills — são campos de domínios diferentes.
+
+**Dois níveis de estado.** A `sprintx` e a `runx` gravam o estado de um **trabalho**, costurado por `trabalho_id`. A `buildx` grava o estado de um **projeto**, costurado por `projeto_id` — e um projeto tem N trabalhos, um por feature do mapa. Os seis kinds da buildx são, por isso, os únicos além de `relatorios_indice` que não têm `trabalho_id`.
 
 ---
 
@@ -36,14 +38,19 @@ painel, com o defeito à vista.
 
 | Campo | Valores |
 |---|---|
-| `expx_tool` | `sprintx` · `runx` |
+| `expx_tool` | `sprintx` · `runx` · `buildx` |
 | `tipo_trabalho` | `feature` · `ocorrencia` |
 | `tipo_ocorrencia` | `bug` · `melhoria-ui` · `melhoria-ux` · `novo-relatorio` · `regra-de-calculo` · `campo-novo` · `outro` · `null` |
-| `estagio` | sprintx: `f1`…`f6` · runx: `e1`…`e5` |
+| `estagio` | sprintx: `f1`…`f6` · runx: `e1`…`e5` · buildx: `b1`…`b6` |
 | `status` (trabalho, sprint, fase) | `nao_iniciado` · `em_andamento` · `bloqueado` · `concluido` |
 | `status` (task) | `pendente` · `em_andamento` · `concluida` · `bloqueada` |
 | `suite` | `verde` · `vermelha` · `nao_executada` |
 | `veredito` | `aprovado` · `reprovado` |
+| `veredito` (buildx, kind `validacao`) | `aprovado` · `aprovado_com_pendencia` · `reprovado` |
+| `modo` (buildx) | `autonomo` · `briefing` |
+| `status` (feature do mapa) | `pendente` · `em_andamento` · `entregue` · `bloqueada` |
+| `origem` (feature do mapa) | `descricao` · `premissa` · `recursao` |
+| `classe` (pendência da recursão) | `trabalho_novo` · `replanejamento` · `decisao_humana` · `recurso_externo` |
 | `severidade` | `alta` · `media` · `baixa` |
 | `modo` (causa raiz) | `causa_raiz` · `analise_impacto` |
 | `evidencia` | `teste_falho` · `log` · `codigo` · `null` |
@@ -286,12 +293,138 @@ entradas:
 
 ---
 
+## Os kinds da buildx
+
+Os seis abaixo descrevem o estado de um **projeto**, não de um trabalho. Todos
+usam `projeto_id` no lugar de `trabalho_id`, e `etapa` no lugar de `estagio`
+quando marcam posição na máquina de estados.
+
+### `projeto` — `docs/projeto/PROJETO.md`
+
+```yaml
+---
+expx_schema: 1
+expx_tool: buildx
+kind: projeto
+projeto_id: gestao-de-contratos
+titulo: Sistema de gestao de contratos
+modo: autonomo
+criado_em: 2026-08-30
+atualizado_em: 2026-08-30
+etapa: b3
+total_features: 11
+features_entregues: 4
+features_bloqueadas: 0
+ciclos_recursao: 0
+---
+```
+
+### `premissas` — `docs/projeto/PREMISSAS.md`
+
+```yaml
+---
+expx_schema: 1
+expx_tool: buildx
+kind: premissas
+projeto_id: gestao-de-contratos
+atualizado_em: 2026-08-30
+total: 23
+---
+```
+
+### `mapa` — `docs/projeto/MAPA.md`
+
+```yaml
+---
+expx_schema: 1
+expx_tool: buildx
+kind: mapa
+projeto_id: gestao-de-contratos
+atualizado_em: 2026-08-30
+total_features: 11
+pendentes: 6
+em_andamento: 1
+entregues: 4
+bloqueadas: 0
+---
+```
+
+### `recursao` — `docs/projeto/RECURSAO.md`
+
+```yaml
+---
+expx_schema: 1
+expx_tool: buildx
+kind: recursao
+projeto_id: gestao-de-contratos
+atualizado_em: 2026-08-30
+ciclo_atual: 2
+teto_ciclos: 3
+pendencias_abertas: 2
+pendencias_resolvidas: 5
+---
+```
+
+### `validacao` — `docs/projeto/VALIDACAO.md`
+
+```yaml
+---
+expx_schema: 1
+expx_tool: buildx
+kind: validacao
+projeto_id: gestao-de-contratos
+data: 2026-08-30
+veredito: aprovado
+itens_conferidos: 34
+itens_atendidos: 32
+itens_pendentes: 2
+---
+```
+
+`veredito` aqui tem **três** valores, e não os dois do enum geral: a buildx
+precisa distinguir a entrega íntegra da entrega com pendência declarada, e
+apagar essa diferença esconderia justamente o que o relatório final mostra.
+
+### `relatorio` — `docs/projeto/RELATORIO.md`
+
+```yaml
+---
+expx_schema: 1
+expx_tool: buildx
+kind: relatorio
+projeto_id: gestao-de-contratos
+data: 2026-08-30
+modo: autonomo
+features_entregues: 11
+prs_abertos: 11
+pendencias_declaradas: 2
+premissas_registradas: 23
+ciclos_recursao: 2
+---
+```
+
+### A ponte entre os dois níveis
+
+Todo artefato de trabalho gerado sob uma buildx acrescenta duas chaves ao
+frontmatter da skill que o gravou:
+
+| Chave | Valor |
+|---|---|
+| `origem_buildx` | o `projeto_id` |
+| `feature_id` | o `FT-NN` do mapa |
+
+São elas que permitem abrir um plano de sprint qualquer e saber de qual projeto
+e de qual feature ele veio. Ambas são opcionais: trabalho sem buildx não as tem.
+
+---
+
 ## Onde o painel procura
 
 ```
 docs/<slug>/                        ← trabalhos do sprintx
 docs/manutencao/<OC-ID>-<slug>/     ← trabalhos do runx
 docs/relatorios/                    ← histórico
+docs/projeto/                       ← o projeto da buildx
 ```
 
 Regra de descoberta: qualquer `ORQUESTRADOR.md` com frontmatter `kind: orquestrador` é um trabalho. Arquivo sem frontmatter válido é ignorado e reportado como "fora do schema", nunca causa crash do parser.
