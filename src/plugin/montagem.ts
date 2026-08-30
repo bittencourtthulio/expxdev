@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { montarPluginJson, montarMarketplaceJson, ORIGEM_DO_PLUGIN } from "./manifestos.js";
@@ -23,6 +23,11 @@ export type SkillMontavel = {
    * acusado pelo typecheck e quebraria só em runtime.
    */
   hooks?: readonly string[];
+  /**
+   * A pasta `.claude/hooks/` do repositório da skill, inteira. Ver
+   * `montarHooks`: é ela que carrega os hooks de verdade.
+   */
+  arvoreHooks?: string;
 };
 
 /**
@@ -36,6 +41,75 @@ export type SkillMontavel = {
  */
 function raizDoNucleo(): string {
   return join(dirname(fileURLToPath(import.meta.url)), "..", "..", "nucleo");
+}
+
+/** O `hooks.json` de um plugin, no formato que o Claude Code carrega. */
+type ManifestoHooks = { hooks: Record<string, unknown[]> };
+
+/**
+ * Leva os hooks das skills para dentro do plugin e consolida o `hooks.json`.
+ *
+ * ## Por que isto existe
+ *
+ * O plugin montado tinha `skills/`, `commands/` e `nucleo/` — e nenhum hook.
+ * Como todo caminho de erro do rastro é falha aberta (regra 3 do contrato
+ * `expx-eventos`), nada avisava: `docs/eventos/` nunca era escrito, e o painel
+ * e o `expx watch` ficavam sem a seção de eventos e sem o rodapé de atividade.
+ * O sintoma que chega à pessoa é uma tela parada.
+ *
+ * ## Como o Claude Code carrega isto
+ *
+ * `hooks/hooks.json` na raiz do plugin, detectado automaticamente quando o
+ * plugin está habilitado — não precisa ser declarado no `plugin.json`. Os
+ * comandos usam `${CLAUDE_PLUGIN_ROOT}`, que resolve para a pasta do plugin
+ * instalado, e é por isso que a ÁRVORE toda precisa viajar: o despachante
+ * chama `comum/rastro`, `runx/escopo-da-ocorrencia` e afins por caminho
+ * relativo, e um arquivo solto não resolveria nenhum deles.
+ *
+ * ## Conflito entre skills
+ *
+ * Cada skill traz o seu `hooks.json` e todas caem na mesma pasta. Os arquivos
+ * são copiados sob o namespace que a própria skill já usa (`comum/`, `runx/`,
+ * `sprintx/`), então a colisão real seria duas skills com o mesmo caminho —
+ * que é o `comum/` compartilhado, e nesse caso são o mesmo arquivo por
+ * construção. Os eventos são concatenados: dois `PostToolUse` de skills
+ * diferentes viram duas entradas, e o Claude Code roda as duas.
+ */
+function montarHooks(destino: string, skills: readonly SkillMontavel[]): void {
+  const comArvore = skills.filter((s) => s.arvoreHooks !== undefined && existsSync(s.arvoreHooks));
+  if (comArvore.length === 0) return;
+
+  const dirHooks = join(destino, "hooks");
+  mkdirSync(dirHooks, { recursive: true });
+
+  const consolidado: ManifestoHooks = { hooks: {} };
+
+  for (const s of comArvore) {
+    // O `hooks.json` de cada skill é consolidado, não copiado: dois arquivos
+    // com o mesmo nome se sobrescreveriam e a última skill venceria em
+    // silêncio, desligando os hooks de todas as outras.
+    cpSync(s.arvoreHooks as string, dirHooks, {
+      recursive: true,
+      filter: (origem) => basename(origem) !== "hooks.json",
+    });
+
+    const manifesto = join(s.arvoreHooks as string, "hooks.json");
+    if (!existsSync(manifesto)) continue;
+    let lido: ManifestoHooks;
+    try {
+      lido = JSON.parse(readFileSync(manifesto, "utf8")) as ManifestoHooks;
+    } catch {
+      continue; // hooks.json quebrado não derruba a instalação inteira
+    }
+    for (const [evento, grupos] of Object.entries(lido.hooks ?? {})) {
+      if (!Array.isArray(grupos)) continue;
+      consolidado.hooks[evento] = [...(consolidado.hooks[evento] ?? []), ...grupos];
+    }
+  }
+
+  if (Object.keys(consolidado.hooks).length > 0) {
+    writeFileSync(join(dirHooks, "hooks.json"), `${JSON.stringify(consolidado, null, 2)}\n`);
+  }
 }
 
 /** Monta só o plugin, em `destino`. */
@@ -69,6 +143,9 @@ export function montarPlugin(
       cpSync(c, join(destino, "commands", basename(c)));
     }
   }
+
+  // Sem isto o plugin sobe sem hook nenhum e o rastro nunca é escrito.
+  montarHooks(destino, skills);
 }
 
 /**

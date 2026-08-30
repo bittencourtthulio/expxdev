@@ -16,7 +16,21 @@ import { basename, join } from "node:path";
  */
 
 export type Layout =
-  | { ok: true; nome: string; raizSkill: string; comandos: string[]; hooks: string[] }
+  | {
+      ok: true;
+      nome: string;
+      raizSkill: string;
+      comandos: string[];
+      hooks: string[];
+      /**
+       * A pasta de hooks do repositório inteira (`.claude/hooks/`), quando ela
+       * existe. É o que o plugin precisa levar: os hooks reais das skills vivem
+       * em SUBPASTAS (`hooks/runx/`, `hooks/comum/`) e são chamados por um
+       * despachante que referencia esses caminhos. Copiar só os arquivos soltos
+       * de `hooks` deixava o plugin sem nenhum hook — medido em produção.
+       */
+      arvoreHooks?: string;
+    }
   | { ok: false; erro: string };
 
 const IGNORADAS = new Set([".git", "node_modules", ".github", "dist"]);
@@ -100,6 +114,25 @@ function acharHooks(raiz: string, nome: string): string[] {
   return [];
 }
 
+/**
+ * A pasta de hooks do repositório, quando existe.
+ *
+ * Devolve o DIRETÓRIO, não os arquivos: os hooks reais são chamados por um
+ * despachante com caminhos relativos (`comum/rastro`, `runx/escopo-da-task`),
+ * então a estrutura tem que chegar inteira ao plugin ou nenhum deles resolve.
+ */
+function acharArvoreHooks(raiz: string): string | undefined {
+  for (const c of CANDIDATAS_HOOKS) {
+    const dir = join(raiz, c);
+    try {
+      if (statSync(dir).isDirectory()) return dir;
+    } catch {
+      continue;
+    }
+  }
+  return undefined;
+}
+
 export function detectarLayout(raizRepo: string, nomeEsperado: string): Layout {
   const skillMd = acharSkillMd(raizRepo);
   if (skillMd === undefined) return { ok: false, erro: `SKILL.md nao encontrado em ${raizRepo}` };
@@ -109,11 +142,13 @@ export function detectarLayout(raizRepo: string, nomeEsperado: string): Layout {
   if (nome !== nomeEsperado) {
     return { ok: false, erro: `nome da skill e "${nome}", esperado "${nomeEsperado}"` };
   }
+  const arvore = acharArvoreHooks(raizRepo);
   return {
     ok: true,
     nome,
     raizSkill,
     comandos: acharComandos(raizRepo, nome),
     hooks: acharHooks(raizRepo, nome),
+    ...(arvore !== undefined ? { arvoreHooks: arvore } : {}),
   };
 }

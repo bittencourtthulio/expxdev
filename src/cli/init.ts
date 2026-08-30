@@ -98,7 +98,15 @@ export async function executarInit(op: OpcoesInit): Promise<ResultadoInit> {
       continue;
     }
 
-    montaveis.push({ nome, raizSkill: layout.raizSkill, comandos: layout.comandos, hooks: layout.hooks });
+    montaveis.push({
+      nome,
+      raizSkill: layout.raizSkill,
+      comandos: layout.comandos,
+      hooks: layout.hooks,
+      // A árvore inteira: é ela que leva os hooks de verdade para o plugin,
+      // e sem ela o rastro nunca é escrito (ver `montarHooks`).
+      ...(layout.arvoreHooks !== undefined ? { arvoreHooks: layout.arvoreHooks } : {}),
+    });
     travadas[nome] = {
       repositorio,
       referencia: alvo.referencia,
