@@ -12,6 +12,7 @@ export const SUBCOMANDOS = ["init", "panel", "watch", "add", "remove", "update",
 export type Subcomando = (typeof SUBCOMANDOS)[number];
 
 export type Roteamento =
+  | { ok: true; versao: true }
   | { ok: true; ajuda: true }
   | { ok: true; ajuda: false; subcomando: Subcomando; resto: string[] }
   | { ok: false; erro: string };
@@ -30,6 +31,7 @@ expx — CLI do metodo Expx
   expx doctor               diagnostica uma instalacao quebrada
 
   --ajuda              mostra esta ajuda
+  --version            mostra a versao do CLI
 
 O painel e o watch funcionam sem init: nenhum dos dois escreve no projeto.
 `.trim();
@@ -44,6 +46,11 @@ function ehSubcomando(v: string): v is Subcomando {
 
 export function interpretarSubcomando(argv: readonly string[]): Roteamento {
   const primeiro = argv[0];
+  // `--version` é a primeira coisa que se digita para conferir uma atualização;
+  // antes ele caía em "subcomando desconhecido".
+  if (primeiro === "--version" || primeiro === "-v") {
+    return { ok: true, versao: true };
+  }
   if (primeiro === undefined || primeiro === "--ajuda" || primeiro === "--help" || primeiro === "-h") {
     return { ok: true, ajuda: true };
   }

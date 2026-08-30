@@ -4,6 +4,7 @@ import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { interpretar, textoDeAjuda } from "./argumentos.js";
+import { garantirPasta, escolherPorta } from "./autonomo.js";
 import { iniciarPainel } from "../servidor/painel.js";
 import { ErroDePorta } from "../servidor/http.js";
 
@@ -42,17 +43,21 @@ export async function principal(argv: readonly string[]): Promise<number> {
   }
 
   const raiz = resolve(r.opcoes.dir);
-  if (!existsSync(raiz)) {
-    process.stderr.write(`a pasta ${r.opcoes.dir} nao existe\n`);
-    return 1;
-  }
+  // Um projeto recém-inicializado ainda não tem `docs/`. Exigir que a pessoa
+  // criasse a pasta na mão era o único passo manual entre `init` e `panel`.
+  const pasta = garantirPasta(raiz);
+  if (pasta.criada) process.stdout.write(`  criada a pasta ${r.opcoes.dir}\n`);
+
+  // A porta pedida pode estar ocupada por outro painel. Pular para a próxima
+  // livre entrega o painel funcionando em vez de um erro com instrução.
+  const porta = await escolherPorta(r.opcoes.porta);
 
   const estaticos = pastaEstaticos();
   let painel: Awaited<ReturnType<typeof iniciarPainel>>;
   try {
     painel = await iniciarPainel({
       raiz,
-      porta: r.opcoes.porta,
+      porta,
       diasBloqueio: r.opcoes.diasBloqueio,
       ...(estaticos !== undefined ? { estaticos } : {}),
     });

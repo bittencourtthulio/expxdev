@@ -1,6 +1,6 @@
 {
   "name": "expxdev",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "CLI do metodo Expx: instala, atualiza e opera o ecossistema de skills, e sobe o painel de operacao",
   "type": "module",
   "bin": {

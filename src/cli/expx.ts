@@ -194,6 +194,10 @@ export async function executarExpx(argv: readonly string[], saida: Saida = {}): 
     escreverErro(`${r.erro}\n\n${ajudaGeral()}\n`);
     return 1;
   }
+  if ("versao" in r) {
+    escrever(`${versaoDoCli()}\n`);
+    return 0;
+  }
   if (r.ajuda) {
     escrever(`${ajudaGeral()}\n`);
     return 0;
