@@ -13,8 +13,28 @@ import { z } from "zod";
  *    status de trabalho, sprint e fase usa o masculino (`concluido`, `bloqueado`).
  */
 
+/**
+ * `expx_tool` — quem ESCREVEU um artefato de estado. Só a sprintx e a runx
+ * escrevem frontmatter `expx-schema`; as demais skills do método não têm kind
+ * próprio nesse contrato.
+ *
+ * Não confundir com `ferramenta`, do rastro de eventos (`Ferramenta`, abaixo),
+ * que aceita as seis. Tratar os dois como o mesmo enum rejeita o rastro de
+ * quatro skills.
+ */
 export const ExpxTool = z.enum(["sprintx", "runx"]);
 export type ExpxTool = z.infer<typeof ExpxTool>;
+
+/** `ferramenta` — quem EMITIU um evento no rastro. Todas as skills emitem. */
+export const Ferramenta = z.enum([
+  "sprintx",
+  "runx",
+  "mergex",
+  "legadox",
+  "stackx",
+  "memox",
+]);
+export type Ferramenta = z.infer<typeof Ferramenta>;
 
 export const TipoTrabalho = z.enum(["feature", "ocorrencia"]);
 export type TipoTrabalho = z.infer<typeof TipoTrabalho>;

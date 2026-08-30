@@ -23,6 +23,7 @@
   "files": [
     "dist",
     "ui/dist",
+    "nucleo",
     "README.md",
     "LICENSE"
   ],

@@ -8,6 +8,48 @@ function violacoes(raiz: string) {
   return verificarConformidade(montarProjeto(raiz), { hoje: HOJE, diasBloqueio: 7 });
 }
 
+describe("R6 — chave nunca omitida", () => {
+  it("integração: projeto-ok não produz nenhuma violação de chave omitida", () => {
+    // Guarda contra o falso positivo óbvio: cobrar na RAIZ do kind `tasks` os
+    // campos que vivem dentro de cada item da lista acusa toda task correta.
+    const v = violacoes("fixtures/projeto-ok").filter(
+      (x) => x.tipo === TipoViolacao.ChaveOmitida,
+    );
+    expect(v).toEqual([]);
+  });
+
+  it("funcional: chave ausente na task vira violação, com o caminho do campo", () => {
+    const v = violacoes("fixtures/projeto-ruim").filter(
+      (x) => x.tipo === TipoViolacao.ChaveOmitida,
+    );
+    const alvos = v.map((x) => x.alvo);
+    expect(alvos).toContain("tasks.0.teste_integracao");
+    expect(alvos).toContain("tasks.0.teste_funcional");
+  });
+
+  it("funcional: chave presente e vazia NÃO é chave omitida", () => {
+    // T-01.02 tem os dois testes como string vazia. É defeito, mas de outro
+    // tipo (`teste_ausente`). Confundir os dois apaga a distinção entre "não
+    // se aplica" e "esqueceram de escrever", que é a razão de ser da R6.
+    const v = violacoes("fixtures/projeto-ruim").filter(
+      (x) => x.tipo === TipoViolacao.ChaveOmitida,
+    );
+    expect(v.map((x) => x.alvo)).not.toContain("tasks.1.teste_integracao");
+    expect(v.map((x) => x.alvo)).not.toContain("tasks.1.teste_funcional");
+  });
+
+  it("funcional: a violação aponta um arquivo e uma linha, para o painel navegar", () => {
+    const v = violacoes("fixtures/projeto-ruim").filter(
+      (x) => x.tipo === TipoViolacao.ChaveOmitida,
+    );
+    expect(v.length).toBeGreaterThan(0);
+    for (const x of v) {
+      expect(x.arquivo).toMatch(/tasks\.md$/);
+      expect(x.linha).not.toBeNull();
+    }
+  });
+});
+
 describe("violacoes de teste da task", () => {
   it("integração: projeto-ok não tem nenhuma violação de teste", () => {
     const v = violacoes("fixtures/projeto-ok").filter(

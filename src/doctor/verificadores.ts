@@ -1,6 +1,7 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { lerLock } from "../nucleo/lock.js";
+import { validarRastro } from "../parser/esquema/evento.js";
 import { verificarCaminhos } from "../nucleo/caminhos.js";
 import { expxNoGitignore } from "../cli/projeto.js";
 import { verificarModificacaoLocal, pastaDaSkill } from "../update/modificacao.js";
@@ -189,5 +190,64 @@ export function diagnosticar(raiz: string): Diagnostico {
     }
   }
 
+  verificarRastro(raiz, push);
+
   return { saudavel: achados.filter((a) => a.severidade === "erro").length === 0, achados };
+}
+
+/**
+ * O rastro de eventos obedece ao contrato `expx-eventos`?
+ *
+ * Aviso, nunca erro: rastro malformado não impede o método de funcionar, e um
+ * `doctor` que reprova a instalação por causa de linha antiga em disco é um
+ * doctor que as pessoas param de rodar. As quatro skills que escrevem o rastro
+ * têm implementações independentes — é justamente onde a divergência aparece.
+ */
+function verificarRastro(raiz: string, push: (a: Achado) => void): void {
+  const dir = join(raiz, "docs", "eventos");
+  if (!existsSync(dir)) return;
+
+  let arquivos: string[];
+  try {
+    arquivos = readdirSync(dir).filter((f) => f.endsWith(".jsonl"));
+  } catch {
+    return;
+  }
+
+  for (const nome of arquivos) {
+    let conteudo: string;
+    try {
+      conteudo = readFileSync(join(dir, nome), "utf8");
+    } catch {
+      continue;
+    }
+    const r = validarRastro(conteudo);
+
+    if (r.defeitos.length > 0) {
+      const primeiro = r.defeitos[0];
+      const resto = r.defeitos.length - 1;
+      push({
+        id: "rastro-fora-do-contrato",
+        severidade: "aviso",
+        problema:
+          `docs/eventos/${nome}: ${r.defeitos.length} de ${r.linhas} linhas fora do ` +
+          `contrato expx-eventos (L${primeiro?.linha}: ${primeiro?.motivo}` +
+          `${resto > 0 ? `, e mais ${resto}` : ""})`,
+        correcao:
+          "o rastro e append-only e nao se edita a mao: corrija quem grava (o hook da skill) " +
+          "e deixe as linhas antigas onde estao",
+      });
+    }
+
+    if (r.desconhecidas.length > 0) {
+      push({
+        id: "rastro-chave-nao-declarada",
+        severidade: "aviso",
+        problema: `docs/eventos/${nome}: chaves fora do contrato: ${r.desconhecidas.join(", ")}`,
+        correcao:
+          "chave extra e permitida, mas precisa ser declarada em CONTRATO-expx-eventos.md " +
+          "e vir depois das doze obrigatorias",
+      });
+    }
+  }
 }

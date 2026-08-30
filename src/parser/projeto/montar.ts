@@ -64,12 +64,23 @@ function comCorpo(a: Aceito | undefined): Record<string, unknown> | null {
   return a ? { ...a.dados, _corpo: a.corpo } : null;
 }
 
+/** Uma chave que a R6 exige e que não estava no arquivo. */
+export type ChaveOmitida = {
+  arquivo: string;
+  trabalho_id: string;
+  /** Caminho no frontmatter, ex. `tasks.0.criterio_aceite`. */
+  caminho: string;
+  linha: number | null;
+};
+
 export type Projeto = {
   raiz: string;
   trabalhos: TrabalhoMontado[];
   bloqueios: BloqueioSituado[];
   historico: EntradaHistorico[];
   rejeicoes: Rejeicao[];
+  /** Violações da R6, colhidas na leitura (ver `colherOmitidas`). */
+  omitidas: ChaveOmitida[];
   lido_em: string;
 };
 
@@ -213,12 +224,27 @@ export function montarProjeto(raiz: string, agora: Date = new Date()): Projeto {
     };
   });
 
+  const omitidas: ChaveOmitida[] = aceitos.flatMap((a) =>
+    a.omitidas.map((caminho) => ({
+      arquivo: a.arquivo,
+      trabalho_id: String(a.dados["trabalho_id"] ?? ""),
+      caminho,
+      // A linha do campo não existe — ele não está no arquivo. Aponta para o
+      // item que deveria carregá-lo, e daí para o começo do bloco.
+      linha:
+        a.linhas.get(caminho.split(".").slice(0, -1).join(".")) ??
+        a.linhas.get("kind") ??
+        null,
+    })),
+  );
+
   return {
     raiz,
     trabalhos: montados,
     bloqueios: montados.flatMap((t) => t.bloqueios),
     historico: montarHistorico(aceitos),
     rejeicoes,
+    omitidas,
     lido_em: agora.toISOString(),
   };
 }

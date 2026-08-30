@@ -2,23 +2,35 @@
 
 Este é o contrato entre as skills (`sprintx`, `runx`) e o painel. As skills **escrevem** este frontmatter; o painel **lê** e nunca escreve.
 
-Guarde este arquivo no repositório do painel. Ele é a fonte da verdade quando skill e parser divergirem.
+Guarde este arquivo no repositório do painel. Ele é a fonte da verdade sobre **os `kind`, seus campos e seus enums** quando skill e parser divergirem. As convenções que valem para todo artefato do método — nomes de chave, enums, datas, chave omitida — vêm do documento raiz [`CONVENCOES.md`](./CONVENCOES.md).
+
+`expx_tool` aceita `sprintx` e `runx`: só essas duas escrevem artefato de estado. Não confundir com `ferramenta`, do rastro de eventos, que aceita as seis skills — são campos de domínios diferentes.
 
 ---
 
 ## Regras universais
 
-Valem para todo arquivo com frontmatter, sem exceção.
+As convenções valem para todo artefato do método e vivem no documento raiz
+[`CONVENCOES.md`](./CONVENCOES.md), numeradas de R1 a R14. Este contrato **não as
+repete** — repetir cria uma segunda fonte que envelhece.
 
-1. O bloco YAML é a **primeira coisa do arquivo**, delimitado por `---`.
-2. Toda chave em `snake_case`, minúscula, **sem acento**.
-3. Todo valor de enum em minúscula e **sem acento**: `concluida`, nunca `Concluída`.
-4. Datas em ISO: `AAAA-MM-DD`.
-5. Booleanos: `true` / `false`.
-6. Lista vazia é `[]`. Valor ausente é `null`. **Nunca omitir a chave** — o painel diferencia "não se aplica" de "esqueceram de escrever".
-7. O frontmatter é a **única** fonte para o painel. A prosa abaixo dele é para humano e pode dizer o que quiser.
-8. Nada de duplicar prosa longa no YAML. Campos de texto são de uma linha.
-9. `atualizado_em` é reescrito a cada gravação do arquivo.
+As mais citadas por quem escreve frontmatter:
+
+| | |
+|---|---|
+| **R1** | o bloco YAML é a primeira coisa do arquivo, entre `---` |
+| **R2** | chave em `snake_case`, minúscula, sem acento |
+| **R3** | valor de enum minúsculo e sem acento |
+| **R4** | data ISO `AAAA-MM-DD`, obtida do sistema com `date +%Y-%m-%d` |
+| **R5** | booleano `true`/`false`, sem aspas |
+| **R6** | chave nunca omitida: `[]` para lista vazia, `null` para ausente |
+| **R7** | o frontmatter é a única fonte para a máquina |
+| **R8** | campos de texto são de uma linha |
+| **R9** | `atualizado_em` reescrito a cada gravação |
+| **R10** | nenhum caminho absoluto em nenhum valor |
+
+Chave obrigatória ausente é **violação**, não rejeição (R6): o arquivo continua no
+painel, com o defeito à vista.
 
 ## Enums
 

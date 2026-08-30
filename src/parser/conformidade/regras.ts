@@ -24,6 +24,7 @@ export const TipoViolacao = {
   DependenciaInexistente: "dependencia_inexistente",
   CicloDependencia: "ciclo_dependencia",
   EstagioIncoerente: "estagio_incoerente",
+  ChaveOmitida: "chave_omitida",
 } as const;
 
 export type TipoViolacao = (typeof TipoViolacao)[keyof typeof TipoViolacao];
@@ -231,6 +232,29 @@ function regrasDeReferencia(t: TrabalhoMontado, saida: Violacao[]): void {
   }
 }
 
+/**
+ * R6 — chave nunca omitida.
+ *
+ * A omissão foi colhida na leitura, onde o dado cru ainda existia; aqui ela só
+ * vira violação. É violação e não rejeição por decisão: o painel existe para
+ * mostrar o defeito, e rejeitar faria o trabalho sumir da tela justamente
+ * quando tem um problema (D-04, lacuna L-05).
+ */
+function regrasDeChaveOmitida(projeto: Projeto, saida: Violacao[]): void {
+  for (const o of projeto.omitidas) {
+    const partes = o.caminho.split(".");
+    const campo = partes[partes.length - 1] ?? o.caminho;
+    saida.push({
+      tipo: TipoViolacao.ChaveOmitida,
+      trabalho_id: o.trabalho_id,
+      alvo: o.caminho,
+      arquivo: o.arquivo,
+      linha: o.linha,
+      detalhe: `${campo} nao esta no arquivo; a chave e obrigatoria mesmo vazia (use null ou [])`,
+    });
+  }
+}
+
 export function verificarConformidade(projeto: Projeto, op: OpcoesConformidade): Violacao[] {
   const saida: Violacao[] = [];
   for (const t of projeto.trabalhos) {
@@ -238,5 +262,6 @@ export function verificarConformidade(projeto: Projeto, op: OpcoesConformidade):
     regrasDeEstrutura(t, saida, op);
     regrasDeReferencia(t, saida);
   }
+  regrasDeChaveOmitida(projeto, saida);
   return saida;
 }

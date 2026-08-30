@@ -22,6 +22,26 @@ function montavel(nome: string, layout: "embutido" | "plano" = "embutido"): Skil
   return { nome, raizSkill: l.raizSkill, comandos: l.comandos };
 }
 
+describe("nucleo compartilhado", () => {
+  // A Camada 2 do núcleo só existe se ela CHEGA ao projeto. Sem este teste, a
+  // pasta pode sair da montagem sem ninguém perceber, e cada skill volta a
+  // manter a própria cópia do rastro — que é o problema que ele resolve.
+  it("integração: o núcleo viaja junto com o plugin montado", () => {
+    p = projetoTemporario();
+    const destino = join(p.raiz, "plugin");
+    montarPlugin(destino, [montavel("sprintx")], "1.0.0");
+
+    const rastro = join(destino, "nucleo", "hooks", "expx-rastro.sh");
+    expect(existsSync(rastro)).toBe(true);
+
+    const fonte = readFileSync(rastro, "utf8");
+    // A ferramenta é parâmetro, nunca literal: é o que impedia compartilhar.
+    expect(fonte).toContain("EXPX_FERRAMENTA");
+    expect(fonte).toContain("expx_rastro_grava");
+    expect(fonte).toContain("expx_modo");
+  });
+});
+
 describe("montagem do plugin", () => {
   it("integração: monta com duas de três skills e a terceira não aparece", () => {
     p = projetoTemporario();

@@ -1,5 +1,6 @@
-import { cpSync, mkdirSync, writeFileSync } from "node:fs";
-import { basename, join } from "node:path";
+import { cpSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { montarPluginJson, montarMarketplaceJson, ORIGEM_DO_PLUGIN } from "./manifestos.js";
 
 /**
@@ -17,6 +18,19 @@ export type SkillMontavel = {
   comandos: readonly string[];
 };
 
+/**
+ * O núcleo compartilhado (`nucleo/hooks/`), distribuído por CÓPIA.
+ *
+ * Cópia, e não dependência, porque cada projeto precisa rodar sozinho: nenhum
+ * repositório de skill tem `package.json`, então não há como depender do
+ * `expxdev` por npm. A fonte é uma só; o que chega ao projeto é um arquivo.
+ *
+ * Resolvido a partir do `dist/` em execução — daí o `../..`.
+ */
+function raizDoNucleo(): string {
+  return join(dirname(fileURLToPath(import.meta.url)), "..", "..", "nucleo");
+}
+
 /** Monta só o plugin, em `destino`. */
 export function montarPlugin(
   destino: string,
@@ -26,6 +40,14 @@ export function montarPlugin(
   mkdirSync(join(destino, ".claude-plugin"), { recursive: true });
   mkdirSync(join(destino, "skills"), { recursive: true });
   mkdirSync(join(destino, "commands"), { recursive: true });
+
+  // O núcleo viaja com o plugin. Ausente (checkout parcial, empacotamento sem
+  // a pasta), a montagem segue: as skills têm a própria cópia em disco e o
+  // projeto continua funcionando — falha aberta, como todo hook.
+  const nucleo = raizDoNucleo();
+  if (existsSync(nucleo)) {
+    cpSync(nucleo, join(destino, "nucleo"), { recursive: true });
+  }
 
   writeFileSync(
     join(destino, ".claude-plugin", "plugin.json"),
