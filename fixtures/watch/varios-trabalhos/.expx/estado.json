@@ -1,0 +1,17 @@
+{
+  "expx_estado": 1,
+  "atualizado_em": "2026-08-29T10:00:00Z",
+  "trabalho": null,
+  "ferramenta": null,
+  "titulo_curto": null,
+  "fase": null,
+  "task": null,
+  "tasks_concluidas": 0,
+  "tasks_total": 0,
+  "raio": null,
+  "orcamento_arquivos": null,
+  "orcamento_linhas": null,
+  "branch": null,
+  "pr_estado": null,
+  "bloqueios": 0
+}

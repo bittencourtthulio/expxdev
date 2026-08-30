@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" role="img" aria-label="As tres camadas que garantem o metodo: a skill instrui, o hook barra de forma deterministica, e o agente julga em contexto proprio">
+  <rect width="1000" height="430" rx="12" fill="#ffffff"/>
+  <g font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+  <text x="30" y="32" font-size="12.5" fill="#59636e" letter-spacing="0.6">TRES CAMADAS, DA MAIS FRACA PARA A MAIS FORTE</text>
+  <rect x="30" y="46" width="290" height="150" rx="7" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1.8"/>
+  <text x="52" y="74" font-size="15" fill="#1f2328" font-weight="700">A skill</text>
+  <text x="52" y="94" font-size="11.5" fill="#59636e">instrui</text>
+  <text x="52" y="120" font-size="11" fill="#1f2328">o metodo escrito: fases, contratos,</text>
+  <text x="52" y="137" font-size="11" fill="#1f2328">regras invioláveis, templates</text>
+  <text x="52" y="176" font-size="10.5" fill="#59636e" font-weight="600">Pode ser esquecida numa execucao longa.</text>
+  <rect x="355" y="46" width="290" height="150" rx="7" fill="#f6f8fa" stroke="#bc4c00" stroke-width="1.8"/>
+  <text x="377" y="74" font-size="15" fill="#bc4c00" font-weight="700">O hook</text>
+  <text x="377" y="94" font-size="11.5" fill="#59636e">barra</text>
+  <text x="377" y="120" font-size="11" fill="#1f2328">script deterministico: quem executa</text>
+  <text x="377" y="137" font-size="11" fill="#1f2328">e o harness, nao o modelo</text>
+  <text x="377" y="176" font-size="10.5" fill="#bc4c00" font-weight="600">Roda sempre. Nao depende de lembrar.</text>
+  <rect x="680" y="46" width="290" height="150" rx="7" fill="#f6f8fa" stroke="#8250df" stroke-width="1.8"/>
+  <text x="702" y="74" font-size="15" fill="#8250df" font-weight="700">O agente</text>
+  <text x="702" y="94" font-size="11.5" fill="#59636e">julga</text>
+  <text x="702" y="120" font-size="11" fill="#1f2328">contexto proprio, ferramentas</text>
+  <text x="702" y="137" font-size="11" fill="#1f2328">restritas a leitura</text>
+  <text x="702" y="176" font-size="10.5" fill="#8250df" font-weight="600">Nao pode corrigir: nao tem a ferramenta.</text>
+  <text x="30" y="232" font-size="12.5" fill="#59636e" letter-spacing="0.6">TODO HOOK DE METODO NASCE EM AVISO</text>
+  <rect x="30" y="246" width="460" height="100" rx="7" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+  <text x="52" y="272" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13" fill="#bc4c00" font-weight="700">aviso</text>
+  <text x="120" y="272" font-size="11.5" fill="#59636e">registra no rastro e deixa passar</text>
+  <text x="52" y="296" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13" fill="#cf222e" font-weight="700">bloqueio</text>
+  <text x="120" y="296" font-size="11.5" fill="#59636e">exit 2 — barra a acao e diz o motivo ao modelo</text>
+  <text x="52" y="326" font-size="11" fill="#1f2328">A promocao e decisao humana, guiada pelo rastro.</text>
+  <rect x="510" y="246" width="460" height="100" rx="7" fill="#f6f8fa" stroke="#cf222e" stroke-width="1.4"/>
+  <text x="532" y="272" font-size="12.5" fill="#cf222e" font-weight="600">Por que nao nasce tudo em bloqueio</text>
+  <text x="532" y="294" font-size="11" fill="#59636e">Hook que da falso positivo e desinstalado — e junto</text>
+  <text x="532" y="312" font-size="11" fill="#59636e">com ele vao os que funcionavam. Excecao: seguranca</text>
+  <text x="532" y="330" font-size="11" fill="#59636e">nasce em bloqueio, porque segredo commitado nao volta.</text>
+  <rect x="30" y="362" width="940" height="56" rx="7" fill="#f6f8fa" stroke="#8250df" stroke-width="1.4"/>
+  <text x="52" y="384" font-size="12.5" fill="#8250df" font-weight="600">Os agentes de veredito tem acesso somente de leitura</text>
+  <text x="52" y="404" font-size="11" fill="#59636e">auditor-plano · revisor-testes · qa — isso transforma "aponta, nao corrige" de promessa em impossibilidade tecnica.</text>
+  </g>
+</svg>

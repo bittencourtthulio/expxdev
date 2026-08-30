@@ -8,7 +8,7 @@
  * painel.
  */
 
-export const SUBCOMANDOS = ["init", "panel", "add", "remove", "update", "doctor"] as const;
+export const SUBCOMANDOS = ["init", "panel", "watch", "add", "remove", "update", "doctor"] as const;
 export type Subcomando = (typeof SUBCOMANDOS)[number];
 
 export type Roteamento =
@@ -23,6 +23,7 @@ expx — CLI do metodo Expx
 
   expx init                 instala as skills escolhidas neste projeto
   expx panel                sobe o painel de operacao lendo o docs/ do projeto
+  expx watch                acompanha um trabalho no terminal, ao vivo
   expx add <skill...>       acrescenta skills a selecao
   expx remove <skill...>    remove skills da selecao
   expx update [skill...]    atualiza as skills instaladas
@@ -30,7 +31,7 @@ expx — CLI do metodo Expx
 
   --ajuda              mostra esta ajuda
 
-O painel funciona sem init: ele nao precisa de nada instalado.
+O painel e o watch funcionam sem init: nenhum dos dois escreve no projeto.
 `.trim();
 
 export function ajudaGeral(): string {

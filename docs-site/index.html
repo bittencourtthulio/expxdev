@@ -1,0 +1,2116 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentação do método Expx</title>
+<meta name="description" content="Referência completa do CLI expxdev e das sete skills do método Expx: instalação, contratos, painel, watch e a arquitetura interna.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/estilo.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>📘</text></svg>">
+</head>
+<body>
+
+<header class="topo">
+  <button class="icone-btn menu-btn" id="menu" aria-label="Abrir navegação" aria-expanded="false">
+    <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+  </button>
+
+  <a class="marca" href="#visao-geral">
+    <svg class="marca__glifo" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="1.5" y="1.5" width="21" height="21" rx="5.5" fill="var(--accent)"/>
+      <path d="M7.6 7.4 L16.4 16.6 M16.4 7.4 L7.6 16.6" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/>
+    </svg>
+    <span class="marca__nome">expx<b>dev</b></span>
+    <span class="marca__versao" id="versao">v0.4.1</span>
+  </a>
+
+  <div class="busca">
+    <svg class="busca__lupa" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14" stroke-linecap="round"/></svg>
+    <input class="busca__campo" id="busca" type="search" placeholder="Buscar na documentação…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="resultados" aria-label="Buscar na documentação">
+    <span class="busca__atalho">/</span>
+    <div class="resultados" id="resultados" role="listbox" hidden></div>
+  </div>
+
+  <div class="topo__acoes">
+    <button class="icone-btn" id="tema" aria-label="Alternar tema claro e escuro" title="Alternar tema">
+      <svg id="icone-tema" width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="8" cy="8" r="3.1"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2 3.1 3.1"/></svg>
+    </button>
+    <a class="icone-btn" href="https://github.com/bittencourtthulio/expxdev" target="_blank" rel="noopener" aria-label="Repositório no GitHub" title="GitHub">
+      <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+    </a>
+  </div>
+</header>
+
+<nav class="lateral" id="lateral" aria-label="Navegação da documentação">
+  <div class="nav__grupo">
+    <p class="nav__titulo">Começar</p>
+    <ul class="nav__lista">
+      <li><a class="nav__link" href="#visao-geral" data-secao="visao-geral">Visão geral</a></li>
+      <li><a class="nav__link" href="#instalacao" data-secao="instalacao">Instalação</a></li>
+      <li><a class="nav__link" href="#ecossistema" data-secao="ecossistema">O ecossistema</a></li>
+      <li><a class="nav__link" href="#garantias" data-secao="garantias">As três garantias</a></li>
+    </ul>
+  </div>
+
+  <div class="nav__grupo">
+    <p class="nav__titulo">As sete skills</p>
+    <ul class="nav__lista">
+      <li><a class="nav__link" href="#sprintx" data-secao="sprintx"><span class="nav__ponto" style="background:var(--accent)"></span>sprintx</a></li>
+      <li><a class="nav__link" href="#runx" data-secao="runx"><span class="nav__ponto" style="background:var(--accent)"></span>runx</a></li>
+      <li><a class="nav__link" href="#mergex" data-secao="mergex"><span class="nav__ponto" style="background:var(--accent)"></span>mergex</a></li>
+      <li><a class="nav__link" href="#legadox" data-secao="legadox"><span class="nav__ponto" style="background:var(--layer)"></span>legadox</a></li>
+      <li><a class="nav__link" href="#stackx" data-secao="stackx"><span class="nav__ponto" style="background:var(--layer)"></span>stackx</a></li>
+      <li><a class="nav__link" href="#memox" data-secao="memox"><span class="nav__ponto" style="background:var(--layer)"></span>memox</a></li>
+      <li><a class="nav__link" href="#prodx" data-secao="prodx"><span class="nav__ponto" style="background:var(--layer)"></span>prodx</a></li>
+    </ul>
+  </div>
+
+  <div class="nav__grupo">
+    <p class="nav__titulo">Referência do CLI</p>
+    <ul class="nav__lista">
+      <li><a class="nav__link" href="#comandos" data-secao="comandos">Subcomandos</a></li>
+      <li><a class="nav__link" href="#init" data-secao="init">Anatomia do init</a></li>
+      <li><a class="nav__link" href="#lock" data-secao="lock">Lock e update</a></li>
+      <li><a class="nav__link" href="#doctor" data-secao="doctor">Doctor</a></li>
+      <li><a class="nav__link" href="#painel" data-secao="painel">O painel</a></li>
+      <li><a class="nav__link" href="#watch" data-secao="watch">O watch</a></li>
+    </ul>
+  </div>
+
+  <div class="nav__grupo">
+    <p class="nav__titulo">Os contratos</p>
+    <ul class="nav__lista">
+      <li><a class="nav__link" href="#convencoes" data-secao="convencoes">Convenções R1–R14</a></li>
+      <li><a class="nav__link" href="#schema" data-secao="schema">expx-schema v1</a></li>
+      <li><a class="nav__link" href="#eventos" data-secao="eventos">expx-eventos v1</a></li>
+      <li><a class="nav__link" href="#estado" data-secao="estado">expx-estado v1</a></li>
+    </ul>
+  </div>
+
+  <div class="nav__grupo">
+    <p class="nav__titulo">Interno</p>
+    <ul class="nav__lista">
+      <li><a class="nav__link" href="#arquitetura" data-secao="arquitetura">Arquitetura</a></li>
+      <li><a class="nav__link" href="#decisoes" data-secao="decisoes">Decisões</a></li>
+      <li><a class="nav__link" href="#desenvolvimento" data-secao="desenvolvimento">Desenvolvimento</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="corpo">
+<div class="conteudo" id="conteudo">
+
+<!-- ============================ VISAO GERAL ============================ -->
+<section class="secao" id="visao-geral">
+  <p class="eyebrow">Método Expx</p>
+  <h1>O método, escrito e executável</h1>
+  <p class="lede">
+    Pedir a um agente de IA para construir uma feature funciona — até a segunda hora. O plano era vago
+    o bastante para o agente decidir sozinho no meio da implementação, e ele decide: escolhe um padrão
+    que não é o do projeto, escreve o teste na pasta que o runner não olha, refatora três arquivos que
+    ninguém pediu. O método Expx é o conjunto das restrições que evitam isso, escrito. Este site é a
+    referência completa do <code>expxdev</code> — o CLI que instala e mantém as sete skills — e de cada
+    uma delas.
+  </p>
+
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">npx</span> expxdev init</code></pre>
+  </div>
+
+  <div class="cartoes">
+    <div class="cartao"><div class="cartao__num">7</div><div class="cartao__rot">skills no catálogo</div></div>
+    <div class="cartao"><div class="cartao__num">7</div><div class="cartao__rot">subcomandos do CLI</div></div>
+    <div class="cartao"><div class="cartao__num">438</div><div class="cartao__rot">testes, sem rede</div></div>
+    <div class="cartao"><div class="cartao__num">16</div><div class="cartao__rot">verificações do doctor</div></div>
+  </div>
+
+  <h2 id="apostas">As quatro apostas</h2>
+  <p>O método parte de quatro premissas, e tudo o mais decorre delas.</p>
+
+  <ol class="passos">
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Todo o esforço vai para o planejamento</p>
+      <p>Uma pergunta feita durante a execução é sempre uma falha da fase de planejamento. Se a ambiguidade
+      foi eliminada antes, a execução pode ser autônoma sem virar aposta.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Nada avança sem critério verificável</p>
+      <p>Task, fase e sprint têm portão de aceite binário, sem adjetivo. TDD não é sugestão: o teste vem
+      antes, e a task só fecha com a suíte inteira verde.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">O escopo é travado no que a investigação provou</p>
+      <p>O que não está no plano não é tocado. Melhoria avulsa vira registro de dívida, nunca um brinde no diff.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Quem implementa não aprova</p>
+      <p>O QA e a auditoria são papéis distintos, e os agentes que os executam têm acesso somente de leitura —
+      o que transforma “aponta, não corrige” de promessa em impossibilidade técnica.</p>
+    </div></li>
+  </ol>
+
+  <h2 id="mapa">O método de ponta a ponta</h2>
+  <figure class="figura">
+    <div class="figura__tela" data-diagrama="metodo"></div>
+    <figcaption><strong>prodx</strong> diz se vale fazer, <strong>stackx</strong> diz como este projeto escreve
+    código, <strong>legadox</strong> diz o quanto ter medo, <strong>sprintx</strong> e <strong>runx</strong>
+    fazem o trabalho, <strong>mergex</strong> entrega, e o <strong>expxdev</strong> instala todos e mostra o andamento.</figcaption>
+  </figure>
+
+  <h3>Build e Run são a mesma disciplina</h3>
+  <p><code>sprintx</code> e <code>runx</code> não são dois métodos: são o mesmo método com gatilhos diferentes.</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th></th><th>sprintx (Build)</th><th>runx (Run)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Gatilho</strong></td><td>feature nova, planejada do zero</td><td>ocorrência num sistema em produção</td></tr>
+      <tr><td><strong>Entrada</strong></td><td>uma ideia, um requisito</td><td>um chamado, ticket ou relato de cliente</td></tr>
+      <tr><td><strong>Estágios</strong></td><td><code>F1</code>…<code>F6</code></td><td><code>E1</code>…<code>E5</code></td></tr>
+      <tr><td><strong>Saída</strong></td><td>a feature entregue</td><td>a ocorrência encerrada, com dois relatórios</td></tr>
+      <tr><td><strong>Raiz em disco</strong></td><td><code>docs/sprintx/features/&lt;slug&gt;/</code></td><td><code>docs/manutencao/&lt;OC-ID&gt;-&lt;slug&gt;/</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>As duas compartilham exatamente os mesmos contratos: base de conhecimento antes de qualquer plano,
+  hierarquia sprint → fase → task, TDD obrigatório com no mínimo dois testes por task, critério de aceite
+  verificável em toda transição e execução autônoma guiada por um arquivo orquestrador.
+  <strong>Muda o gatilho e o tamanho. Nunca o rigor.</strong></p>
+</section>
+
+<!-- ============================ INSTALACAO ============================ -->
+<section class="secao" id="instalacao">
+  <p class="eyebrow">Começar</p>
+  <h1>Instalação</h1>
+  <p class="lede">O <code>init</code> busca as skills que você escolher nos repositórios oficiais, empacota
+  apenas as selecionadas como um plugin local chamado <code>expx</code> e configura o harness.</p>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Requisito:</strong> Node ≥ 20.19.0 e o <code>git</code> do sistema no <code>PATH</code>.
+    O CLI usa <code>git clone --depth 1</code> justamente para aproveitar a credencial já configurada na
+    máquina — repositório privado funciona sem nenhum token.</p></div>
+  </div>
+
+  <h2 id="modo-rapido">O caminho declarativo</h2>
+  <p>A seleção é feita por flag, o que faz a mesma linha servir ao seu terminal e ao CI:</p>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">npx</span> expxdev init <span class="tok-flag">--skills</span> sprintx,runx,mergex <span class="tok-flag">--harness</span> claude,opencode <span class="tok-flag">--yes</span></code></pre>
+  </div>
+
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Flag</th><th>Efeito</th></tr></thead>
+    <tbody>
+      <tr><td><code>--skills &lt;lista&gt;</code></td><td>Skills a instalar, separadas por vírgula. Repetível; nomes duplicados são ignorados</td></tr>
+      <tr><td><code>--harness &lt;lista&gt;</code></td><td><code>claude</code>, <code>opencode</code>, ou os dois. Padrão: <code>claude</code></td></tr>
+      <tr><td><code>--yes</code> · <code>--sim</code></td><td>Aplica sem exigir terminal interativo</td></tr>
+    </tbody>
+  </table></div>
+  <p>Todas aceitam também a forma <code>--flag=valor</code>.</p>
+
+  <div class="nota nota--aviso">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.2 14.6 13.4H1.4z" stroke-linejoin="round"/><path d="M8 6.6v3.1M8 11.6v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Sem terminal interativo e sem <code>--yes</code></strong>, o <code>init</code> imprime o
+    que instalaria e sai sem escrever nada. É o modo de simulação, e é o que protege um CI de escrever por engano.</p></div>
+  </div>
+
+  <h2 id="modo-interativo">O caminho interativo</h2>
+  <p>Rodando <code>npx expxdev init</code> sem <code>--skills</code> num terminal completo (stdin e stdout
+  precisam ser TTY), o CLI abre um assistente:</p>
+  <div class="terminal">
+    <div class="terminal__barra"><span class="terminal__bolha" style="background:#ff5f57"></span><span class="terminal__bolha" style="background:#febc2e"></span><span class="terminal__bolha" style="background:#28c840"></span><span class="terminal__titulo">expx init</span></div>
+    <pre><code><span class="t-ciano">  ███████ ██   ██ ██████  ██   ██</span>   <span class="t-cinza">dev</span>
+<span class="t-cinza">  o CLI do metodo Expx · v0.4.1</span>
+
+<span class="t-verde">?</span> <span class="t-azul">Quais skills instalar?</span> <span class="t-cinza">(espaço marca, enter confirma)</span>
+ <span class="t-verde">◉</span> sprintx   <span class="t-cinza">planeja e executa features novas</span>
+ <span class="t-verde">◉</span> runx      <span class="t-cinza">ocorrencias de manutencao do dia a dia</span>
+ <span class="t-cinza">◯ legadox   camada para projetos legados</span>
+ <span class="t-cinza">◯ stackx    descobre o dialeto tecnico do repositorio</span>
+ <span class="t-verde">◉</span> mergex    <span class="t-cinza">versionamento, entrega e revisao de pull requests</span>
+ <span class="t-cinza">◯ memox     memoria do projeto, indexa os artefatos ja fechados</span>
+ <span class="t-cinza">◯ prodx     camada de produto, decide se o pedido vira trabalho</span>
+
+<span class="t-verde">?</span> <span class="t-azul">Qual harness?</span> <span class="t-verde">◉</span> claude  <span class="t-cinza">◯ opencode</span>
+
+<span class="t-cinza">Resumo</span>
+  skills   sprintx, runx, mergex
+  harness  claude
+
+<span class="t-verde">?</span> <span class="t-azul">Confirmar?</span> <span class="t-cinza">(S/n)</span></code></pre>
+  </div>
+  <p>Se já existe um <code>.expx/</code> no projeto, o assistente pergunta antes se você quer reconfigurar,
+  com o padrão em <em>não</em> — seguir remonta a instalação a partir da nova seleção.</p>
+
+  <h2 id="o-que-fica">O que fica no seu projeto</h2>
+  <figure class="figura">
+    <div class="figura__tela" data-diagrama="init"></div>
+    <figcaption>A montagem inteira acontece numa pasta temporária ao lado do destino e é trocada por
+    <code>rename</code> ao final. Se falhar no meio, o <code>.expx/</code> anterior é devolvido ao lugar.</figcaption>
+  </figure>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Sobre o registro do plugin.</strong> Declarar o marketplace na configuração do projeto
+    não instala o plugin — isso foi verificado em execução, não presumido da documentação. O <code>init</code>
+    chama <code>claude plugin marketplace add</code> e <code>claude plugin install</code>. Como esse registro
+    grava um caminho absoluto na configuração do usuário, ele não viaja no commit: cada pessoa roda
+    <code>expx init</code> na própria máquina. Sem o binário <code>claude</code> no <code>PATH</code>, o
+    <code>.expx/</code> é montado normalmente e o CLI imprime os dois comandos para você rodar à mão.</p></div>
+  </div>
+
+  <h2 id="commitar">Commite o <code>.expx/</code></h2>
+  <p>A instalação é travada por lock, e o lock é para ser versionado. Quem clona o projeto recebe exatamente
+  as mesmas skills que o time está usando, sem rede e sem rodar nada. O <code>doctor</code> trata como
+  <strong>erro</strong> um <code>.gitignore</code> que ignore o <code>.expx/</code>.</p>
+</section>
+
+<!-- ============================ ECOSSISTEMA ============================ -->
+<section class="secao" id="ecossistema">
+  <p class="eyebrow">Começar</p>
+  <h1>O ecossistema</h1>
+  <p class="lede">Sete skills que não se conhecem por código: elas se encontram em contratos escritos.
+  É isso que permite instalar três delas e não as outras quatro, ou atualizar uma sem tocar nas demais.</p>
+
+  <figure class="figura">
+    <div class="figura__tela" data-diagrama="ecossistema"></div>
+    <figcaption>O CLI busca cada skill no seu repositório, empacota só as escolhidas num plugin local e
+    configura os harnesses. Os comandos ficam com namespace no Claude Code e sem namespace no OpenCode.</figcaption>
+  </figure>
+
+  <h2 id="as-sete">As sete skills</h2>
+  <div class="cartoes">
+    <a class="cartao" href="#sprintx"><div class="cartao__topo"><span class="cartao__nome">sprintx</span><span class="selo selo--base">base</span></div><p class="cartao__texto">Planeja e executa features novas em seis fases. Construir algo que não existe.</p></a>
+    <a class="cartao" href="#runx"><div class="cartao__topo"><span class="cartao__nome">runx</span><span class="selo selo--base">base</span></div><p class="cartao__texto">Ocorrências de manutenção em produção, em cinco estágios. Corrigir o que já está no ar.</p></a>
+    <a class="cartao" href="#mergex"><div class="cartao__topo"><span class="cartao__nome">mergex</span><span class="selo selo--base">base</span></div><p class="cartao__texto">Branch, commit por task, portão de prontidão, PR e pacote de QA. Levar o trabalho até o merge.</p></a>
+    <a class="cartao" href="#legadox"><div class="cartao__topo"><span class="cartao__nome">legadox</span><span class="selo selo--camada">camada</span></div><p class="cartao__texto">Endurece o trabalho em projeto legado, proporcional ao raio de impacto.</p></a>
+    <a class="cartao" href="#stackx"><div class="cartao__topo"><span class="cartao__nome">stackx</span><span class="selo selo--camada">camada</span></div><p class="cartao__texto">Descobre o dialeto técnico do repositório para o código novo parecer com o que já existe.</p></a>
+    <a class="cartao" href="#memox"><div class="cartao__topo"><span class="cartao__nome">memox</span><span class="selo selo--camada">camada</span></div><p class="cartao__texto">Indexa os artefatos fechados e responde o que já se sabe sobre um arquivo.</p></a>
+    <a class="cartao" href="#prodx"><div class="cartao__topo"><span class="cartao__nome">prodx</span><span class="selo selo--camada">camada</span></div><p class="cartao__texto">Recebe o pedido cru e emite um veredito com evidência. Decide se vale fazer.</p></a>
+  </div>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Camadas sozinhas não fazem nada.</strong> <code>legadox</code>, <code>stackx</code>,
+    <code>memox</code> e <code>prodx</code> modificam o comportamento de <code>sprintx</code> e <code>runx</code>
+    em vez de agir por conta própria. O CLI avisa se você selecionar uma camada sem base, mas nunca impede.</p></div>
+  </div>
+
+  <h2 id="composicao">Como as camadas compõem</h2>
+  <p>A <code>prodx</code> é a única que roda <strong>antes</strong> das outras: ela decide <em>se</em> existe
+  trabalho; as demais tratam de <em>como</em> fazê-lo. Sem ela, o método planeja com rigor uma feature que
+  não deveria existir — o desperdício mais caro de uma software house, porque passa em todos os testes.</p>
+
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Quando a camada existe</th><th>O que muda na sprintx</th><th>O que muda na runx</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>docs/stack/CONVENCOES.md</code><br><span class="selo selo--camada">stackx</span></td>
+        <td>a ingestão lê as convenções; a descoberta transforma cada <code>PROPOSTA</code> em pergunta; o plano define caminho do teste, camada e padrão de erro <strong>por task</strong>; a auditoria roda a verificação de aderência</td>
+        <td>a investigação consulta o cartucho conforme o sintoma; o fix obedece o padrão de teste e o isolamento de banco</td>
+      </tr>
+      <tr>
+        <td><code>docs/legado/PERFIL.md</code><br><span class="selo selo--camada">legadox</span></td>
+        <td colspan="2">cada fase ganha rigor proporcional ao raio: caracterização antes de alterar, orçamento de diff por task, plano de reversão, aprovação humana em raio <code>ALTO</code></td>
+      </tr>
+      <tr>
+        <td><code>mergex</code> instalada</td>
+        <td>abre a branch no início da F6, commita cada task, e entrega ao fim</td>
+        <td>abre a branch no início do E3, e entrega entre o E4 e o E5</td>
+      </tr>
+      <tr>
+        <td><code>docs/produto/</code> com veredito assinado<br><span class="selo selo--camada">prodx</span></td>
+        <td>a F1 recebe o <code>BRIEFING.md</code> como entrada, e o plano referencia o <code>PD-ID</code> de origem</td>
+        <td>o <code>BRIEFING.md</code> vira o <code>00-OCORRENCIA.md</code>, com o tipo já classificado</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="nota nota--ok">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 8.4l3.2 3.2L13 4.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><p><strong>A ausência nunca quebra.</strong> Sem <code>CONVENCOES.md</code>, sem <code>PERFIL.md</code>,
+    sem a <code>mergex</code> ou sem a <code>prodx</code>, as outras skills se comportam exatamente como se
+    comportariam sem elas. Insumo que não existe vira aviso do que falta — nunca invenção, e nunca um erro
+    que trava o trabalho.</p></div>
+  </div>
+
+  <h3>A regra de precedência que evita o pior colateral</h3>
+  <p><code>stackx</code> descreve <strong>o que deve ser seguido daqui pra frente</strong>. <code>legadox</code>
+  descreve <strong>o que existe hoje</strong>, incluindo os dialetos conflitantes. Em projeto novo, só o
+  <code>stackx</code> governa. <strong>Em projeto legado, na área tocada manda o padrão local descrito no
+  <code>PERFIL.md</code>; o <code>stackx</code> governa apenas código novo, em arquivo novo.</strong></p>
+  <p>Sem essa regra, a IA “moderniza” arquivo antigo achando que está obedecendo convenção — o colateral mais
+  perigoso que existe, porque vem com a justificativa de estar seguindo uma regra.</p>
+
+  <h2 id="quadro-geral">Quadro comparativo</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Skill</th><th>Fases</th><th>Comandos</th><th>Agentes</th><th>Hooks</th><th>Raiz dos artefatos</th></tr></thead>
+    <tbody>
+      <tr><td><code>sprintx</code></td><td class="num">6 <span class="selo">+F3.5</span></td><td class="num">8</td><td class="num">3</td><td class="num">6</td><td><code>docs/sprintx/</code></td></tr>
+      <tr><td><code>runx</code></td><td class="num">5</td><td class="num">6</td><td class="num">3</td><td class="num">6</td><td><code>docs/manutencao/</code> · <code>docs/relatorios/</code></td></tr>
+      <tr><td><code>legadox</code></td><td class="num">11</td><td class="num">6</td><td class="num">2</td><td class="num">7</td><td><code>docs/legado/</code></td></tr>
+      <tr><td><code>stackx</code></td><td class="num">5</td><td class="num">5</td><td class="num">1</td><td class="num">2</td><td><code>docs/stack/</code></td></tr>
+      <tr><td><code>mergex</code></td><td class="num">10</td><td class="num">7</td><td class="num">2</td><td class="num">6</td><td><code>docs/entregas/</code></td></tr>
+      <tr><td><code>memox</code></td><td class="num">5</td><td class="num">5</td><td class="num">0</td><td class="num">2</td><td><code>.expx/memoria/</code></td></tr>
+      <tr><td><code>prodx</code></td><td class="num">6</td><td class="num">6</td><td class="num">0</td><td class="num">0</td><td><code>docs/produto/</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>A <code>memox</code> é a única que não grava nada em <code>docs/</code>: o índice dela é derivado,
+  descartável e gitignorado. A <code>prodx</code> é a única sem hooks.</p>
+</section>
+
+<!-- ============================ GARANTIAS ============================ -->
+<section class="secao" id="garantias">
+  <p class="eyebrow">Começar</p>
+  <h1>As três camadas de garantia</h1>
+  <p class="lede">Uma regra escrita na skill é uma instrução — e instrução é coisa que o modelo pode esquecer
+  na task 14 de uma execução longa, justamente quando o trabalho é grande e o risco é maior.</p>
+
+  <figure class="figura">
+    <div class="figura__tela" data-diagrama="camadas"></div>
+    <figcaption>Cada camada cobre o que a anterior não garante.</figcaption>
+  </figure>
+
+  <h2 id="modos-de-hook">Todo hook de método nasce em modo aviso</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Modo</th><th>Comportamento</th><th>Quando promover</th></tr></thead>
+    <tbody>
+      <tr><td><code>aviso</code></td><td>registra no rastro, não bloqueia</td><td>estado inicial de todo hook de método</td></tr>
+      <tr><td><code>bloqueio</code></td><td>barra a ação e devolve o motivo ao modelo</td><td>só depois de rodar semanas sem falso positivo</td></tr>
+      <tr><td><code>desligado</code></td><td>não roda e não registra</td><td>desligar explicitamente um hook</td></tr>
+    </tbody>
+  </table></div>
+  <p>A razão é prática: <strong>hook que dá falso positivo é desinstalado, e junto com ele vão os que
+  funcionavam.</strong> A exceção são os hooks de segurança, que nascem em <code>bloqueio</code> e falham
+  fechados — segredo commitado não tem volta, e o falso positivo ali é raro.</p>
+
+  <p>O modo de cada hook vive em <code>.expx/hooks.json</code>:</p>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">.expx/hooks.json</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>{
+  <span class="tok-key">"expx_hooks"</span>: <span class="tok-num">1</span>,
+  <span class="tok-key">"hooks"</span>: {
+    <span class="tok-key">"escopo-da-task"</span>:   { <span class="tok-key">"modo"</span>: <span class="tok-str">"aviso"</span>,    <span class="tok-key">"tipo"</span>: <span class="tok-str">"metodo"</span> },
+    <span class="tok-key">"segredo"</span>:          { <span class="tok-key">"modo"</span>: <span class="tok-str">"bloqueio"</span>, <span class="tok-key">"tipo"</span>: <span class="tok-str">"seguranca"</span> }
+  }
+}</code></pre>
+  </div>
+  <p>Arquivo ausente, ilegível ou sem a entrada: hook de segurança assume <code>bloqueio</code>, hook de
+  método assume <code>aviso</code>. Só um <code>desligado</code> explícito desliga um de segurança.</p>
+
+  <h2 id="agentes">Os agentes do ecossistema</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Agente</th><th>Usado por</th><th>Ferramentas</th><th>Papel</th></tr></thead>
+    <tbody>
+      <tr><td><code>auditor-plano</code></td><td>sprintx F5</td><td><span class="selo selo--ok">leitura apenas</span></td><td>Fura o plano antes de ele virar código</td></tr>
+      <tr><td><code>revisor-testes</code></td><td>sprintx, runx</td><td><span class="selo selo--ok">leitura apenas</span></td><td>Responde: esse teste passaria com a implementação errada?</td></tr>
+      <tr><td><code>qa</code></td><td>runx E4</td><td>leitura + rodar suíte</td><td>Valida contra os critérios; não corrige</td></tr>
+      <tr><td><code>investigador</code></td><td>runx E1, sprintx F1</td><td>leitura + busca</td><td>Monta a base e prova a causa raiz</td></tr>
+      <tr><td><code>cartografo</code></td><td>stackx, legadox</td><td>leitura + histórico</td><td>Varre o repositório e extrai convenção ou perfil</td></tr>
+      <tr><td><code>avaliador-de-raio</code></td><td>legadox C2</td><td>leitura + escrita em <code>docs/legado/raio/</code></td><td>Coleta os oito sinais e classifica a faixa</td></tr>
+      <tr><td><code>revisor-diff</code></td><td>mergex E3</td><td>leitura + suíte</td><td>Classifica o diff nas três faixas de atenção</td></tr>
+      <tr><td><code>analista-de-conflito</code></td><td>mergex E9</td><td><span class="selo selo--ok">leitura apenas</span></td><td>Explica o que cada lado pretendia; nunca resolve</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="nota nota--aviso">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.2 14.6 13.4H1.4z" stroke-linejoin="round"/><path d="M8 6.6v3.1M8 11.6v.1" stroke-linecap="round"/></svg>
+    <div><p>Um agente <strong>sem restrição declarada herda todas as ferramentas</strong> no Claude Code, o que
+    destruiria exatamente a garantia que justifica o agente existir. No Claude Code a restrição se escreve
+    <code>tools: Read, Glob, Grep</code>; no OpenCode não existe o campo <code>tools</code> — usa-se
+    <code>permission:</code> com <code>edit: deny</code>, <code>write: deny</code>, <code>bash: deny</code>.</p></div>
+  </div>
+</section>
+
+<!-- ============================ SPRINTX ============================ -->
+<section class="secao" id="sprintx">
+  <p class="eyebrow">Skill · base</p>
+  <h1>sprintx</h1>
+  <p class="lede">Planeja e executa <strong>features novas</strong> em seis fases: ingestão → descoberta →
+  plano → orquestrador → auditoria → execução. Todo o esforço vai para o planejamento, e a execução é
+  autônoma porque a ambiguidade já foi eliminada.</p>
+
+  <div class="pilulas">
+    <span class="selo selo--base">base</span>
+    <span class="selo">6 fases + 1 opcional</span>
+    <span class="selo">8 comandos</span>
+    <span class="selo">3 agentes</span>
+    <span class="selo">6 hooks</span>
+  </div>
+
+  <h2 id="sprintx-fases">As fases</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Fase</th><th>Nome</th><th>O que produz</th></tr></thead>
+    <tbody>
+      <tr><td><code>F1</code></td><td>Ingestão</td><td><code>base/00-INDICE.md</code>, <code>base/00-LACUNAS.md</code>, um arquivo por recurso, <code>00-BLOQUEIOS.md</code></td></tr>
+      <tr><td><code>F2</code></td><td>Descoberta</td><td><code>00-DECISOES.md</code> — linhas <code>D-NN</code> e <code>PENDENTE-NN</code></td></tr>
+      <tr><td><code>F3</code></td><td>Plano</td><td><code>sprint-NN/sprint.md</code>, <code>fases.md</code> (com o grafo de tasks), <code>tasks.md</code></td></tr>
+      <tr><td><code>F3.5</code></td><td>Estimativa <span class="selo">opcional</span></td><td><code>00-ESTIMATIVA.md</code></td></tr>
+      <tr><td><code>F4</code></td><td>Orquestrador</td><td><code>ORQUESTRADOR.md</code> — oito seções fixas, na ordem</td></tr>
+      <tr><td><code>F5</code></td><td>Auditoria</td><td><code>00-AUDITORIA.md</code> — tabela de achados e a linha <code>VEREDITO:</code></td></tr>
+      <tr><td><code>F6</code></td><td>Execução</td><td>atualiza <code>tasks.md</code> e <code>fases.md</code>; grava <code>FECHAMENTO.md</code> e apenda o histórico de estimativas</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>A fase é detectada pelo disco</h3>
+  <p>A skill nunca lê o <code>.expx/estado.json</code> para decidir onde está — ela olha o que existe:</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Estado do disco</th><th>Fase</th></tr></thead>
+    <tbody>
+      <tr><td><code>base/</code> não existe</td><td><code>F1</code></td></tr>
+      <tr><td><code>base/</code> existe, <code>00-DECISOES.md</code> não</td><td><code>F2</code></td></tr>
+      <tr><td><code>00-DECISOES.md</code> existe, <code>sprint-01/</code> não</td><td><code>F3</code></td></tr>
+      <tr><td><code>sprint-01/</code> existe, <code>ORQUESTRADOR.md</code> não</td><td><code>F4</code></td></tr>
+      <tr><td><code>ORQUESTRADOR.md</code> existe, sem auditoria aprovada</td><td><code>F5</code></td></tr>
+      <tr><td><code>00-AUDITORIA.md</code> contém <code>VEREDITO: SIM</code></td><td><code>F6</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="sprintx-comandos">Comandos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>/sprintx</code></td><td>Detecta a fase atual e continua de onde parou</td></tr>
+      <tr><td><code>/sprintx-base</code></td><td>F1 — ingestão, constrói a base de conhecimento</td></tr>
+      <tr><td><code>/sprintx-descoberta</code></td><td>F2 — entrevista o usuário e registra as decisões</td></tr>
+      <tr><td><code>/sprintx-sprints</code></td><td>F3 — gera o plano de sprints, fases e tasks</td></tr>
+      <tr><td><code>/sprintx-estimar</code></td><td>F3.5 — estima o esforço em faixa, com premissas e confiança</td></tr>
+      <tr><td><code>/sprintx-orquestrador</code></td><td>F4 — gera o <code>ORQUESTRADOR.md</code></td></tr>
+      <tr><td><code>/sprintx-auditoria</code></td><td>F5 — audita o plano e dá o veredito de prontidão</td></tr>
+      <tr><td><code>/sprintx-executar</code></td><td>F6 — executa o plano auditado de forma autônoma</td></tr>
+    </tbody>
+  </table></div>
+  <p>No Claude Code os comandos ganham o namespace do plugin: <code>/expx:sprintx-sprints</code>.
+  No OpenCode ficam sem prefixo: <code>/sprintx-sprints</code>.</p>
+
+  <h2 id="sprintx-hooks">Agentes e hooks</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Hook</th><th>Evento</th><th>Modo</th><th>O que barra</th></tr></thead>
+    <tbody>
+      <tr><td><code>segredo</code></td><td><code>PreToolUse</code> escrita</td><td><span class="selo selo--erro">bloqueio</span></td><td>segredo com forma reconhecível indo para arquivo versionado</td></tr>
+      <tr><td><code>git-perigoso</code></td><td><code>PreToolUse</code> Bash</td><td><span class="selo selo--erro">bloqueio</span></td><td>operação de versionamento irreversível durante a execução autônoma</td></tr>
+      <tr><td><code>escopo-da-task</code></td><td><code>PreToolUse</code> escrita</td><td><span class="selo selo--aviso">aviso</span></td><td>arquivo editado fora do campo <code>arquivos</code> da task em andamento</td></tr>
+      <tr><td><code>task-so-fecha-verde</code></td><td><code>PreToolUse</code> escrita</td><td><span class="selo selo--aviso">aviso</span></td><td><code>status: concluida</code> com suíte ≠ verde ou faltando os dois testes</td></tr>
+      <tr><td><code>sem-placeholder-no-plano</code></td><td><code>PostToolUse</code></td><td><span class="selo selo--aviso">aviso</span></td><td>marcador <code>{{…}}</code> de template não substituído</td></tr>
+      <tr><td><code>tdd-teste-antes</code></td><td><code>PostToolUse</code></td><td><span class="selo selo--aviso">aviso</span></td><td>implementação nasceu antes do teste — inativo sem <code>CONVENCOES.md</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="sprintx-regras">Regras invioláveis</h2>
+  <p>São vinte no total. As que mais governam o dia a dia:</p>
+  <ul>
+    <li><strong>R2</strong> — “As fases são estritamente sequenciais; nunca pule fase nem execute fora de ordem.”</li>
+    <li><strong>R3</strong> — “TDD é obrigatório: o teste é escrito antes da implementação.”</li>
+    <li><strong>R4</strong> — “Task só é marcada como concluída quando o teste de integração E o teste funcional passam; não existe ‘concluído com ressalva’.”</li>
+    <li><strong>R8</strong> — “Dúvida nova durante a execução: registrar em <code>00-BLOQUEIOS.md</code>, pular a task e seguir para a próxima paralelizável; nunca parar e esperar.”</li>
+    <li><strong>R9</strong> — “Na F1 nada de invenção: se a fonte não afirma, escreva <code>NÃO DOCUMENTADO</code>; todo número vem com a referência que o afirma.”</li>
+    <li><strong>R14</strong> — “Na F5 a IA é auditora: só aponta, nunca corrige; achado de severidade ALTA manda voltar para a F3.”</li>
+    <li><strong>R15</strong> — “Proibido escrever código de implementação em qualquer fase antes da F6.”</li>
+    <li><strong>R18/R19</strong> — “Estimativa sai sempre como faixa… Número único é proibido.” / “Estimativa é esforço, nunca prazo de calendário.”</li>
+  </ul>
+
+  <h2 id="sprintx-disco">Artefatos em disco</h2>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">árvore</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>docs/sprintx/features/&lt;slug&gt;/
+  00-BLOQUEIOS.md  00-DECISOES.md  00-ESTIMATIVA.md
+  ORQUESTRADOR.md  00-AUDITORIA.md  FECHAMENTO.md
+  base/00-INDICE.md  base/00-LACUNAS.md  base/&lt;recurso&gt;.md
+  sprint-NN/sprint.md  sprint-NN/fases.md  sprint-NN/tasks.md
+docs/sprintx/estimativas/HISTORICO.md   <span class="tok-com"># append-only, atravessa features</span>
+docs/eventos/&lt;trabalho_id&gt;.jsonl        <span class="tok-com"># rastro, gitignorado</span></code></pre>
+  </div>
+</section>
+
+<!-- ============================ RUNX ============================ -->
+<section class="secao" id="runx">
+  <p class="eyebrow">Skill · base</p>
+  <h1>runx</h1>
+  <p class="lede">A metade <strong>Run</strong>: ocorrências de manutenção em produção, em cinco estágios —
+  investigação com causa raiz comprovada, plano, fix sob TDD, QA independente e relatórios de fechamento.</p>
+
+  <div class="pilulas">
+    <span class="selo selo--base">base</span>
+    <span class="selo">5 estágios</span>
+    <span class="selo">6 comandos</span>
+    <span class="selo">3 agentes</span>
+    <span class="selo">6 hooks</span>
+  </div>
+
+  <h2 id="runx-estagios">Os estágios</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Estágio</th><th>Nome</th><th>O que produz</th></tr></thead>
+    <tbody>
+      <tr><td><code>E1</code></td><td>Investigação</td><td><code>00-OCORRENCIA.md</code>, <code>base/00-INDICE.md</code>, <code>base/00-LACUNAS.md</code>, <code>01-CAUSA-RAIZ.md</code></td></tr>
+      <tr><td><code>E2</code></td><td>Plano</td><td><code>sprint-NN/sprint.md</code>, <code>fases.md</code>, <code>tasks.md</code>, <code>ORQUESTRADOR.md</code></td></tr>
+      <tr><td><code>E3</code></td><td>Fix</td><td>atualiza <code>tasks.md</code>; preenche <code>BLOQUEIOS.md</code></td></tr>
+      <tr><td><code>E4</code></td><td>QA</td><td><code>QA.md</code> com <code>VEREDITO: APROVADO</code> ou <code>REPROVADO</code></td></tr>
+      <tr><td><code>E5</code></td><td>Relatório</td><td><code>docs/relatorios/&lt;data&gt;-&lt;OC-ID&gt;-&lt;slug&gt;/tecnico.md</code> e <code>uso.md</code>; atualiza o <code>INDICE.md</code></td></tr>
+    </tbody>
+  </table></div>
+  <p><code>QA.md</code> reprovado volta para o <code>E3</code>. E há um retorno que o disco não mostra: se no
+  <code>E3</code> o teste de regressão passar <strong>antes</strong> do fix, a ocorrência volta ao <code>E1</code>
+  — porque o que se acreditava ser a causa não era.</p>
+
+  <h3>Os tipos de ocorrência governam o E1</h3>
+  <p>Só <code>bug</code> exige causa raiz comprovada; os demais entram em análise de impacto.</p>
+  <div class="pilulas">
+    <span class="selo selo--erro">bug</span><span class="selo">melhoria-ui</span><span class="selo">melhoria-ux</span>
+    <span class="selo">novo-relatorio</span><span class="selo">regra-de-calculo</span><span class="selo">campo-novo</span><span class="selo">outro</span>
+  </div>
+
+  <h2 id="runx-comandos">Comandos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>/runx</code></td><td>Detecta o estágio atual e continua de onde parou</td></tr>
+      <tr><td><code>/runx-causa</code></td><td>E1 — mapeia a base e comprova a causa raiz (ou mapeia o impacto)</td></tr>
+      <tr><td><code>/runx-plano</code></td><td>E2 — converte a investigação em sprints, fases e tasks</td></tr>
+      <tr><td><code>/runx-fix</code></td><td>E3 — implementa o plano sob TDD estrito, de forma autônoma</td></tr>
+      <tr><td><code>/runx-qa</code></td><td>E4 — valida a entrega contra o plano e o escopo, sem corrigir</td></tr>
+      <tr><td><code>/runx-relatar</code></td><td>E5 — relatórios técnico e de uso, e fechamento da ocorrência</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="runx-hooks">Hooks</h2>
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p>Os hooks da <code>runx</code> rodam por um <strong>despachante único</strong>: cada
+    <code>python3</code> custa cerca de 30 ms de partida, e cinco processos estourariam o orçamento de
+    200 ms por chamada de ferramenta.</p></div>
+  </div>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Hook</th><th>Modo</th><th>O que garante</th></tr></thead>
+    <tbody>
+      <tr><td><code>segredo-no-commit</code></td><td><span class="selo selo--erro">bloqueio</span></td><td>barra credencial indo para arquivo versionado</td></tr>
+      <tr><td><code>causa-antes-do-plano</code></td><td><span class="selo selo--aviso">aviso</span></td><td>plano sem <code>01-CAUSA-RAIZ.md</code>, ou com <code>comprovada: false</code> num bug</td></tr>
+      <tr><td><code>regressao-antes-do-fix</code></td><td><span class="selo selo--aviso">aviso</span></td><td>código de produção tocado antes de o teste de regressão existir</td></tr>
+      <tr><td><code>task-so-fecha-verde</code></td><td><span class="selo selo--aviso">aviso</span></td><td><code>status: concluida</code> sem <code>suite: verde</code> e sem os dois testes</td></tr>
+      <tr><td><code>escopo-da-ocorrencia</code></td><td><span class="selo selo--aviso">aviso</span></td><td>escrita fora de <code>arquivos_impactados</code> e do <code>arquivos</code> das tasks</td></tr>
+      <tr><td><code>sem-jargao-no-uso</code></td><td><span class="selo selo--aviso">aviso</span></td><td>caminho de arquivo, nome de função, tabela ou stack trace no relatório do cliente</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="runx-regras">Regras invioláveis</h2>
+  <ul>
+    <li><strong>R1</strong> — “Nenhum plano nasce sem <code>base/</code> preenchida. Mapear antes de planejar.”</li>
+    <li><strong>R2</strong> — “Bug não avança de E1 sem causa raiz comprovada.”</li>
+    <li><strong>R5</strong> — “O teste de regressão é escrito antes do fix e tem que falhar antes.”</li>
+    <li><strong>R8</strong> — “Escopo travado: o que não está em <code>01-CAUSA-RAIZ.md</code> e em <code>tasks.md</code> não é tocado — nada de refactor de brinde, nada de ‘já que estou aqui’.”</li>
+    <li><strong>R10</strong> — “Quem implementa não aprova: E4 é papel distinto de E3, e E4 não corrige nada.”</li>
+    <li><strong>R13</strong> — “Durante E3 a skill não pergunta nada. Dúvida nova vira registro em <code>BLOQUEIOS.md</code> e a task é pulada.”</li>
+    <li><strong>R15</strong> — “Coincidência de arquivo não é regressão. O campo <code>regressao_de</code> só é preenchido com evidência de vínculo causal.”</li>
+  </ul>
+  <p><strong>Proporcionalidade:</strong> uma correção de uma linha gera 1 sprint, 1 fase e 2 tasks.
+  “Proibido inflar o plano para parecer robusto. Proibido enxugar campos para parecer ágil.”</p>
+</section>
+
+<!-- ============================ MERGEX ============================ -->
+<section class="secao" id="mergex">
+  <p class="eyebrow">Skill · base</p>
+  <h1>mergex</h1>
+  <p class="lede">Versionamento, entrega e revisão: branch, um commit por task, portão de prontidão, descrição
+  de PR, pacote de QA e abertura do pull request. O princípio que a governa:
+  <strong>o revisor humano é recurso caro e finito.</strong></p>
+
+  <div class="pilulas">
+    <span class="selo selo--base">base</span><span class="selo">10 etapas</span>
+    <span class="selo">7 comandos</span><span class="selo">2 agentes</span><span class="selo">6 hooks</span>
+  </div>
+
+  <h2 id="mergex-etapas">As etapas</h2>
+  <p>Não é uma máquina de estados sequencial: <code>E0</code> e <code>E1</code> acontecem <em>durante</em> a
+  execução do trabalho, <code>E2</code>–<code>E8</code> acontecem no fim, e <code>E9</code> é manual e avulsa.</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Etapa</th><th>Nome</th><th>O que produz</th></tr></thead>
+    <tbody>
+      <tr><td><code>E0</code></td><td>Abertura</td><td>a branch do trabalho. “Branch que já existe é retomada, nunca duplicada”</td></tr>
+      <tr><td><code>E1</code></td><td>Commit por task</td><td>um commit por task fechada, com varredura de segredo antes de cada um</td></tr>
+      <tr><td><code>E2</code></td><td>Portão de prontidão</td><td><code>PRONTO</code> ou <code>BLOQUEADO</code>. “<code>BLOQUEADO</code> encerra: a mergex não segue e não maquia”</td></tr>
+      <tr><td><code>E3</code></td><td>Atenção humana</td><td><code>ATENCAO.md</code> — <strong>é o coração da skill</strong></td></tr>
+      <tr><td><code>E4</code></td><td>Descrição do PR</td><td><code>PR.md</code> — “Cabe em uma tela”</td></tr>
+      <tr><td><code>E5</code></td><td>Pacote para o QA</td><td><code>QA-PACOTE.md</code> — “O QA não deve precisar ler código”</td></tr>
+      <tr><td><code>E6</code></td><td>Push</td><td>sobe a branch. “Nunca forçado, nunca na principal”</td></tr>
+      <tr><td><code>E7</code></td><td>Abertura do PR</td><td>abre pela CLI do serviço quando existir; ausente, grava em <code>PR.md</code></td></tr>
+      <tr><td><code>E8</code></td><td>Registro da entrega</td><td><code>ENTREGA.md</code> com <code>kind: entrega</code></td></tr>
+      <tr><td><code>E9</code></td><td>Revisão e merge <span class="selo selo--erro">manual</span></td><td>conduz um PR por vez. “Nunca resolve conflito”</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="mergex-faixas">As três faixas de atenção humana</h2>
+  <p>O <code>E3</code> classifica cada arquivo do diff em exatamente uma faixa, a partir de evidência já
+  registrada pelas outras skills — nunca de sensação.</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Faixa</th><th>O que o revisor faz</th><th>Critérios — basta um</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="selo selo--erro">OLHO OBRIGATÓRIO</span></td>
+        <td>Lê linha a linha</td>
+        <td>zona de risco do <code>PERFIL.md</code>; mudança de regra de negócio ou cálculo; migração de banco;
+        autenticação, autorização ou dado pessoal; alteração de contrato público; código sem cobertura antes e depois;
+        efeito irreversível; tudo que veio de raio <code>ALTO</code>; arquivo com histórico de regressão no memox</td>
+      </tr>
+      <tr>
+        <td><span class="selo selo--aviso">LEITURA RÁPIDA</span></td>
+        <td>Confere intenção, não implementação</td>
+        <td>mudança coberta por teste de caracterização que continua passando; alteração em camada isolada com
+        cobertura existente; código novo em arquivo novo, com os dois testes verdes</td>
+      </tr>
+      <tr>
+        <td><span class="selo selo--ok">DISPENSÁVEL</span></td>
+        <td>A máquina já provou</td>
+        <td>arquivo de teste que só acrescenta caso; alteração mecânica coberta por regressão verde; arquivo
+        gerado automaticamente, quando declarado como tal</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="nota nota--aviso">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.2 14.6 13.4H1.4z" stroke-linejoin="round"/><path d="M8 6.6v3.1M8 11.6v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Tamanho do diff não é critério.</strong> Uma linha que muda um cálculo fiscal é
+    <code>OLHO OBRIGATÓRIO</code>; trezentas linhas de teste novo são <code>DISPENSÁVEL</code>. E a faixa
+    <strong>nunca desce</strong> por causa do memox — o índice só agrava.</p></div>
+  </div>
+
+  <h2 id="mergex-comandos">Comandos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>Etapas</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>/mergex</code></td><td>E2–E8</td><td>Fluxo automático completo a partir do estado atual</td></tr>
+      <tr><td><code>/mergex-abrir</code></td><td>E0</td><td>Abre a branch antes da primeira linha de código</td></tr>
+      <tr><td><code>/mergex-check</code></td><td>E2</td><td>As dez verificações do portão de prontidão</td></tr>
+      <tr><td><code>/mergex-atencao</code></td><td>E3</td><td>Classifica o diff nas três faixas</td></tr>
+      <tr><td><code>/mergex-pr</code></td><td>E4, E6, E7</td><td>Monta a descrição, sobe a branch e abre o PR</td></tr>
+      <tr><td><code>/mergex-qa</code></td><td>E5</td><td>Gera o pacote de teste executável por quem não programa</td></tr>
+      <tr><td><code>/mergex-revisar</code></td><td>E9</td><td><span class="selo selo--erro">só por chamada explícita</span> revisão e integração de PRs</td></tr>
+    </tbody>
+  </table></div>
+  <p>O <code>/mergex-revisar</code> nunca é encadeado a partir de nenhum fluxo nem oferecido ao fim de um
+  trabalho: <strong>integrar código é decisão humana.</strong></p>
+
+  <h3>As dez verificações do portão</h3>
+  <div class="pilulas">
+    <span class="selo">tasks concluídas</span><span class="selo">suíte verde</span><span class="selo">dois testes por task</span>
+    <span class="selo">teste de regressão</span><span class="selo">QA</span><span class="selo">auditoria</span>
+    <span class="selo">bloqueios</span><span class="selo">modo legado</span><span class="selo">arquivos fora do escopo</span>
+    <span class="selo">segredos no diff</span>
+  </div>
+
+  <h2 id="mergex-regras">Regras invioláveis</h2>
+  <ul>
+    <li><strong>R1</strong> — “A branch nasce com o trabalho, não no fim.”</li>
+    <li><strong>R3</strong> — “Cada task concluída com suíte verde vira um commit próprio. Nunca amontoar tasks distintas.”</li>
+    <li><strong>R6</strong> — “O portão de prontidão barra e explica. Nunca maquia.”</li>
+    <li><strong>R7</strong> — “Nada na entrega é inventado: todo conteúdo vem de artefato existente.”</li>
+    <li><strong>R9</strong> — “Zona de risco, migração de banco, mudança de contrato público e efeito irreversível são sempre <code>OLHO OBRIGATÓRIO</code>.”</li>
+    <li><strong>R11</strong> — “Nunca push forçado, nunca na branch principal, nunca reescrever histórico já enviado.”</li>
+    <li><strong>R18</strong> — “A mergex não faz merge no fluxo automático, não aprova, não publica e não faz deploy.”</li>
+    <li><strong>R19</strong> — “A mergex entrega; quem fecha a ocorrência é a runx.”</li>
+  </ul>
+  <div class="nota nota--erro">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M10.2 5.8 5.8 10.2M5.8 5.8l4.4 4.4" stroke-linecap="round"/></svg>
+    <div><p><strong>Limitação declarada pela própria skill:</strong> a mergex não previne colisão entre
+    desenvolvedores. Ela organiza a entrega de um trabalho; coordenar duas pessoas no mesmo arquivo continua
+    sendo problema de processo humano.</p></div>
+  </div>
+</section>
+
+<!-- ============================ LEGADOX ============================ -->
+<section class="secao" id="legadox">
+  <p class="eyebrow">Skill · camada</p>
+  <h1>legadox</h1>
+  <p class="lede">Camada que endurece o trabalho em projetos legados. Não acrescenta fase: muda o <em>rigor</em>
+  de cada uma, proporcional ao raio de impacto da mudança.
+  <strong>Em código legado o comportamento atual é o contrato, bugs inclusive.</strong></p>
+
+  <div class="pilulas">
+    <span class="selo selo--camada">camada</span><span class="selo">11 camadas</span>
+    <span class="selo">6 comandos</span><span class="selo">2 agentes</span><span class="selo">7 hooks</span>
+  </div>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>O gatilho é um arquivo.</strong> Sem <code>docs/legado/PERFIL.md</code> não existe modo
+    legado. A primeira coisa a fazer é gerá-lo, com <code>/legadox-perfil</code>.</p></div>
+  </div>
+
+  <h2 id="legadox-raio">O raio de impacto</h2>
+  <p>Oito sinais coletados por evidência — chamadores, telas e rotas, consumo assíncrono, cobertura, zona de
+  risco, churn e idade, migração, dado histórico. <strong>Sinal que não puder ser coletado conta como pior
+  caso, e isso fica escrito.</strong></p>
+
+  <figure class="figura">
+    <div class="figura__tela" data-diagrama="raio"></div>
+    <figcaption>A faixa é calculada por sinais, nunca escolhida por sensação. <code>BAIXO</code> exige que
+    todas as condições valham juntas; <code>MEDIO</code> e <code>ALTO</code> bastam uma.</figcaption>
+  </figure>
+
+  <h3>O que cada faixa aciona</h3>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Camada</th><th>BAIXO</th><th>MEDIO</th><th>ALTO</th></tr></thead>
+    <tbody>
+      <tr><td>Raio registrado <span class="selo">C2</span></td><td>sim</td><td>sim</td><td>sim</td></tr>
+      <tr><td>Prova de código vivo <span class="selo">C10</span></td><td>sim</td><td>sim</td><td>sim</td></tr>
+      <tr><td>Proibição de colateral <span class="selo">C6</span></td><td>sim</td><td>sim</td><td>sim</td></tr>
+      <tr><td>Testes de caracterização <span class="selo">C3</span></td><td>—</td><td>sim</td><td>sim</td></tr>
+      <tr><td>Ponto de costura <span class="selo">C4</span></td><td>—</td><td>sim</td><td>sim</td></tr>
+      <tr><td><strong>Orçamento por task <span class="selo">C5</span></strong></td><td><code>5 arq / 150 linhas</code></td><td><code>3 arq / 80 linhas</code></td><td><code>2 arq / 40 linhas</code></td></tr>
+      <tr><td>Plano de reversão <span class="selo">C7</span></td><td>—</td><td>sim</td><td>sim</td></tr>
+      <tr><td>Roteiro de teste manual <span class="selo">C8</span></td><td>—</td><td>sim</td><td>sim</td></tr>
+      <tr><td>Plano aprovado antes do código</td><td>—</td><td>sim</td><td>sim</td></tr>
+      <tr><td>Perguntas da zona <span class="selo">C11</span></td><td>—</td><td>se tocar zona</td><td>sim</td></tr>
+      <tr><td>Comparação com dado real <span class="selo">C9</span></td><td>—</td><td>—</td><td>sim</td></tr>
+      <tr><td>Chave de desligamento</td><td>—</td><td>—</td><td>sim</td></tr>
+      <tr><td>Aprovação humana registrada</td><td>—</td><td>—</td><td>sim</td></tr>
+    </tbody>
+  </table></div>
+  <p>A camada 9 é obrigatória, <strong>independentemente da faixa</strong>, em qualquer mudança de cálculo ou
+  de regra de negócio.</p>
+
+  <div class="nota nota--ok">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 8.4l3.2 3.2L13 4.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><p><strong>Nenhum hook de método roda em raio BAIXO.</strong> Todos leem a faixa primeiro e saem
+    imediatamente. A exceção é o <code>zona-de-risco</code>, que bloqueia em qualquer faixa.</p></div>
+  </div>
+
+  <h2 id="legadox-comandos">Comandos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>Camada</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>/legadox</code></td><td>—</td><td>Verifica o modo legado e mostra o que falta no trabalho atual</td></tr>
+      <tr><td><code>/legadox-perfil</code></td><td>C1</td><td>Gera ou atualiza o <code>PERFIL.md</code>, o gatilho do modo legado</td></tr>
+      <tr><td><code>/legadox-raio</code></td><td>C2</td><td>Calcula o raio por evidência e declara quais camadas isso aciona</td></tr>
+      <tr><td><code>/legadox-caracterizar</code></td><td>C3</td><td>Escreve os testes que congelam o comportamento atual</td></tr>
+      <tr><td><code>/legadox-divida</code></td><td>C6</td><td>Consulta e acrescenta ao inventário de dívida, sem corrigir</td></tr>
+      <tr><td><code>/legadox-manual</code></td><td>C8</td><td>Gera o roteiro de teste manual, com a seção de colateral</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="legadox-regras">Regras invioláveis</h2>
+  <ol>
+    <li>“Sem <code>docs/legado/PERFIL.md</code> não existe modo legado. A primeira coisa é gerá-lo.”</li>
+    <li>“Nenhum plano é gerado sem o raio de impacto calculado e escrito.”</li>
+    <li>“A faixa do raio é calculada por sinais, nunca escolhida por sensação.”</li>
+    <li>“Em raio MEDIO ou ALTO, nada é alterado antes de existir teste de caracterização passando no código atual.”</li>
+    <li>“Nenhuma melhoria colateral. O que incomoda vai para <code>docs/legado/DIVIDA.md</code>.”</li>
+    <li>“O orçamento de mudança por task não é estourado em silêncio.”</li>
+    <li>“Toda task de raio MEDIO ou ALTO declara como se reverte, inclusive os efeitos que o versionador não desfaz.”</li>
+    <li>“Zona de risco tocada obriga as perguntas da zona respondidas antes do plano.”</li>
+    <li>“Raio ALTO obriga aprovação humana explícita e registrada.”</li>
+    <li>“Código morto identificado não é removido: vira achado.”</li>
+    <li>“Dado real usado em comparação é anonimizado e nunca é commitado.”</li>
+    <li>“O legadox não substitui a sprintx nem a runx: ele os endurece.”</li>
+  </ol>
+
+  <h2 id="legadox-disco">Artefatos em disco</h2>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">árvore</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>docs/legado/PERFIL.md                    <span class="tok-com"># C1 — gatilho do modo legado</span>
+docs/legado/LACUNAS.md
+docs/legado/DIVIDA.md                    <span class="tok-com"># C6 — append-only</span>
+docs/legado/raio/&lt;trabalho_id&gt;.md        <span class="tok-com"># C2</span>
+docs/legado/manual/&lt;trabalho_id&gt;.md      <span class="tok-com"># C8</span>
+docs/legado/comparacao/&lt;trabalho_id&gt;.md  <span class="tok-com"># C9</span></code></pre>
+  </div>
+</section>
+
+<!-- ============================ STACKX ============================ -->
+<section class="secao" id="stackx">
+  <p class="eyebrow">Skill · camada</p>
+  <h1>stackx</h1>
+  <p class="lede">Descobre o dialeto técnico do repositório — onde os testes moram, como o banco é isolado,
+  quais comandos funcionam de verdade, quem pode chamar quem — e grava tudo com evidência.
+  <strong>Convenção não se propõe, se descobre.</strong></p>
+
+  <div class="pilulas">
+    <span class="selo selo--camada">camada</span><span class="selo">5 etapas</span>
+    <span class="selo">5 comandos</span><span class="selo">1 agente</span><span class="selo">2 hooks</span>
+  </div>
+
+  <h2 id="stackx-etapas">As etapas</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Etapa</th><th>Nome</th><th>O que produz</th></tr></thead>
+    <tbody>
+      <tr><td><code>1</code></td><td>Detecção</td><td>inventário <code>FATO / EVIDÊNCIA / FORÇA</code> em memória — roda no agente <code>cartografo</code></td></tr>
+      <tr><td><code>2</code></td><td>O CONVENCOES.md</td><td><code>docs/stack/CONVENCOES.md</code></td></tr>
+      <tr><td><code>3</code></td><td>Conflito e lacuna</td><td><code>docs/stack/LACUNAS.md</code></td></tr>
+      <tr><td><code>4</code></td><td>Verificação de aderência</td><td>tabela severidade / arquivo / convenção violada / correção sugerida</td></tr>
+      <tr><td><code>5</code></td><td>Atualização</td><td>diff sobre o <code>CONVENCOES.md</code> — nunca sobrescreve em silêncio</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>A ordem da detecção</h3>
+  <p>Não é arbitrária: vai do que declara a intenção para o que revela a prática.</p>
+  <ol>
+    <li>manifestos e locks</li>
+    <li>configuração de runner, lint, formatador, type checker e build</li>
+    <li><strong>os testes que já existem</strong> — a fonte mais rica</li>
+    <li>migrações e schema</li>
+    <li>scripts dos manifestos</li>
+    <li>integração contínua</li>
+    <li>arquivos de ambiente de exemplo</li>
+    <li>o próprio código</li>
+  </ol>
+
+  <h2 id="stackx-cartuchos">Os três cartuchos</h2>
+  <p>Um cartucho só existe quando o assunto é, ao mesmo tempo, <strong>não óbvio</strong>,
+  <strong>específico de versão ou engine</strong> e <strong>caro de errar</strong>.</p>
+  <div class="cartoes">
+    <div class="cartao"><div class="cartao__topo"><span class="cartao__nome">migração segura</span></div><p class="cartao__texto">O que trava tabela e por quanto tempo, índice sem bloqueio, coluna obrigatória em tabela grande, ordem segura de renomear em deploy sem indisponibilidade, e o que fazer quando reverter não é possível.</p></div>
+    <div class="cartao"><div class="cartao__topo"><span class="cartao__nome">N+1 no ORM</span></div><p class="cartao__texto">Consultas que explodem em produção e passam nos testes com massa pequena.</p></div>
+    <div class="cartao"><div class="cartao__topo"><span class="cartao__nome">teste instável</span></div><p class="cartao__texto">Estado global, paralelismo sem isolamento de banco, relógio, ordem, fuso e rede.</p></div>
+  </div>
+
+  <h2 id="stackx-comandos">Comandos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>/stackx</code></td><td>Sem <code>CONVENCOES.md</code>, conduz à detecção; com ele, mostra o resumo, as lacunas e os pontos marcados <code>PROPOSTA</code></td></tr>
+      <tr><td><code>/stackx-detectar</code></td><td>Etapas 1 e 2 — varre em busca de evidência real e gera os dois arquivos</td></tr>
+      <tr><td><code>/stackx-check</code></td><td>Etapa 4 — verifica se um diff respeitou as convenções. <strong>Aponta, não corrige</strong></td></tr>
+      <tr><td><code>/stackx-atualizar</code></td><td>Etapa 5 — redetecta e apresenta o diff. Nunca sobrescreve em silêncio</td></tr>
+      <tr><td><code>/stackx-migracao</code></td><td>Consulta dirigida ao cartucho de migração segura</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="stackx-regras">Regras invioláveis</h2>
+  <ol>
+    <li>“Toda convenção aponta um arquivo real do repositório que a exemplifica, com caminho e linha.”</li>
+    <li>“Convenção sem evidência no código não é convenção: é <code>PROPOSTA</code>, e é marcada como tal.”</li>
+    <li>“<code>PROPOSTA</code> não governa. Nas outras skills ela vira decisão a levantar, nunca regra a obedecer.”</li>
+    <li>“Diante de dialetos conflitantes, o stackx não escolhe sozinho: apresenta os dialetos com contagem e histórico, e pergunta.”</li>
+    <li>“Comando declarado precisa ter sido encontrado em manifesto, script ou integração contínua. Comando nunca é inferido do nome do framework.”</li>
+    <li>“Em projeto legado, na área tocada manda o <code>PERFIL.md</code> do legadox. O stackx governa apenas código novo em arquivo novo.”</li>
+    <li>“Atualização de convenção nunca sobrescreve em silêncio: apresenta diff e espera confirmação.”</li>
+    <li>“A verificação de aderência aponta, não corrige.”</li>
+    <li>“Cartucho não repete o que o modelo já sabe. Se virou tutorial de sintaxe, foi escrito errado.”</li>
+    <li>“Nenhum segredo, credencial ou dado real de cliente entra em <code>CONVENCOES.md</code>, exemplo ou template.”</li>
+  </ol>
+  <p>O formato obrigatório da evidência é literal:</p>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">docs/stack/CONVENCOES.md</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>Evidência: src/users/create-user.test.ts:14, src/orders/place-order.test.ts:9</code></pre>
+  </div>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>O <code>CONVENCOES.md</code> liga hooks de outras skills.</strong> O
+    <code>tdd-teste-antes</code> e o <code>escopo-da-task</code> da sprintx, a convenção de commit e branch da
+    mergex e o comando de teste de todas ficam <em>inativos</em> quando o arquivo não existe.</p></div>
+  </div>
+</section>
+
+<!-- ============================ MEMOX ============================ -->
+<section class="secao" id="memox">
+  <p class="eyebrow">Skill · camada</p>
+  <h1>memox</h1>
+  <p class="lede">Indexa o que as outras skills já gravaram e responde o que se sabe sobre um arquivo antes de
+  alguém mexer nele. <strong>Memória que precisa ser consultada não é usada</strong> — por isso ela se injeta
+  sozinha no contexto.</p>
+
+  <div class="pilulas">
+    <span class="selo selo--camada">camada</span><span class="selo">5 etapas</span>
+    <span class="selo">5 comandos</span><span class="selo">0 agentes</span><span class="selo">2 hooks</span>
+  </div>
+
+  <h2 id="memox-porque">Índice invertido, não busca semântica</h2>
+  <p>A pergunta real não é “o que é parecido com isto”, é “quem já mexeu neste arquivo e por quê” — e isso é
+  uma string exata. Resposta de índice aponta artefato e data, então dá para abrir e conferir; recuperação
+  semântica erra em silêncio, devolvendo algo plausível com a mesma confiança do certo.</p>
+
+  <h2 id="memox-fontes">O que ele indexa</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Fonte</th><th>O que extrai</th></tr></thead>
+    <tbody>
+      <tr><td><code>docs/relatorios/*/tecnico.md</code></td><td>trabalho, data de fechamento, tipo, módulo afetado, arquivos alterados, causa em uma linha, risco residual</td></tr>
+      <tr><td><code>docs/relatorios/INDICE.md</code></td><td>a linha do tempo, para ordenação e contagem</td></tr>
+      <tr><td><code>docs/manutencao/*/01-CAUSA-RAIZ.md</code></td><td>modo, se é comprovada, arquivos impactados, decisões</td></tr>
+      <tr><td><code>00-DECISOES.md</code></td><td>cada decisão com a alternativa descartada e o motivo</td></tr>
+      <tr><td><code>docs/legado/DIVIDA.md</code></td><td>dívida observada por arquivo, com risco estimado</td></tr>
+      <tr><td><code>base/00-LACUNAS.md</code></td><td>o que a documentação não respondia</td></tr>
+      <tr><td><code>docs/manutencao/*/QA.md</code></td><td>reprovações — <strong>o sinal mais forte de área frágil</strong></td></tr>
+      <tr><td><code>docs/entregas/*/ENTREGA.md</code></td><td>branch, commits e faixa de atenção por arquivo</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Regressão exige evidência causal, não coincidência</h3>
+  <p>Um vínculo só é registrado como regressão quando as três condições valem juntas: um arquivo apontado pela
+  causa raiz do trabalho posterior está entre os que o anterior alterou; a ordem cronológica está estabelecida;
+  e a causa do posterior é <strong>comprovada</strong>, não hipótese. Faltando qualquer uma, o vínculo aparece
+  como <code>coincidencia_arquivo</code> com o motivo escrito — é isso que impede o sinal mais valioso do
+  índice de virar ruído.</p>
+
+  <h2 id="memox-comandos">Comandos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>/memox</code></td><td>Estado do índice: quantos trabalhos, quando foi reconstruído, o que ficou de fora e por quê</td></tr>
+      <tr><td><code>/memox-indexar</code></td><td>Reconstrói o índice do zero a partir dos artefatos</td></tr>
+      <tr><td><code>/memox-arquivo</code></td><td>O que se sabe sobre um arquivo — quem o tocou, quando, e se já causou regressão</td></tr>
+      <tr><td><code>/memox-modulo</code></td><td>Histórico de um módulo, com as decisões e suas alternativas descartadas</td></tr>
+      <tr><td><code>/memox-buscar</code></td><td>Busca textual nos títulos, causas e resumos dos trabalhos fechados</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="memox-hooks">Os dois hooks falham abertos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Hook</th><th>Evento</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>memox-injetar</code></td><td><code>UserPromptSubmit</code></td><td>detecta os arquivos que o prompt declara que serão tocados e injeta o que se sabe sobre eles, com proveniência</td></tr>
+      <tr><td><code>memox-reindexar</code></td><td><code>Stop</code></td><td>reconstrói o índice quando detecta artefato novo ou alterado, de forma assíncrona</td></tr>
+    </tbody>
+  </table></div>
+  <p>Contrato dos dois: silencioso quando não há nada relevante; <strong>sai com <code>0</code> sempre, inclusive
+  em erro</strong>; abaixo de 200 ms; sem rede e sem modelo.</p>
+
+  <div class="nota nota--aviso">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.2 14.6 13.4H1.4z" stroke-linejoin="round"/><path d="M8 6.6v3.1M8 11.6v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>É por isso que o <code>doctor</code> trata “hook sem motor” como erro.</strong> Falha aberta
+    nunca trava o prompt de quem está trabalhando — o preço é que uma instalação quebrada fica indistinguível
+    de um projeto sem artefatos. O <code>doctor</code> é o único lugar onde a diferença aparece.</p></div>
+  </div>
+
+  <h2 id="memox-ruido">Controle de ruído</h2>
+  <p>No máximo <strong>3 entradas recentes</strong> por arquivo, <em>mais</em> as que envolveram regressão,
+  reprovação em QA ou zona de risco. Acima de <strong>8 entradas relevantes</strong> ele não lista: informa a
+  contagem. Tudo configurável em <code>.expx/memoria/config.json</code>.</p>
+
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">python3</span> .claude/skills/memox/assets/memox.py indexar</code></pre>
+  </div>
+  <p>O índice fica em <code>.expx/memoria/indice.json</code>, é local e gitignorado, e se reconstrói do zero a
+  qualquer momento. Um clone recém-feito não tem nenhum — esse é o caso <strong>comum</strong>, não um erro.</p>
+</section>
+
+<!-- ============================ PRODX ============================ -->
+<section class="secao" id="prodx">
+  <p class="eyebrow">Skill · camada</p>
+  <h1>prodx</h1>
+  <p class="lede">Recebe o pedido cru, tria, verifica se o que foi pedido já existe e emite um veredito com
+  evidência para assinatura humana. <strong>O cliente pede solução, não problema.</strong></p>
+
+  <div class="pilulas">
+    <span class="selo selo--camada">camada</span><span class="selo">6 estágios</span>
+    <span class="selo">6 comandos</span><span class="selo">0 agentes</span><span class="selo">0 hooks</span>
+  </div>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p>O indicador de sucesso declarado pela skill é <strong>a taxa de pedidos que NÃO viram trabalho</strong>.
+    Três dos quatro vereditos encerram o pedido sem gerar uma linha de código.</p></div>
+  </div>
+
+  <h2 id="prodx-estagios">Os estágios</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Estágio</th><th>Nome</th><th>Saída</th><th>Quando roda</th></tr></thead>
+    <tbody>
+      <tr><td><code>P0</code></td><td>Triagem</td><td>linha em <code>docs/produto/INDICE.md</code> — <strong>não gera pasta</strong></td><td>todo pedido</td></tr>
+      <tr><td><code>P1</code></td><td>Contexto de produto</td><td><code>PRODUTO.md</code> e <code>LACUNAS.md</code></td><td>uma vez, atualizado sob demanda</td></tr>
+      <tr><td><code>P2</code></td><td>Entendimento do pedido</td><td><code>01-pedido.md</code></td><td>avaliação completa</td></tr>
+      <tr><td><code>P3</code></td><td>Verificação de existência</td><td><code>02-existencia.md</code></td><td>avaliação completa</td></tr>
+      <tr><td><code>P4</code></td><td>Avaliação</td><td><code>03-avaliacao.md</code></td><td>quando não for <code>ja_existe</code></td></tr>
+      <tr><td><code>P5</code></td><td>Veredito e briefing</td><td><code>VEREDITO.md</code> e <code>BRIEFING.md</code></td><td>avaliação completa</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="prodx-gatilhos">Os oito gatilhos da triagem</h2>
+  <p>Nenhum gatilho disparado: veredito direto, uma linha no índice, segue para a runx. Um ou mais: avaliação
+  completa, de <code>P2</code> a <code>P5</code>.</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th></th><th>Gatilho</th></tr></thead>
+    <tbody>
+      <tr><td><code>G1</code></td><td>O pedido é do tipo <code>novo</code>, ou pede tela, relatório ou fluxo novo</td></tr>
+      <tr><td><code>G2</code></td><td>O pedido descreve uma solução, não um problema</td></tr>
+      <tr><td><code>G3</code></td><td>O pedido serve a um cliente só, num produto multi-cliente</td></tr>
+      <tr><td><code>G4</code></td><td>O pedido cheira a algo que já existe no sistema</td></tr>
+      <tr><td><code>G5</code></td><td>O pedido chegou rotulado como bug mas descreve regra de negócio</td></tr>
+      <tr><td><code>G6</code></td><td>O pedido toca zona de risco declarada no <code>PERFIL.md</code></td></tr>
+      <tr><td><code>G7</code></td><td>O mesmo pedido já foi recusado antes</td></tr>
+      <tr><td><code>G8</code></td><td>O esforço aparente é maior que alguns dias</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="prodx-vereditos">Os quatro vereditos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Veredito</th><th>Significado</th></tr></thead>
+    <tbody>
+      <tr><td><span class="selo selo--ok">ja_existe</span></td><td>O sistema já faz. Sai um texto para o cliente explicando onde e como, na linguagem dele</td></tr>
+      <tr><td><span class="selo selo--erro">nao_fazer</span></td><td>Com o motivo registrado. Este arquivo é <strong>ativo permanente</strong>: quando o pedido voltar, a avaliação já está feita</td></tr>
+      <tr><td><span class="selo selo--aviso">fazer_outra_coisa</span></td><td>O problema real reformulado, que costuma ser menor e diferente do pedido</td></tr>
+      <tr><td><span class="selo selo--base">fazer</span></td><td>E aí sai o briefing</td></tr>
+    </tbody>
+  </table></div>
+  <p>O <code>VEREDITO.md</code> traz sempre um campo de <strong>assinatura humana</strong>, preenchido pela
+  pessoa, nunca pela skill.</p>
+
+  <h2 id="prodx-comandos">Comandos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>/prodx</code></td><td>Mostra os pedidos abertos e a proporção entre triagem e avaliação completa</td></tr>
+      <tr><td><code>/prodx-produto</code></td><td>P1 — cria ou atualiza o contexto de produto que sustenta todos os vereditos</td></tr>
+      <tr><td><code>/prodx-triar</code></td><td>P0 — roda os oito gatilhos. Seco e rápido, sem criar pasta</td></tr>
+      <tr><td><code>/prodx-avaliar</code></td><td>P2 a P5 — avaliação completa até o veredito pronto para assinatura</td></tr>
+      <tr><td><code>/prodx-existe</code></td><td>P3 isolada — “isso já existe?”, com evidência</td></tr>
+      <tr><td><code>/prodx-briefing</code></td><td>Gera o <code>BRIEFING.md</code> no formato que a sprintx ou a runx espera</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="prodx-regras">Regras invioláveis</h2>
+  <ol>
+    <li>“A skill não decide. Ela recomenda com evidência; humano assina.”</li>
+    <li>“Nenhum trabalho segue para sprintx ou runx sem veredito assinado.”</li>
+    <li>“A triagem nunca é pulada, e a avaliação completa nunca roda em pedido sem gatilho disparado.”</li>
+    <li>“A solução pedida nunca é tratada como o requisito. O requisito é o problema.”</li>
+    <li>“A verificação de existência é obrigatória e vem com evidência: tela, rota, arquivo ou relatório. ‘Acho que já tem’ não é resposta.”</li>
+    <li>“Escopo mínimo é campo obrigatório e nunca fica vazio.”</li>
+    <li>“Pedido rotulado como bug é verificado contra comportamento intencional antes de virar ocorrência.”</li>
+    <li>“Informação que falta vira pergunta, nunca suposição.”</li>
+    <li>“Pedido recusado não é apagado: a avaliação é ativo permanente.”</li>
+    <li>“O briefing não contém decisão técnica.”</li>
+    <li>“Nada de invenção no <code>PRODUTO.md</code>. O não verificável vira <code>NAO DETERMINADO</code>.”</li>
+    <li>“O campo de quem assina nunca fica vazio.”</li>
+  </ol>
+</section>
+
+<!-- ============================ COMANDOS ============================ -->
+<section class="secao" id="comandos">
+  <p class="eyebrow">Referência do CLI</p>
+  <h1>Subcomandos</h1>
+  <p class="lede">Sete subcomandos. O <code>panel</code> e o <code>watch</code> funcionam <strong>sem</strong>
+  <code>init</code>: nenhum dos dois escreve no projeto.</p>
+
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>expx init</code></td><td>Instala as skills escolhidas neste projeto</td></tr>
+      <tr><td><code>expx panel</code></td><td>Sobe o painel de operação lendo o <code>docs/</code> do projeto</td></tr>
+      <tr><td><code>expx watch</code></td><td>Acompanha um trabalho no terminal, ao vivo</td></tr>
+      <tr><td><code>expx add &lt;skill…&gt;</code></td><td>Acrescenta skills à seleção e remonta o plugin</td></tr>
+      <tr><td><code>expx remove &lt;skill…&gt;</code></td><td>Remove skills da seleção e remonta o plugin</td></tr>
+      <tr><td><code>expx update [skill…]</code></td><td>Atualiza as skills instaladas</td></tr>
+      <tr><td><code>expx doctor</code></td><td>Diagnostica uma instalação quebrada</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>O pacote publica três binários: <code>expx</code> e <code>expxdev</code> (o mesmo programa) e
+  <code>expx-painel</code>, que sobe o painel direto.</p>
+
+  <h2 id="cmd-init">init</h2>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">expx</span> init [<span class="tok-flag">--skills</span> a,b] [<span class="tok-flag">--harness</span> claude,opencode] [<span class="tok-flag">--yes</span>]</code></pre>
+  </div>
+  <p>Sem <code>--skills</code> e com terminal interativo, abre o assistente. Sem <code>--yes</code> e sem TTY,
+  imprime o que instalaria e sai sem escrever. Uma skill que falha não derruba as outras: o erro dela é
+  reportado nominalmente e o <code>init</code> segue com as demais.</p>
+
+  <h2 id="cmd-add-remove">add e remove</h2>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">expx</span> add memox prodx
+<span class="tok-cmd">expx</span> remove legadox</code></pre>
+  </div>
+  <p>Os dois leem o lock, ajustam a seleção e <strong>remontam o plugin do zero</strong> com o mesmo harness
+  já registrado. Sem instalação válida, o CLI orienta a rodar o <code>init</code>. Remover a última skill é
+  recusado: uma instalação vazia não é estado válido.</p>
+
+  <h2 id="cmd-update">update</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Flag</th><th>Efeito</th></tr></thead>
+    <tbody>
+      <tr><td><em>(sem argumento)</em></td><td>Atualiza todas as skills instaladas</td></tr>
+      <tr><td><code>&lt;skill…&gt;</code></td><td>Atualiza apenas as nomeadas</td></tr>
+      <tr><td><code>--check</code></td><td>Só mostra o que mudaria, não aplica nada</td></tr>
+      <tr><td><code>--to &lt;ref&gt;</code></td><td>Fixa uma skill numa tag ou commit — exige nomear exatamente uma skill</td></tr>
+      <tr><td><code>--yes</code> · <code>--sim</code></td><td>Aplica sem exigir terminal interativo</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="cmd-doctor">doctor</h2>
+  <p>Não aceita flags. Sai com <code>0</code> quando não há nenhum achado de severidade <code>erro</code> —
+  ou seja, só avisos ainda sai <code>0</code>, mas a lista é impressa.</p>
+
+  <h2 id="cmd-panel-watch">panel e watch</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Comando</th><th>Flag</th><th>Padrão</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="4"><code>panel</code></td><td><code>--porta &lt;n&gt;</code></td><td><code>4000</code></td><td>porta do servidor local</td></tr>
+      <tr><td><code>--dir &lt;caminho&gt;</code></td><td><code>./docs</code></td><td>pasta de documentação a observar</td></tr>
+      <tr><td><code>--no-open</code></td><td>—</td><td>não abre o navegador</td></tr>
+      <tr><td><code>--dias-bloqueio &lt;n&gt;</code></td><td><code>7</code></td><td>dias a partir dos quais um bloqueio é antigo</td></tr>
+      <tr><td rowspan="3"><code>watch</code></td><td><code>&lt;trabalho_id&gt;</code></td><td>—</td><td>segue um trabalho específico</td></tr>
+      <tr><td><code>--todos</code></td><td>—</td><td>lista os trabalhos abertos, sem árvore</td></tr>
+      <tr><td><code>--colunas &lt;n&gt;</code></td><td>largura do terminal</td><td>largura fixa</td></tr>
+    </tbody>
+  </table></div>
+  <p>Os dois aceitam <code>--ajuda</code>, <code>--help</code> ou <code>-h</code>, e a forma
+  <code>--flag=valor</code>.</p>
+
+  <div class="nota nota--aviso">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.2 14.6 13.4H1.4z" stroke-linejoin="round"/><path d="M8 6.6v3.1M8 11.6v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Flags aceitas que ainda não têm efeito.</strong> O parser reconhece <code>--painel</code>
+    e <code>--check</code> no <code>init</code>, e <code>--latest</code> no <code>update</code>, mas nenhuma
+    delas altera o comportamento nesta versão. O dry-run efetivo do <code>init</code> é a ausência de
+    <code>--yes</code> fora de um terminal interativo; a resolução do <code>update</code> já é sempre a maior
+    tag. Não existe <code>expx --version</code>: a versão aparece no cabeçalho do <code>init</code> interativo.</p></div>
+  </div>
+</section>
+
+<!-- ============================ INIT ============================ -->
+<section class="secao" id="init">
+  <p class="eyebrow">Referência do CLI</p>
+  <h1>Anatomia do init</h1>
+  <p class="lede">O que roda, em que ordem, e por quê.</p>
+
+  <h2 id="init-loop">Para cada skill selecionada</h2>
+  <ol class="passos">
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Resolve a versão alvo</p>
+      <p>Busca a <strong>maior tag de versão semântica</strong> do repositório — comparando número a número,
+      porque ordenar como texto colocaria <code>v1.10.0</code> antes de <code>v1.2.0</code>. Pré-lançamento
+      (<code>-rc.1</code>) é ignorado: não é versão publicada. Sem nenhuma tag, cai para a branch padrão e
+      registra <code>travado: false</code> no lock.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Busca o conteúdo</p>
+      <p>Com <code>git clone --depth 1 --branch &lt;referência&gt;</code>, usando o <code>git</code> do sistema.
+      É de propósito: assim aproveita a credencial já configurada na máquina e não esbarra em limite de
+      requisição de API.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Detecta o layout</p>
+      <p>Os repositórios não têm todos a mesma forma. O CLI não assume caminho: procura o <strong><code>SKILL.md</code>
+      mais raso</strong> e adota a pasta dele como raiz, depois confere que o <code>name:</code> do frontmatter
+      é mesmo a skill pedida. Um layout novo passa a funcionar sem tocar nesta camada.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Verifica os caminhos</p>
+      <p>Recusa qualquer skill que referencie caminho <strong>fora da própria pasta</strong>. A mensagem traz
+      até três achados, no formato <code>arquivo:linha → referência</code>.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Calcula o hash de cada arquivo</p>
+      <p>SHA-256 por arquivo, registrado no lock junto com repositório, referência, commit e a data de resolução.</p>
+    </div></li>
+  </ol>
+
+  <div class="nota nota--erro">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M10.2 5.8 5.8 10.2M5.8 5.8l4.4 4.4" stroke-linecap="round"/></svg>
+    <div><p><strong>Por que “caminho fora da própria pasta” é recusado.</strong> Ao instalar, o Claude Code
+    <em>copia</em> o plugin para <code>~/.claude/plugins/cache/…</code>, e só a pasta do plugin vai junto.
+    Qualquer <code>../</code> dentro de uma skill sai da árvore copiada e deixa de resolver — silenciosamente.
+    O CLI recusa instalar uma skill assim, tanto no <code>init</code> quanto no <code>doctor</code>.</p></div>
+  </div>
+
+  <h2 id="init-escrita">Só depois é que a escrita acontece</h2>
+  <p>E ela é <strong>atômica</strong>: a montagem inteira ocorre numa pasta temporária <strong>ao lado do
+  destino</strong> — não em <code>/tmp</code>, porque <code>rename</code> só é atômico dentro do mesmo sistema
+  de arquivos — e é trocada por <code>rename</code> ao final. Se falhar no meio, o <code>.expx/</code> anterior
+  é devolvido ao lugar e permanece intacto.</p>
+
+  <h3>A configuração do harness</h3>
+  <p>A configuração do Claude Code é <strong>mesclada</strong>, nunca reescrita: backup datado antes de
+  qualquer alteração, todo o resto preservado, e recusa explícita de “consertar” JSON inválido — nesse caso o
+  arquivo não é tocado e o <code>init</code> emite um aviso.</p>
+  <p>Duas particularidades medidas em execução, não presumidas:</p>
+  <ul>
+    <li>A lista de plugins habilitados é <strong>lida nos dois formatos</strong> — o array documentado e o
+    objeto que o Claude Code realmente escreve — e sempre gravada como objeto.</li>
+    <li>Os hooks só entram na configuração <strong>se houver hooks</strong>. Um projeto sem skill com hook não
+    ganha uma seção vazia do nada. E a entrada é deduplicada pelo comando, porque o <code>init</code> roda de
+    novo a cada atualização e a duplicata faria o hook rodar duas vezes por prompt.</li>
+  </ul>
+
+  <h3>Hooks no disco</h3>
+  <p>Quando alguma skill traz hook, o CLI copia <strong>a skill inteira</strong> para
+  <code>.claude/skills/&lt;nome&gt;/</code> e o script para <code>.claude/hooks/</code>, com
+  <code>chmod 0755</code> — sem o bit de execução o hook não roda e não avisa. A skill vai junto porque o hook
+  resolve o próprio motor como um caminho relativo a si mesmo.</p>
+
+  <h2 id="init-harness">Claude Code e OpenCode lado a lado</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Aspecto</th><th>Claude Code</th><th>OpenCode</th></tr></thead>
+    <tbody>
+      <tr><td>Skills</td><td>no plugin; e em <code>.claude/skills/</code> quando há hook</td><td><code>.claude/skills/</code> — sempre, todas</td></tr>
+      <tr><td>Comandos</td><td>no plugin, com namespace <code>/expx:…</code></td><td><code>.opencode/commands/</code>, sem prefixo</td></tr>
+      <tr><td>Manifestos</td><td><code>plugin.json</code> + <code>marketplace.json</code></td><td>nenhum</td></tr>
+      <tr><td>Configuração</td><td>mesclada, com backup</td><td>não escreve configuração</td></tr>
+      <tr><td>Registro</td><td><code>claude plugin marketplace add</code> e <code>install</code></td><td>nenhum comando externo</td></tr>
+      <tr><td>Hooks</td><td>copiados e registrados</td><td><span class="selo selo--aviso">lacuna declarada</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>As skills vão <strong>somente</strong> para <code>.claude/skills/</code>, que o OpenCode lê nativamente.
+  Copiar também para <code>.opencode/skills/</code> criaria dois <code>name</code> iguais nas pastas que o
+  OpenCode varre, e a duplicata é resolvida por último-a-escrever-vence com apenas um aviso no log —
+  silenciosamente. É exatamente essa colisão que o <code>doctor</code> detecta.</p>
+</section>
+
+<!-- ============================ LOCK ============================ -->
+<section class="secao" id="lock">
+  <p class="eyebrow">Referência do CLI</p>
+  <h1>Lock e atualização</h1>
+  <p class="lede">A instalação é travada por lock; a atualização é um ato explícito. Quem clona o projeto
+  recebe exatamente as mesmas skills que o time está usando, sem rede e sem rodar nada.</p>
+
+  <figure class="figura">
+    <div class="figura__tela" data-diagrama="lock"></div>
+    <figcaption>O hash por arquivo é o que permite detectar modificação local sem consultar a rede.</figcaption>
+  </figure>
+
+  <h2 id="lock-formato">O formato do lock</h2>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">.expx/expx-lock.json</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>{
+  <span class="tok-key">"lock_version"</span>: <span class="tok-num">1</span>,
+  <span class="tok-key">"cli_version"</span>: <span class="tok-str">"0.4.1"</span>,
+  <span class="tok-key">"harness"</span>: [<span class="tok-str">"claude"</span>],
+  <span class="tok-key">"skills"</span>: {
+    <span class="tok-key">"sprintx"</span>: {
+      <span class="tok-key">"repositorio"</span>:  <span class="tok-str">"https://github.com/bittencourtthulio/sprintx"</span>,
+      <span class="tok-key">"referencia"</span>:   <span class="tok-str">"main"</span>,
+      <span class="tok-key">"travado"</span>:      <span class="tok-num">false</span>,
+      <span class="tok-key">"commit"</span>:       <span class="tok-str">"4e3570c9bb19b8e336a5ca9c22ea17e7394dc6e8"</span>,
+      <span class="tok-key">"resolvido_em"</span>: <span class="tok-str">"2026-08-29"</span>,
+      <span class="tok-key">"arquivos"</span>: {
+        <span class="tok-key">"SKILL.md"</span>: <span class="tok-str">"e3b0c442…b855"</span>
+      }
+    }
+  }
+}</code></pre>
+  </div>
+  <p><code>travado: false</code> significa que a skill segue uma branch, e não uma tag publicada — é o estado
+  atual de todas as sete, porque nenhum dos repositórios publica tag ainda. O <code>doctor</code> reporta isso
+  como <strong>aviso</strong>, nunca como erro.</p>
+
+  <h2 id="update-fluxo">O que o update faz</h2>
+  <ol>
+    <li>Descobre a versão alvo de cada skill instalada</li>
+    <li>Compara com o lock — skill já em dia é reportada e <strong>não é tocada</strong></li>
+    <li><strong>Detecta modificação local</strong>: se os arquivos divergirem do lock, não sobrescreve</li>
+    <li>Mostra o resumo por skill: versão atual, versão nova, e os títulos dos commits entre as duas</li>
+    <li>Pede confirmação e aplica</li>
+    <li>Remonta o plugin do zero, reescreve o lock e valida</li>
+  </ol>
+  <p>A aplicação <strong>remonta o plugin do zero</strong> com a seleção inteira do lock, em vez de editar a
+  árvore montada. É mais lento e é de propósito: editar no lugar deixa arquivo órfão quando uma skill encolhe
+  entre versões.</p>
+
+  <h2 id="modificacao-local">O que conta como modificação local</h2>
+  <p>A comparação do disco contra os hashes do lock produz três listas — <strong>alterados</strong>,
+  <strong>removidos</strong> e <strong>novos</strong>. A instalação só é considerada limpa quando as três estão
+  vazias.</p>
+  <div class="nota nota--aviso">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.2 14.6 13.4H1.4z" stroke-linejoin="round"/><path d="M8 6.6v3.1M8 11.6v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Um arquivo novo criado dentro da pasta de uma skill já bloqueia o update</strong>, mesmo
+    que nada tenha sido alterado. A mensagem do bloqueio lista os alterados e os removidos, mas não os novos —
+    então uma skill pode aparecer bloqueada com uma lista aparentemente vazia. Se isso acontecer, procure por
+    arquivo acrescentado à mão dentro de <code>.expx/marketplace/plugins/expx/skills/&lt;nome&gt;/</code>.</p></div>
+  </div>
+
+  <h2 id="rollback">Rollback</h2>
+  <p>Como o <code>.expx/</code> é commitado, desfazer uma atualização é revertê-lo pelo versionador. O
+  <code>update</code> imprime isso em toda execução que aplica:</p>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">git</span> checkout -- .expx</code></pre>
+  </div>
+  <p>Não existe comando de desfazer no CLI, e é uma decisão: guardar a versão anterior dentro do
+  <code>.expx/</code> duplicaria no repositório aquilo que o versionador já guarda melhor.</p>
+</section>
+
+<!-- ============================ DOCTOR ============================ -->
+<section class="secao" id="doctor">
+  <p class="eyebrow">Referência do CLI</p>
+  <h1>O que o doctor verifica</h1>
+  <p class="lede">Dezesseis verificações, cada uma com severidade e correção sugerida. Achado de severidade
+  <code>aviso</code> não derruba a saída; <code>erro</code> sim.</p>
+
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">npx</span> expxdev doctor</code></pre>
+  </div>
+
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Verificação</th><th>Severidade</th><th>O que significa</th></tr></thead>
+    <tbody>
+      <tr><td><code>gitignore-ignora-expx</code></td><td><span class="selo selo--erro">erro</span></td><td>o <code>.gitignore</code> ignora o <code>.expx/</code>, que precisa ser versionado</td></tr>
+      <tr><td><code>sem-expx</code></td><td><span class="selo selo--erro">erro</span></td><td>a pasta <code>.expx/</code> não existe — o diagnóstico para aqui</td></tr>
+      <tr><td><code>lock-ilegivel</code></td><td><span class="selo selo--erro">erro</span></td><td>lock ausente, JSON inválido ou fora do formato — o diagnóstico para aqui</td></tr>
+      <tr><td><code>lock-futuro</code></td><td><span class="selo selo--erro">erro</span></td><td>o lock foi criado por uma versão mais nova do CLI</td></tr>
+      <tr><td><code>plugin-json-invalido</code></td><td><span class="selo selo--erro">erro</span></td><td><code>plugin.json</code> ausente ou fora do schema</td></tr>
+      <tr><td><code>marketplace-json-invalido</code></td><td><span class="selo selo--erro">erro</span></td><td><code>marketplace.json</code> ausente ou fora do schema</td></tr>
+      <tr><td><code>skill-ausente</code></td><td><span class="selo selo--erro">erro</span></td><td>skill do lock sem pasta em disco</td></tr>
+      <tr><td><code>caminho-fora</code></td><td><span class="selo selo--erro">erro</span></td><td>skill referencia caminho fora da própria pasta</td></tr>
+      <tr><td><code>settings-ausente</code></td><td><span class="selo selo--erro">erro</span></td><td>harness inclui <code>claude</code> e a configuração está ausente ou inválida</td></tr>
+      <tr><td><code>plugin-nao-habilitado</code></td><td><span class="selo selo--erro">erro</span></td><td>o plugin não está habilitado na configuração</td></tr>
+      <tr><td><code>colisao-de-nome</code></td><td><span class="selo selo--erro">erro</span></td><td>a mesma skill existe em <code>.claude/skills/</code> e em <code>.opencode/skills/</code></td></tr>
+      <tr><td><code>&lt;skill&gt;-sem-motor</code></td><td><span class="selo selo--erro">erro</span></td><td>hook instalado sem a pasta de <code>assets</code> da skill ao lado</td></tr>
+      <tr><td><code>modificacao-local</code></td><td><span class="selo selo--aviso">aviso</span></td><td>o disco divergiu do lock</td></tr>
+      <tr><td><code>skill-nao-travada</code></td><td><span class="selo selo--aviso">aviso</span></td><td>a skill segue uma branch, não uma versão publicada</td></tr>
+      <tr><td><code>rastro-fora-do-contrato</code></td><td><span class="selo selo--aviso">aviso</span></td><td>linhas do rastro fora do contrato <code>expx-eventos</code></td></tr>
+      <tr><td><code>rastro-chave-nao-declarada</code></td><td><span class="selo selo--aviso">aviso</span></td><td>chaves não declaradas no rastro</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Por que os achados do rastro são aviso.</strong> Um doctor que reprova a instalação por
+    causa de linha antiga em disco é um doctor que as pessoas param de rodar. A instalação está correta; o
+    histórico é que tem linhas de um contrato anterior.</p></div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal__barra"><span class="terminal__bolha" style="background:#ff5f57"></span><span class="terminal__bolha" style="background:#febc2e"></span><span class="terminal__bolha" style="background:#28c840"></span><span class="terminal__titulo">expx doctor</span></div>
+    <pre><code>[<span class="t-vermelho">erro</span>] a skill memox tem hook instalado mas nao tem o motor ao lado
+  correcao: rode expx init novamente para reinstalar a skill memox
+
+[<span class="t-amarelo">aviso</span>] a skill sprintx nao esta travada em versao publicada
+  correcao: nenhuma acao necessaria; o repositorio ainda nao publica tag</code></pre>
+  </div>
+</section>
+
+<!-- ============================ PAINEL ============================ -->
+<section class="secao" id="painel">
+  <p class="eyebrow">Referência do CLI</p>
+  <h1>O painel</h1>
+  <p class="lede">Lê a pasta <code>docs/</code>, descobre os trabalhos gravados pelas skills e mostra no
+  navegador o que foi planejado, o que está em execução, o que travou e o histórico do que já foi entregue.</p>
+
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">npx</span> expxdev panel</code></pre>
+  </div>
+
+  <div class="nota nota--ok">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 8.4l3.2 3.2L13 4.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><p><strong>Somente leitura, e não só por convenção.</strong> Qualquer requisição que não seja
+    <code>GET</code> recebe <code>405</code> com a mensagem <code>o painel e somente leitura</code>. O servidor
+    escuta exclusivamente em <code>127.0.0.1</code> — o host é constante no código, sem flag, opção ou variável
+    de ambiente que mude isso.</p></div>
+  </div>
+
+  <h2 id="painel-fluxo">Como ele lê o projeto</h2>
+  <figure class="figura">
+    <div class="figura__tela" data-diagrama="painel"></div>
+    <figcaption>A cada mudança o projeto é <strong>relido inteiro</strong>, não em pedaços: as regras de
+    conformidade cruzam referências entre arquivos, e uma leitura parcial produziria violação falsa.</figcaption>
+  </figure>
+
+  <h3>O que ele reconhece</h3>
+  <p>O painel não varre todo <code>.md</code> do projeto: procura <strong>os nomes de arquivo do contrato</strong>.
+  A razão é que muitos <code>.md</code> legítimos não têm frontmatter — <code>00-LACUNAS.md</code> e
+  <code>00-AUDITORIA.md</code>, por contrato, não levam — e varrer por extensão encheria a tela de “fora do
+  schema” com ruído.</p>
+  <div class="pilulas">
+    <span class="selo">ORQUESTRADOR.md</span><span class="selo">sprint.md</span><span class="selo">fases.md</span>
+    <span class="selo">tasks.md</span><span class="selo">BLOQUEIOS.md</span><span class="selo">00-BLOQUEIOS.md</span>
+    <span class="selo">00-DECISOES.md</span><span class="selo">00-OCORRENCIA.md</span><span class="selo">01-CAUSA-RAIZ.md</span>
+    <span class="selo">QA.md</span><span class="selo">INDICE.md</span><span class="selo">tecnico.md</span>
+    <span class="selo">uso.md</span><span class="selo">00-INDICE.md</span>
+  </div>
+  <p>Um trabalho é uma pasta com <code>ORQUESTRADOR.md</code> de frontmatter válido — <strong>a regra é sobre
+  o conteúdo, não sobre o caminho</strong>. Pasta sem orquestrador é ignorada em silêncio. O
+  <code>00-INDICE.md</code> só conta quando está dentro de uma pasta <code>base/</code>.</p>
+
+  <h2 id="painel-violacoes">Violação e rejeição são coisas diferentes</h2>
+  <p>A distinção importa e tem duas telas separadas:</p>
+  <div class="cartoes">
+    <div class="cartao"><div class="cartao__topo"><span class="cartao__nome">Violação</span><span class="selo selo--aviso">o método</span></div><p class="cartao__texto">O painel <em>leu</em> o arquivo, e o conteúdo desobedece uma regra do método. É um achado sobre o trabalho, e ele continua na tela com o defeito à vista.</p></div>
+    <div class="cartao"><div class="cartao__topo"><span class="cartao__nome">Rejeição</span><span class="selo selo--erro">o arquivo</span></div><p class="cartao__texto">O painel <em>não conseguiu</em> ler. É um achado sobre o arquivo, e ele fica de fora do painel até ser corrigido.</p></div>
+  </div>
+
+  <h3>As dez regras de conformidade</h3>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Violação</th><th>O que significa</th></tr></thead>
+    <tbody>
+      <tr><td><code>teste_ausente</code></td><td>task sem teste de integração ou funcional declarado</td></tr>
+      <tr><td><code>concluida_sem_verde</code></td><td>task marcada como concluída sem a suíte verde</td></tr>
+      <tr><td><code>paralela_com_dependencia</code></td><td>task declarada paralelizável mas com dependência aberta</td></tr>
+      <tr><td><code>regressao_ausente</code></td><td>ocorrência do tipo <code>bug</code> sem o teste que reproduz</td></tr>
+      <tr><td><code>sem_criterio_saida</code></td><td>fase ou sprint sem critério de saída</td></tr>
+      <tr><td><code>bloqueio_antigo</code></td><td>bloqueio parado há mais dias que o limite configurado</td></tr>
+      <tr><td><code>dependencia_inexistente</code></td><td>task que depende de um id que não existe neste trabalho</td></tr>
+      <tr><td><code>ciclo_dependencia</code></td><td>duas ou mais tasks que se esperam em círculo</td></tr>
+      <tr><td><code>estagio_incoerente</code></td><td>estágio declarado que não combina com a ferramenta (<code>runx</code> com <code>f3</code>, por exemplo)</td></tr>
+      <tr><td><code>chave_omitida</code></td><td>chave obrigatória ausente do arquivo — pela regra R6, é violação, não rejeição</td></tr>
+    </tbody>
+  </table></div>
+  <p>Cada regra tem escopo estreito de propósito, porque <strong>violação falsa é pior que violação
+  ausente</strong>: regressão não é cobrada de trabalho da <code>sprintx</code> nem de ocorrência que não é
+  bug, e critério de saída não é exigido de fase que não o declara por não existir.</p>
+
+  <h3>Os seis motivos de rejeição</h3>
+  <div class="pilulas">
+    <span class="selo selo--erro">sem frontmatter valido</span><span class="selo selo--erro">YAML invalido</span>
+    <span class="selo selo--erro">kind desconhecido</span><span class="selo selo--erro">versao de schema futura</span>
+    <span class="selo selo--erro">expx_schema ausente ou nao numerico</span><span class="selo selo--erro">estrutura incompativel com o kind</span>
+  </div>
+
+  <h2 id="painel-api">A API</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Rota</th><th>Devolve</th></tr></thead>
+    <tbody>
+      <tr><td><code>GET /api/projeto</code></td><td>o estado inteiro do projeto</td></tr>
+      <tr><td><code>GET /api/conformidade</code></td><td>as violações</td></tr>
+      <tr><td><code>GET /api/rejeicoes</code></td><td>os arquivos que não puderam ser lidos</td></tr>
+      <tr><td><code>GET /api/historico</code></td><td>as entregas já fechadas</td></tr>
+      <tr><td><code>GET /api/memoria</code></td><td>o índice da memox, ou <code>null</code> — que é estado legítimo, não erro</td></tr>
+      <tr><td><code>GET /api/saude</code></td><td><code>{ ok, raiz, lido_em }</code></td></tr>
+      <tr><td><code>GET /relatorio?oc=&lt;id&gt;&amp;tipo=tecnico|uso</code></td><td>o relatório como página HTML autocontida</td></tr>
+      <tr><td><code>GET /relatorio.md?oc=…</code></td><td>o mesmo relatório como download em Markdown</td></tr>
+      <tr><td><code>WS /ws</code></td><td>o estado inteiro a cada mudança</td></tr>
+    </tbody>
+  </table></div>
+  <p>O websocket manda <strong>o estado inteiro, não um delta</strong>: o estado de um projeto documental é
+  pequeno, e mandar tudo elimina a classe de bug em que servidor e tela discordam depois de uma mensagem
+  perdida. Conexão caída fica visível na barra de status e reconecta sozinha — uma tela congelada mostrando
+  dado velho é pior que um erro à mostra.</p>
+
+  <h2 id="painel-telas">As telas</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Tela</th><th>O que mostra</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Dashboard</strong></td><td>seis cartões, quatro distribuições e os trabalhos recentes. A separação entre planejamento e execução vem do <em>estágio</em>, não do status</td></tr>
+      <tr><td><strong>Trabalhos</strong></td><td>tabela filtrável por ferramenta, tipo e status, ordenável por atualização, progresso ou título</td></tr>
+      <tr><td><strong>Detalhe</strong></td><td>sprint por sprint, fase por fase, task por task, com dependências, critérios de saída e caminho crítico</td></tr>
+      <tr><td><strong>Conformidade</strong></td><td>as violações agrupadas por tipo, com arquivo e linha</td></tr>
+      <tr><td><strong>Histórico</strong></td><td>as entregas, com link para os relatórios técnico e de uso</td></tr>
+      <tr><td><strong>Memória</strong></td><td>arquivos de risco, regressões, coincidências e artefatos contaminados</td></tr>
+      <tr><td><strong>Fora do schema</strong></td><td>as rejeições, em duas abas: erros de leitura e arquivos anteriores ao contrato</td></tr>
+    </tbody>
+  </table></div>
+  <p>Toda tela exporta CSV. Um filtro de período global — <code>7d</code>, <code>30d</code>, <code>90d</code>,
+  mês, ano ou intervalo — recorta trabalhos, histórico, bloqueios e violações; data ausente nunca é filtrada
+  para fora.</p>
+
+  <h3>Por que o quadro kanban foi removido</h3>
+  <p>O kanban pressupõe cartões movendo-se entre colunas por decisão de pessoas. Aqui o estágio é a máquina de
+  estados do método: ele avança quando um artefato passa a existir no disco, não quando alguém arrasta um
+  cartão. A tabela conta essa verdade; o quadro contava outra.</p>
+
+  <h3>A tela de Memória não respeita o filtro de período</h3>
+  <p>Ao contrário das demais, e de propósito: <strong>o valor do sinal é justamente o antigo</strong>. Um
+  arquivo que regrediu há dois anos continua sendo um arquivo que regride. Os arquivos de risco são ordenados
+  por <strong>regressões</strong>, depois reprovações de QA, depois número de trabalhos — nunca por movimento,
+  porque um arquivo central é tocado por dezenas de trabalhos sem nunca ter falhado, e ordenar por contagem o
+  colocaria no topo, enterrando embaixo o arquivo que já quebrou duas vezes.</p>
+</section>
+
+<!-- ============================ WATCH ============================ -->
+<section class="secao" id="watch">
+  <p class="eyebrow">Referência do CLI</p>
+  <h1>O watch</h1>
+  <p class="lede">Acompanha um trabalho no terminal, ao vivo, sem sair do lugar onde você está trabalhando.
+  Como o painel, ele <strong>nunca escreve</strong> nos arquivos do projeto.</p>
+
+  <div class="terminal">
+    <div class="terminal__barra"><span class="terminal__bolha" style="background:#ff5f57"></span><span class="terminal__bolha" style="background:#febc2e"></span><span class="terminal__bolha" style="background:#28c840"></span><span class="terminal__titulo">expx watch</span></div>
+    <pre><code><span class="t-vermelho">2 bloqueios abertos</span>
+<span class="t-vermelho">  B-01 · T-02.03 · 3 dias · Falta o contrato do gateway de pagamento</span>
+<span class="t-vermelho">  B-02 · sem task · hoje · Ambiente de homologacao fora do ar</span>
+
+<span class="t-ciano">OC-2026-0142 · runx · Arredondamento na faixa de peso</span>
+  e3 · 7/11 tasks · agora T-02.04
+<span class="t-amarelo">  raio medio · arquivos 2/3 · linhas 31/80</span>
+<span class="t-cinza">  fix/OC-2026-0142-arredondamento · pr aberto</span>
+
+<span class="t-verde">[x]</span> sprint-01 · Congelar o comportamento atual
+<span class="t-verde">  [x]</span> F-01.1 · Caracterizacao
+<span class="t-verde">    [x]</span> T-01.01 Teste de caracterizacao da faixa 0-5kg
+<span class="t-verde">    [x]</span> T-01.02 Teste de caracterizacao da faixa 5-30kg
+<span class="t-amarelo">[&gt;]</span> sprint-02 · Corrigir o arredondamento
+<span class="t-amarelo">  [&gt;]</span> F-02.1 · Fix
+<span class="t-verde">    [x]</span> T-02.01 Teste de regressao que reproduz o bug
+<span class="t-verde">    [x]</span> T-02.02 Corrigir a funcao de arredondamento
+<span class="t-vermelho">    [!]</span> T-02.03 Integrar com o gateway <span class="t-cinza">← T-02.02</span>
+<span class="t-ciano">    [&gt;] T-02.04 Atualizar o relatorio de fechamento &lt;</span>
+<span class="t-cinza">    [ ]</span> T-02.05 Revisar a documentacao de uso <span class="t-cinza">||</span>
+
+<span class="t-cinza">eventos recentes</span>
+<span class="t-cinza">  14:32</span> <span class="t-verde">task_concluida</span> T-02.02 <span class="t-cinza">· suite verde, 14 testes</span>
+<span class="t-cinza">  14:28  suite_executada</span> T-02.02 <span class="t-cinza">· 14 passed</span>
+<span class="t-cinza">  14:11</span> <span class="t-vermelho">regra_violada</span> T-02.02 <span class="t-cinza">escopo-da-task · arquivo fora do plano</span>
+
+<span class="t-cinza">ultimo evento há 3 min · 1 violacao em aviso</span></code></pre>
+  </div>
+
+  <h2 id="watch-uso">Uso</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Forma</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>expx watch</code></td><td>segue o trabalho atual, lido do <code>.expx/estado.json</code></td></tr>
+      <tr><td><code>expx watch &lt;trabalho_id&gt;</code></td><td>segue um trabalho específico</td></tr>
+      <tr><td><code>expx watch --todos</code></td><td>lista os trabalhos abertos, um por linha, sem árvore</td></tr>
+      <tr><td><code>expx watch --colunas 100</code></td><td>largura fixa, útil para capturar saída</td></tr>
+    </tbody>
+  </table></div>
+  <p>Sai com <kbd>Ctrl+C</kbd>, devolvendo o terminal ao estado anterior — cursor restaurado inclusive em
+  encerramento por exceção.</p>
+
+  <h2 id="watch-escolha">Como ele escolhe o trabalho</h2>
+  <p>A precedência é deliberada, e cada degrau existe para um caso real:</p>
+  <ol>
+    <li>o id que você pediu na linha de comando</li>
+    <li>o <code>trabalho</code> do <code>estado.json</code>, <strong>se ele existir no disco observado</strong>
+    — apontar para uma pasta apagada ou de outro repositório não trava o watch</li>
+    <li>entre os trabalhos <code>em_andamento</code>, o mais recente por <code>atualizado_em</code></li>
+    <li>sem nenhum em andamento: o mais recente entre os abertos</li>
+    <li>nada aberto: o mais recente entre todos, inclusive concluídos</li>
+  </ol>
+
+  <h2 id="watch-gatilhos">Três gatilhos, três custos</h2>
+  <p>O watch não relê tudo a cada mudança. Ele separa o que mudou:</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Mudou</th><th>O que ele relê</th></tr></thead>
+    <tbody>
+      <tr><td>qualquer arquivo em <code>docs/</code></td><td>a visão inteira — a única releitura cara</td></tr>
+      <tr><td><code>.expx/estado.json</code></td><td>só o estado, e recalcula se está degradado</td></tr>
+      <tr><td><code>docs/eventos/*.jsonl</code></td><td>só a cauda dos eventos e a contagem de violações</td></tr>
+    </tbody>
+  </table></div>
+  <p>O rastro é lido pela <strong>cauda</strong> — só os últimos 64 KB, em linhas completas, descartando o
+  fragmento cortado ao meio. O arquivo só rotaciona em 5 MB, e reler tudo a cada evento seria a chamada cara
+  que a especificação proíbe.</p>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Modo degradado.</strong> Quando o <code>.expx/estado.json</code> não pode ser lido —
+    ausente, JSON inválido ou de uma versão desconhecida —, o watch continua funcionando a partir do plano.
+    O que some é o que só o estado sabe: raio, orçamento, branch e estado do PR.</p></div>
+  </div>
+
+  <h2 id="watch-desenho">O desenho</h2>
+  <p>Bloqueio aberto sobe ao topo, <strong>acima até do cabeçalho</strong>. A ordem das seções é fixa:
+  bloqueios, cabeçalho, árvore, eventos, rodapé.</p>
+  <p>A tela é redesenhada de forma incremental: as linhas anteriores são guardadas, comparadas, e só as que
+  mudaram são reescritas. Se nada mudou, nada é escrito — por isso não pisca. O buffer alternativo do terminal
+  foi descartado de propósito: ele apagaria o que estava na tela quando o watch sai.</p>
+
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Marca</th><th>Task</th><th>Sprint e fase</th></tr></thead>
+    <tbody>
+      <tr><td><code>[x]</code></td><td><code>concluida</code></td><td><code>concluido</code></td></tr>
+      <tr><td><code>[&gt;]</code></td><td><code>em_andamento</code></td><td><code>em_andamento</code></td></tr>
+      <tr><td><code>[!]</code></td><td><code>bloqueada</code></td><td><code>bloqueado</code></td></tr>
+      <tr><td><code>[ ]</code></td><td><code>pendente</code></td><td><code>nao_iniciado</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>São dois vocabulários porque os enums do contrato são mesmo diferentes para task e para grupo — e não
+  são intercambiáveis. Além das marcas, <code>||</code> indica task paralelizável, <code>←</code> lista as
+  dependências e <code>&lt;</code> aponta a task em foco.</p>
+</section>
+
+<!-- ============================ CONVENCOES ============================ -->
+<section class="secao" id="convencoes">
+  <p class="eyebrow">Contratos</p>
+  <h1>Convenções R1–R14</h1>
+  <p class="lede">O documento raiz. Estas regras valem para <strong>todo</strong> artefato do método:
+  frontmatter YAML, linha do rastro, configuração de hook, frontmatter de agente. Os contratos derivados
+  não as repetem — citam por número.</p>
+
+  <div class="tabela-caixa"><table>
+    <thead><tr><th></th><th>Regra</th><th>Detalhe</th></tr></thead>
+    <tbody>
+      <tr><td><code>R1</code></td><td>O bloco YAML é a primeira coisa do arquivo</td><td>Entre <code>---</code> antes e depois. Nada acima: nem linha em branco, nem comentário, nem título. BOM é tolerado</td></tr>
+      <tr><td><code>R2</code></td><td>Toda chave em <code>snake_case</code>, minúscula, sem acento</td><td><code>modulo_afetado</code>, nunca <code>móduloAfetado</code> nem <code>modulo-afetado</code></td></tr>
+      <tr><td><code>R3</code></td><td>Todo valor de enum minúsculo e sem acento</td><td><code>concluida</code>, nunca <code>Concluída</code>. Vale <em>só</em> para enum: texto livre leva acento normalmente</td></tr>
+      <tr><td><code>R4</code></td><td>Datas em ISO</td><td><code>AAAA-MM-DD</code>; timestamp do rastro <code>AAAA-MM-DDTHH:MM:SSZ</code>, sempre UTC. <strong>Obtenha do sistema</strong>, nunca de memória</td></tr>
+      <tr><td><code>R5</code></td><td>Booleanos <code>true</code>/<code>false</code>, sem aspas</td><td>Nunca <code>"true"</code>, <code>sim</code>, <code>yes</code> ou <code>1</code></td></tr>
+      <tr><td><code>R6</code></td><td>Chave nunca omitida</td><td>Lista vazia é <code>[]</code>. Valor ausente é <code>null</code>. <strong>A chave está sempre lá</strong></td></tr>
+      <tr><td><code>R7</code></td><td>O frontmatter é a única fonte para a máquina</td><td>A prosa abaixo é para humano. Nenhum leitor extrai informação dela</td></tr>
+      <tr><td><code>R8</code></td><td>Campos de texto são de uma linha</td><td>Parágrafo vai na prosa; o YAML carrega só o resumo</td></tr>
+      <tr><td><code>R9</code></td><td><code>atualizado_em</code> é reescrito a cada gravação</td><td>Mesmo que só um campo tenha mudado</td></tr>
+      <tr><td><code>R10</code></td><td>Nenhum caminho absoluto em nenhum valor</td><td>Caminho absoluto vaza o nome de usuário da máquina, quebra ao trocar de máquina e polui o diff</td></tr>
+      <tr><td><code>R11</code></td><td>Ausente é <code>null</code>, e só</td><td>Nada de <code>n/a</code>, <code>-</code>, <code>""</code> ou <code>nenhum</code>. Em <em>prosa</em>, a marca é <code>n/a</code> por extenso</td></tr>
+      <tr><td><code>R12</code></td><td>Ids</td><td>Ver a tabela abaixo</td></tr>
+      <tr><td><code>R13</code></td><td>Idioma</td><td>Prosa em português do Brasil, com acento. Identificador em português <em>sem</em> acento, por R2 e R3</td></tr>
+      <tr><td><code>R14</code></td><td>Encoding UTF-8, sem BOM</td><td>Não escreva BOM; leitores devem tolerá-lo na entrada</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Por que R6 existe.</strong> O painel diferencia “não se aplica” de “esqueceram de escrever”.
+    Omitir a chave apaga essa diferença. E chave omitida é <strong>violação do método, não rejeição do
+    arquivo</strong>: o arquivo continua sendo lido e aparece no painel com o defeito à vista. Rejeitar faria o
+    trabalho sumir da tela justamente quando ele tem um problema — o oposto do que o painel serve para fazer.</p></div>
+  </div>
+
+  <h2 id="ids">R12 — os formatos de id</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Artefato</th><th>Formato</th><th>Exemplo</th></tr></thead>
+    <tbody>
+      <tr><td>Task</td><td><code>T-NN.MM</code></td><td><code>T-01.02</code></td></tr>
+      <tr><td>Fase</td><td><code>F-NN.M</code></td><td><code>F-01.1</code></td></tr>
+      <tr><td>Sprint</td><td><code>sprint-NN</code></td><td><code>sprint-01</code></td></tr>
+      <tr><td>Bloqueio</td><td><code>B-NN</code></td><td><code>B-01</code></td></tr>
+      <tr><td>Decisão</td><td><code>D-NN</code></td><td><code>D-07</code></td></tr>
+      <tr><td>Ocorrência</td><td><code>OC-AAAA-NNNN</code></td><td><code>OC-2026-0142</code></td></tr>
+    </tbody>
+  </table></div>
+  <p><code>F-01</code> sozinho é forma antiga e não deve ser gerada.</p>
+
+  <h2 id="datas">R4 na prática</h2>
+  <p>Modelo de linguagem não sabe que dia é hoje. Data escrita de memória é o erro mais comum e o mais
+  silencioso do método:</p>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">shell</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">date</span> +%Y-%m-%d                  <span class="tok-com"># data</span>
+<span class="tok-cmd">date</span> -u +%Y-%m-%dT%H:%M:%SZ     <span class="tok-com"># timestamp do rastro</span></code></pre>
+  </div>
+
+  <div class="nota nota--aviso">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.2 14.6 13.4H1.4z" stroke-linejoin="round"/><path d="M8 6.6v3.1M8 11.6v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Cite sempre com o prefixo <code>R</code>.</strong> Existe numeração histórica sem prefixo,
+    herdada da primeira versão do <code>expx-schema</code>, e ela <em>não coincide</em> com esta. Uma citação a
+    “regra 6”, sem <code>R</code>, é ambígua.</p></div>
+  </div>
+</section>
+
+<!-- ============================ SCHEMA ============================ -->
+<section class="secao" id="schema">
+  <p class="eyebrow">Contratos</p>
+  <h1>expx-schema v1</h1>
+  <p class="lede">O frontmatter YAML de todo arquivo de estado. As skills <strong>escrevem</strong>; o painel
+  <strong>lê e nunca escreve</strong>. É a fonte da verdade sobre os <code>kind</code>, seus campos e seus
+  enums quando skill e leitor divergirem.</p>
+
+  <h2 id="schema-cabecalho">O cabeçalho comum</h2>
+  <p>Todo arquivo carrega estas quatro chaves antes das específicas:</p>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">frontmatter</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>---
+<span class="tok-key">expx_schema</span>: <span class="tok-num">1</span>
+<span class="tok-key">expx_tool</span>: sprintx        <span class="tok-com"># sprintx | runx — quem escreveu</span>
+<span class="tok-key">kind</span>: tasks
+<span class="tok-key">trabalho_id</span>: exportacao-csv-relatorios
+---</code></pre>
+  </div>
+  <p><code>trabalho_id</code> é o slug da feature (sprintx) ou o ID da ocorrência (runx). <strong>É a chave que
+  costura tudo</strong> — um trabalho, um nome, do plano até a entrega. O único <code>kind</code> que não o
+  carrega é o <code>relatorios_indice</code>, que é do projeto inteiro e não de um trabalho.</p>
+
+  <h2 id="schema-kinds">Os treze kinds</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>kind</th><th>Arquivo</th><th>Campos além do cabeçalho</th></tr></thead>
+    <tbody>
+      <tr><td><code>orquestrador</code></td><td><code>ORQUESTRADOR.md</code></td><td><code>titulo</code>, <code>tipo_trabalho</code>, <code>tipo_ocorrencia</code>, <code>estagio</code>, <code>status</code>, <code>criado_em</code>, <code>atualizado_em</code>, <code>concluido_em</code>, <code>sprints[]</code>, <code>caminho_critico[]</code></td></tr>
+      <tr><td><code>sprint</code></td><td><code>sprint-NN/sprint.md</code></td><td><code>sprint_id</code>, <code>titulo</code>, <code>status</code>, <code>criterio_saida</code>, <code>fases[]</code>, <code>riscos[]</code>, <code>atualizado_em</code></td></tr>
+      <tr><td><code>fases</code></td><td><code>sprint-NN/fases.md</code></td><td><code>sprint_id</code>, <code>atualizado_em</code>, <code>fases[]</code> de <code>{id, titulo, status, criterio_saida, paralelizavel, paralela_com[], tasks[]}</code></td></tr>
+      <tr><td><code>tasks</code></td><td><code>sprint-NN/tasks.md</code></td><td><code>sprint_id</code>, <code>atualizado_em</code>, <code>tasks[]</code> — <strong>o arquivo mais importante para o painel</strong></td></tr>
+      <tr><td><code>bloqueios</code></td><td><code>BLOQUEIOS.md</code></td><td><code>atualizado_em</code>, <code>bloqueios[]</code> de <code>{id, task, aberto_em, resolvido_em, descricao}</code></td></tr>
+      <tr><td><code>decisoes</code></td><td><code>00-DECISOES.md</code></td><td><code>atualizado_em</code>, <code>decisoes[]</code> de <code>{id, decisao, alternativa_descartada, motivo, status, bloqueante}</code></td></tr>
+      <tr><td><code>ocorrencia</code></td><td><code>00-OCORRENCIA.md</code></td><td><code>titulo</code>, <code>tipo_ocorrencia</code>, <code>recebido_em</code>, <code>origem</code>, <code>tem_reproducao</code>, <code>modulo_afetado[]</code></td></tr>
+      <tr><td><code>causa_raiz</code></td><td><code>01-CAUSA-RAIZ.md</code></td><td><code>modo</code>, <code>comprovada</code>, <code>evidencia</code>, <code>arquivos_impactados[]</code>, <code>decisoes[]</code>, <code>atualizado_em</code></td></tr>
+      <tr><td><code>qa</code></td><td><code>QA.md</code></td><td><code>veredito</code>, <code>executado_em</code>, <code>achados[]</code> de <code>{severidade, arquivo, problema, correcao_sugerida}</code></td></tr>
+      <tr><td><code>base_indice</code></td><td><code>base/00-INDICE.md</code></td><td><code>atualizado_em</code>, <code>areas[]</code> de <code>{arquivo, titulo, lacunas}</code></td></tr>
+      <tr><td><code>relatorio_tecnico</code></td><td><code>relatorios/…/tecnico.md</code></td><td><code>titulo</code>, <code>tipo_ocorrencia</code>, <code>fechado_em</code>, <code>modulo_afetado[]</code>, <code>arquivos_alterados[]</code>, <code>testes_adicionados</code></td></tr>
+      <tr><td><code>relatorio_uso</code></td><td><code>relatorios/…/uso.md</code></td><td>o mesmo, <em>sem</em> <code>arquivos_alterados</code> nem <code>testes_adicionados</code> — é o arquivo do cliente, e não menciona código nem no YAML</td></tr>
+      <tr><td><code>relatorios_indice</code></td><td><code>relatorios/INDICE.md</code></td><td><code>atualizado_em</code>, <code>entradas[]</code> de <code>{data, oc_id, tipo, modulo, resumo, pasta}</code> — sem <code>trabalho_id</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="schema-task">A anatomia de uma task</h2>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">sprint-01/tasks.md</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>---
+<span class="tok-key">expx_schema</span>: <span class="tok-num">1</span>
+<span class="tok-key">expx_tool</span>: runx
+<span class="tok-key">kind</span>: tasks
+<span class="tok-key">trabalho_id</span>: OC-2026-0142
+<span class="tok-key">sprint_id</span>: sprint-01
+<span class="tok-key">atualizado_em</span>: <span class="tok-num">2026-08-29</span>
+<span class="tok-key">tasks</span>:
+  - <span class="tok-key">id</span>: T-01.02
+    <span class="tok-key">titulo</span>: Corrigir o arredondamento na faixa de peso
+    <span class="tok-key">fase</span>: F-01.1
+    <span class="tok-key">status</span>: concluida
+    <span class="tok-key">objetivo</span>: Fazer o calculo usar duas casas em vez de truncar
+    <span class="tok-key">arquivos</span>:
+      <span class="tok-key">cria</span>: []
+      <span class="tok-key">altera</span>: [src/frete/calculo.ts]
+    <span class="tok-key">teste_regressao</span>: test/frete/calculo.regressao.test.ts
+    <span class="tok-key">teste_integracao</span>: test/frete/calculo.int.test.ts
+    <span class="tok-key">teste_funcional</span>: test/frete/cotacao.func.test.ts
+    <span class="tok-key">criterio_aceite</span>: O teste falha antes do fix e passa depois
+    <span class="tok-key">depende_de</span>: [T-01.01]
+    <span class="tok-key">paralelizavel</span>: <span class="tok-num">false</span>
+    <span class="tok-key">concluida_em</span>: <span class="tok-num">2026-08-29</span>
+    <span class="tok-key">suite</span>: verde
+---</code></pre>
+  </div>
+  <p>O campo <code>fase</code> da task é o <strong>vínculo autoritativo</strong> entre task e fase — não a
+  lista <code>tasks[]</code> da fase. Quando as duas discordam, vale o que a task diz.</p>
+  <p><code>arquivos</code> aceita duas formas: o mapa <code>{cria, altera}</code> que as duas skills gravam, e
+  a lista plana que o contrato descrevia. A lista plana é normalizada para o mapa na leitura.</p>
+
+  <h2 id="schema-enums">Os enums</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Campo</th><th>Valores</th></tr></thead>
+    <tbody>
+      <tr><td><code>expx_tool</code></td><td><code>sprintx</code> · <code>runx</code></td></tr>
+      <tr><td><code>tipo_trabalho</code></td><td><code>feature</code> · <code>ocorrencia</code></td></tr>
+      <tr><td><code>tipo_ocorrencia</code></td><td><code>bug</code> · <code>melhoria-ui</code> · <code>melhoria-ux</code> · <code>novo-relatorio</code> · <code>regra-de-calculo</code> · <code>campo-novo</code> · <code>outro</code> · <code>null</code></td></tr>
+      <tr><td><code>estagio</code></td><td>sprintx: <code>f1</code>…<code>f6</code> · runx: <code>e1</code>…<code>e5</code></td></tr>
+      <tr><td><code>status</code> <span class="selo">trabalho, sprint, fase</span></td><td><code>nao_iniciado</code> · <code>em_andamento</code> · <code>bloqueado</code> · <code>concluido</code></td></tr>
+      <tr><td><code>status</code> <span class="selo">task</span></td><td><code>pendente</code> · <code>em_andamento</code> · <code>concluida</code> · <code>bloqueada</code></td></tr>
+      <tr><td><code>suite</code></td><td><code>verde</code> · <code>vermelha</code> · <code>nao_executada</code></td></tr>
+      <tr><td><code>veredito</code></td><td><code>aprovado</code> · <code>reprovado</code></td></tr>
+      <tr><td><code>severidade</code></td><td><code>alta</code> · <code>media</code> · <code>baixa</code></td></tr>
+      <tr><td><code>modo</code> <span class="selo">causa raiz</span></td><td><code>causa_raiz</code> · <code>analise_impacto</code></td></tr>
+      <tr><td><code>evidencia</code></td><td><code>teste_falho</code> · <code>log</code> · <code>codigo</code> · <code>null</code></td></tr>
+      <tr><td><code>status</code> <span class="selo">decisão</span></td><td><code>fechada</code> · <code>pendente</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="schema-onde">Onde o painel procura</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Caminho</th><th>O quê</th></tr></thead>
+    <tbody>
+      <tr><td><code>docs/&lt;slug&gt;/</code></td><td>features da sprintx</td></tr>
+      <tr><td><code>docs/manutencao/&lt;OC-ID&gt;-&lt;slug&gt;/</code></td><td>ocorrências da runx</td></tr>
+      <tr><td><code>docs/relatorios/</code></td><td>o histórico do que já foi entregue</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============================ EVENTOS ============================ -->
+<section class="secao" id="eventos">
+  <p class="eyebrow">Contratos</p>
+  <h1>expx-eventos v1</h1>
+  <p class="lede">O rastro append-only, e o comportamento de hooks e agentes.
+  <strong>O estado responde “onde está”; o rastro responde “o que aconteceu e quando”.</strong></p>
+
+  <h2 id="eventos-linha">A linha do rastro</h2>
+  <p>Uma linha JSON por evento, em <code>docs/eventos/&lt;trabalho_id&gt;.jsonl</code>. Escrito por hooks e
+  pelas skills nas transições de fase; ninguém edita à mão.</p>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">docs/eventos/OC-2026-0142.jsonl</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>{<span class="tok-key">"ts"</span>:<span class="tok-str">"2026-08-29T14:32:10Z"</span>,<span class="tok-key">"expx_eventos"</span>:<span class="tok-num">1</span>,<span class="tok-key">"trabalho_id"</span>:<span class="tok-str">"OC-2026-0142"</span>,
+ <span class="tok-key">"ferramenta"</span>:<span class="tok-str">"runx"</span>,<span class="tok-key">"origem"</span>:<span class="tok-str">"hook"</span>,<span class="tok-key">"evento"</span>:<span class="tok-str">"task_concluida"</span>,<span class="tok-key">"fase"</span>:<span class="tok-str">"e3"</span>,
+ <span class="tok-key">"task"</span>:<span class="tok-str">"T-01.02"</span>,<span class="tok-key">"agente"</span>:<span class="tok-str">"principal"</span>,<span class="tok-key">"resultado"</span>:<span class="tok-str">"ok"</span>,
+ <span class="tok-key">"detalhe"</span>:<span class="tok-str">"suite verde, 14 testes"</span>,<span class="tok-key">"arquivos"</span>:[<span class="tok-str">"src/frete/calculo.ts"</span>]}</code></pre>
+  </div>
+  <p>As <strong>doze chaves são obrigatórias, nesta ordem</strong>, e nenhuma é omitida — por R6, o que não se
+  aplica vai <code>null</code>, e <code>arquivos</code> vazio vai <code>[]</code>:</p>
+  <div class="pilulas">
+    <span class="selo">ts</span><span class="selo">expx_eventos</span><span class="selo">trabalho_id</span><span class="selo">ferramenta</span>
+    <span class="selo">origem</span><span class="selo">evento</span><span class="selo">fase</span><span class="selo">task</span>
+    <span class="selo">agente</span><span class="selo">resultado</span><span class="selo">detalhe</span><span class="selo">arquivos</span>
+  </div>
+  <p>Duas chaves extras são permitidas depois das doze: <code>hook</code> (o nome do hook que decidiu, quando
+  a origem é <code>hook</code>) e <code>faixa</code> (a faixa de atenção do arquivo tocado).</p>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>A validação é por contenção, nunca por igualdade de conjunto.</strong> O histórico explica:
+    a verificação de uma skill passou a reprovar toda linha escrita por outras duas, porque elas acrescentavam
+    uma chave extra legítima.</p></div>
+  </div>
+
+  <h2 id="eventos-vocabulario">O vocabulário de eventos</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Evento</th><th>Quem grava</th></tr></thead>
+    <tbody>
+      <tr><td><code>fase_iniciada</code> · <code>fase_concluida</code></td><td>a skill</td></tr>
+      <tr><td><code>task_iniciada</code> · <code>task_concluida</code> · <code>task_bloqueada</code></td><td>a skill</td></tr>
+      <tr><td><code>suite_executada</code></td><td>hook <code>PostToolUse</code></td></tr>
+      <tr><td><code>arquivo_alterado</code></td><td>hook <code>PostToolUse</code></td></tr>
+      <tr><td><code>regra_violada</code></td><td>hook em modo <code>aviso</code></td></tr>
+      <tr><td><code>acao_bloqueada</code></td><td>hook em modo <code>bloqueio</code></td></tr>
+      <tr><td><code>agente_iniciado</code> · <code>agente_concluido</code></td><td>hook <code>SubagentStop</code> e a skill</td></tr>
+      <tr><td><code>veredito_emitido</code></td><td>o agente auditor ou o QA</td></tr>
+      <tr><td><code>commit_criado</code> · <code>pr_aberto</code></td><td>a mergex</td></tr>
+    </tbody>
+  </table></div>
+  <p>O campo <code>agente</code> nunca é <code>null</code>: quando não há subagente, o valor é
+  <code>principal</code>.</p>
+
+  <h2 id="eventos-hooks">Como os hooks funcionam</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th></th><th>Claude Code</th><th>OpenCode</th></tr></thead>
+    <tbody>
+      <tr><td>Onde vivem</td><td>configuração do projeto, aninhados evento → matcher → handler</td><td>plugins JS auto-carregados de <code>.opencode/plugin/</code></td></tr>
+      <tr><td>Como bloqueiam</td><td><code>exit 2</code> em <code>PreToolUse</code>; o <code>stderr</code> volta ao modelo</td><td>lançar exceção em <code>tool.execute.before</code></td></tr>
+      <tr><td>Modo aviso</td><td>o hook registra e deixa passar</td><td><span class="selo selo--aviso">não existe no <code>before</code></span> — o contorno é anexar no <code>after</code>, com prefixo dizendo que a ação NÃO foi bloqueada</td></tr>
+      <tr><td>Canal em <code>PostToolUse</code></td><td>só JSON no <code>stdout</code>: o <code>exit 2</code> não bloqueia e o <code>stderr</code> não volta ao modelo</td><td><code>tool.execute.after</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>As sete regras que todo hook obedece</h3>
+  <ol>
+    <li><strong>Rápido</strong> — acima de 200 ms o desenvolvedor sente</li>
+    <li><strong>Silencioso quando passa</strong> — hook que fala sempre vira ruído e é ignorado</li>
+    <li><strong>Falha aberta</strong>, exceto os de segurança</li>
+    <li><strong>Sem rede</strong></li>
+    <li><strong>Mensagem acionável</strong> — dizer o que fazer, não só o que está errado</li>
+    <li><strong>Sem estado próprio</strong> — o disco já é o estado</li>
+    <li><strong>Sempre grava no rastro</strong>, inclusive quando permite</li>
+  </ol>
+
+  <h2 id="eventos-rotacao">Versionamento e rotação</h2>
+  <p>O rastro é <strong>ignorado pelo versionador</strong> por padrão. Acima de <strong>5 MB</strong> o arquivo
+  vira <code>&lt;trabalho_id&gt;.1.jsonl</code> e um novo começa; os leitores leem os dois.</p>
+
+  <div class="nota nota--ok">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 8.4l3.2 3.2L13 4.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><p><strong>Uma consequência que não estava prevista:</strong> o rastro dá o esforço real por task sem
+    ninguém anotar nada, e é isso que calibra a estimativa da <code>sprintx</code> nas features seguintes.</p></div>
+  </div>
+</section>
+
+<!-- ============================ ESTADO ============================ -->
+<section class="secao" id="estado">
+  <p class="eyebrow">Contratos</p>
+  <h1>expx-estado v1</h1>
+  <p class="lede">Um arquivo minúsculo em <code>.expx/estado.json</code>, lido pela barra de status e pelo
+  <code>expx watch</code>. Derivado e descartável: apagá-lo não pode quebrar nada.</p>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>A regra que justifica tudo.</strong> A barra roda a cada mensagem do assistente com
+    debounce de 300 ms, e se um gatilho novo dispara enquanto o script ainda executa, o harness
+    <em>mata</em> a execução em vez de enfileirar — script lento simplesmente não aparece. Por isso a barra
+    nunca lê <code>tasks.md</code>, frontmatter, plano ou rastro: só este arquivo.</p></div>
+  </div>
+
+  <h2 id="estado-formato">Os quinze campos</h2>
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">.expx/estado.json</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>{
+  <span class="tok-key">"expx_estado"</span>: <span class="tok-num">1</span>,
+  <span class="tok-key">"atualizado_em"</span>: <span class="tok-str">"2026-08-29T14:32:10Z"</span>,
+  <span class="tok-key">"trabalho"</span>: <span class="tok-str">"OC-2026-0142"</span>,
+  <span class="tok-key">"ferramenta"</span>: <span class="tok-str">"runx"</span>,
+  <span class="tok-key">"titulo_curto"</span>: <span class="tok-str">"Arredondamento na faixa"</span>,
+  <span class="tok-key">"fase"</span>: <span class="tok-str">"e3"</span>,
+  <span class="tok-key">"task"</span>: <span class="tok-str">"T-02.04"</span>,
+  <span class="tok-key">"tasks_concluidas"</span>: <span class="tok-num">7</span>,
+  <span class="tok-key">"tasks_total"</span>: <span class="tok-num">11</span>,
+  <span class="tok-key">"raio"</span>: <span class="tok-str">"medio"</span>,
+  <span class="tok-key">"orcamento_arquivos"</span>: <span class="tok-str">"2/3"</span>,
+  <span class="tok-key">"orcamento_linhas"</span>: <span class="tok-str">"31/80"</span>,
+  <span class="tok-key">"branch"</span>: <span class="tok-str">"fix/OC-2026-0142-arredondamento"</span>,
+  <span class="tok-key">"pr_estado"</span>: <span class="tok-str">"aberto"</span>,
+  <span class="tok-key">"bloqueios"</span>: <span class="tok-num">2</span>
+}</code></pre>
+  </div>
+
+  <h2 id="estado-donos">Quem escreve o quê</h2>
+  <p>Cada dono atualiza <strong>apenas os seus campos</strong>: ler, alterar o que é seu, gravar — nunca
+  sobrescrever o arquivo inteiro.</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Campos</th><th>Dono</th></tr></thead>
+    <tbody>
+      <tr><td><code>trabalho</code>, <code>ferramenta</code>, <code>titulo_curto</code>, <code>fase</code></td><td>sprintx e runx, nas transições</td></tr>
+      <tr><td><code>task</code>, <code>tasks_concluidas</code>, <code>tasks_total</code></td><td>sprintx e runx, ao abrir e fechar task</td></tr>
+      <tr><td><code>raio</code>, <code>orcamento_arquivos</code>, <code>orcamento_linhas</code></td><td>legadox</td></tr>
+      <tr><td><code>branch</code>, <code>pr_estado</code></td><td>mergex</td></tr>
+      <tr><td><code>bloqueios</code></td><td>quem registrar bloqueio</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="estado-regras">As sete regras</h2>
+  <ol>
+    <li><strong>Somente exibição</strong> — derivado e descartável; apagá-lo não pode quebrar nada</li>
+    <li><strong>Chave nunca omitida</strong> — o que não se aplica vai <code>null</code>: <code>raio</code> fora do modo legado, <code>pr_estado</code> antes do push</li>
+    <li><strong>Escrita atômica</strong> — temporário mais <code>rename</code></li>
+    <li><strong>Pequeno</strong> — abaixo de 1 KB, nada de listas</li>
+    <li><strong><code>titulo_curto</code> cabe em 30 caracteres</strong> — corte, não quebre linha</li>
+    <li><strong>Sem trabalho aberto</strong>, <code>trabalho</code>, <code>fase</code> e <code>task</code> viram <code>null</code> e o arquivo continua existindo</li>
+    <li><strong>Enums iguais aos do <code>expx-schema</code></strong> — <code>e3</code>, não <code>E3</code>; <code>alto</code>, não <code>ALTO</code></li>
+  </ol>
+  <p>A barra de status é mecanismo do Claude Code. O OpenCode tem o seu, com formato possivelmente diferente —
+  isso é <strong>lacuna a verificar, não paridade garantida</strong>.</p>
+</section>
+
+<!-- ============================ ARQUITETURA ============================ -->
+<section class="secao" id="arquitetura">
+  <p class="eyebrow">Interno</p>
+  <h1>Arquitetura</h1>
+  <p class="lede">Camadas isoladas, uma pasta por responsabilidade.
+  <strong>Nenhuma regra de negócio vive no código de linha de comando.</strong></p>
+
+  <figure class="figura">
+    <div class="figura__tela" data-diagrama="arquitetura"></div>
+  </figure>
+
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">árvore</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code>src/
+  nucleo/     <span class="tok-com">catálogo das skills, resolução de versão, busca, layout, lock, integridade</span>
+  plugin/     <span class="tok-com">montagem do plugin e dos manifestos, com escrita atômica</span>
+  harness/    <span class="tok-com">Claude Code e OpenCode, merge de configuração, backup</span>
+  doctor/     <span class="tok-com">os verificadores e o efeito de cada achado</span>
+  update/     <span class="tok-com">comparação com o lock, modificação local, compatibilidade de schema</span>
+  parser/     <span class="tok-com">leitura do expx-schema e do índice da memox, com falha aberta</span>
+  servidor/   <span class="tok-com">o painel: HTTP, websocket e o observador de arquivos</span>
+  watch/      <span class="tok-com">o watch: fontes, visão, desenho puro e terminal</span>
+  cli/        <span class="tok-com">roteamento de subcomando, flags e seleção interativa</span>
+ui/           <span class="tok-com">a interface do painel (React + Vite)</span>
+docs/contrato/  <span class="tok-com">os contratos compartilhados pelas sete skills</span></code></pre>
+  </div>
+
+  <h2 id="arq-decisoes">Padrões que atravessam o código</h2>
+
+  <h3>Escrita atômica em toda parte</h3>
+  <p>O <code>.expx/</code> é montado numa pasta temporária ao lado do destino e trocado por <code>rename</code>.
+  O <code>.expx/estado.json</code> segue a mesma regra. Nunca há um estado intermediário visível no disco.</p>
+
+  <h3>Falha aberta onde a ausência é normal</h3>
+  <p>A leitura do índice da memox devolve <code>null</code> em quatro casos, e nenhum deles é erro: arquivo
+  ausente (o índice é gitignorado — é o caso comum num clone novo), JSON inválido (o motor reescreve o arquivo
+  inteiro, e ler no instante da gravação devolve truncado), raiz que não é objeto, e versão desconhecida.
+  <strong>Degradar mostrando, nunca quebrar.</strong></p>
+
+  <h3>Dois observadores de arquivo, deliberadamente diferentes</h3>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th></th><th>Painel</th><th>Watch</th></tr></thead>
+    <tbody>
+      <tr><td>Debounce</td><td>300 ms</td><td>150 ms</td></tr>
+      <tr><td><code>.expx/</code></td><td>ignorado</td><td>observado, com profundidade zero</td></tr>
+      <tr><td>Gatilhos</td><td>um só, cego</td><td>três: plano, estado e rastro</td></tr>
+    </tbody>
+  </table></div>
+  <p>O painel ignora o <code>.expx/</code> porque é lá que a memox grava o índice: sem ignorá-lo, reindexar
+  dispararia o observador, que recarregaria o estado, que releria o índice — realimentação sem dado novo
+  nenhum. O watch, ao contrário, precisa do <code>estado.json</code>; e observa a <em>pasta</em>, não o
+  arquivo, porque a escrita atômica substitui o inode e um observador preso ao arquivo antigo pararia de ver
+  mudança depois da primeira.</p>
+
+  <h3>O debounce não é conforto, é correção</h3>
+  <p>As skills gravam <code>tasks.md</code> a cada transição de task. Ler no instante da gravação produz YAML
+  truncado — uma rejeição transitória que apareceria e sumiria da tela “fora do schema”, assustando sem motivo.</p>
+
+  <h3>Frontmatter lido com posição de linha</h3>
+  <p>O leitor de YAML foi escolhido por dar a linha de cada campo — é o que permite ao painel dizer
+  <em>onde</em> está o problema. A biblioteca mais comum para frontmatter foi descartada por dois motivos
+  medidos: não dá posição, e mantém um cache global indexado pelo conteúdo, de modo que a segunda leitura da
+  mesma string com YAML inválido devolvia dados vazios em silêncio.</p>
+
+  <h3>Cor ANSI escrita à mão</h3>
+  <p>Os pacotes de cor presentes em <code>node_modules</code> são dependências transitivas de ferramentas de
+  desenvolvimento, e somem na instalação de produção. Seis papéis semânticos — sucesso, atenção, erro,
+  destaque, apagado e neutro — cobrem tudo o que o watch precisa.</p>
+
+  <h3>Largura contada em code points, com normalização</h3>
+  <p>Nome de arquivo vindo do macOS chega decomposto, e contar caracteres como o JavaScript conta por padrão
+  erraria o corte em 80 colunas. A limitação conhecida: caractere de largura dupla conta como uma coluna —
+  aceitável porque a especificação proíbe emoji e a prosa é em português.</p>
+</section>
+
+<!-- ============================ DECISOES ============================ -->
+<section class="secao" id="decisoes">
+  <p class="eyebrow">Interno</p>
+  <h1>Decisões de arquitetura</h1>
+  <p class="lede">Este projeto foi planejado e executado com o próprio método. Estas são algumas das decisões
+  registradas, com a alternativa que foi descartada e o motivo — o formato do <code>kind: decisoes</code>.</p>
+
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Decisão</th><th>Alternativa descartada</th><th>Motivo</th></tr></thead>
+    <tbody>
+      <tr><td>O plugin fica <strong>dentro</strong> da árvore do marketplace</td><td>marketplace e plugin como irmãos, como a especificação descrevia</td><td><code>source</code> relativo que sobe de diretório é rejeitado com <code>source: Invalid input</code></td></tr>
+      <tr><td>O <code>init</code> chama <code>claude plugin marketplace add</code> e <code>install</code></td><td>apenas declarar o marketplace na configuração do projeto</td><td>cinco sintaxes testadas em execução e nenhuma carregou o plugin</td></tr>
+      <tr><td>Ler a lista de plugins habilitados como array <strong>ou</strong> objeto, e escrever objeto</td><td>seguir o array da documentação oficial</td><td>o arquivo real que o Claude Code escreve usa objeto</td></tr>
+      <tr><td>Busca por <code>git clone</code> raso, com o <code>git</code> do sistema</td><td>API REST do GitHub com token</td><td>aproveita a credencial já configurada e não esbarra em limite de requisição</td></tr>
+      <tr><td>Com OpenCode, as skills vão <strong>só</strong> para <code>.claude/skills/</code></td><td>copiar para os dois diretórios</td><td>dois <code>name</code> iguais são resolvidos por último-a-escrever-vence, em silêncio</td></tr>
+      <tr><td>Modificação local por hash SHA-256 de cada arquivo</td><td>hash único da árvore, ou comparação por data de modificação</td><td>hash por arquivo diz <em>qual</em> arquivo mudou; data de modificação muda sozinha</td></tr>
+      <tr><td>Rollback pelo versionador</td><td>guardar a versão anterior dentro do <code>.expx/</code></td><td>duplicaria no repositório o que o versionador já guarda melhor</td></tr>
+      <tr><td>Normalizador que localiza o <code>SKILL.md</code> e toma a pasta dele como raiz</td><td>assumir caminho fixo por repositório</td><td>os repositórios reais divergem, e um layout novo passa a funcionar sem mexer no CLI</td></tr>
+      <tr><td>Comandos do OpenCode sempre em <code>commands/</code>, no plural</td><td>espelhar a pasta de origem, que varia entre singular e plural</td><td>a forma documentada é o plural; a normalização acontece na escrita</td></tr>
+      <tr><td>Framework de linha de comando escrito à mão</td><td>adotar uma biblioteca de argumentos</td><td>nenhuma dependência nova para o que já estava resolvido no projeto</td></tr>
+      <tr><td>Escrita atômica por pasta temporária e <code>rename</code></td><td>escrever direto no destino final</td><td>falha no meio deixaria a instalação anterior destruída</td></tr>
+      <tr><td>O painel difunde o <strong>estado inteiro</strong> a cada mudança</td><td>enviar um delta</td><td>elimina a classe de bug em que servidor e tela discordam depois de uma mensagem perdida</td></tr>
+      <tr><td>Releitura total do disco a cada mudança</td><td>releitura incremental do arquivo que mudou</td><td>as regras cruzam referências entre arquivos; leitura parcial produziria violação falsa</td></tr>
+      <tr><td>Ordenar arquivos de risco por <strong>regressões</strong></td><td>ordenar por número de trabalhos</td><td>arquivo central é tocado por dezenas de trabalhos sem nunca ter falhado</td></tr>
+      <tr><td>A tela de Memória ignora o filtro de período</td><td>aplicar o filtro global como nas demais</td><td>o valor do sinal é justamente o antigo</td></tr>
+      <tr><td>Varredura por <strong>nome exato</strong>, não por extensão</td><td>varrer todo <code>.md</code></td><td><code>00-LACUNAS.md</code> e <code>00-AUDITORIA.md</code> não levam frontmatter por contrato</td></tr>
+      <tr><td>Um trabalho é definido pelo <strong>conteúdo</strong>, não pelo caminho</td><td>exigir uma pasta em local fixo</td><td>a regra vale para qualquer estrutura de pastas que o time adote</td></tr>
+      <tr><td>Chave omitida é <strong>violação</strong>, não rejeição</td><td>rejeitar o arquivo inteiro</td><td>rejeitar faria o trabalho sumir da tela justamente quando ele tem um problema</td></tr>
+      <tr><td>Skill sem tag não vira aviso na instalação</td><td>avisar sempre que a skill não estiver travada</td><td>nenhum repositório publica tag hoje, e o aviso disparava sempre</td></tr>
+      <tr><td>O <code>doctor</code> verifica o <strong>efeito</strong> da instalação, não só a sintaxe</td><td>validar apenas o JSON dos manifestos</td><td>arquivo sintaticamente válido e instalação quebrada são coisas diferentes</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>O plano completo, a base de conhecimento e as decisões deste projeto vivem em
+  <code>docs/expx-cli/</code>, e a integração da memória em <code>docs/memox-painel/</code>.</p>
+</section>
+
+<!-- ============================ DESENVOLVIMENTO ============================ -->
+<section class="secao" id="desenvolvimento">
+  <p class="eyebrow">Interno</p>
+  <h1>Desenvolvimento</h1>
+
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">npm</span> install
+<span class="tok-cmd">npm</span> test          <span class="tok-com"># 438 testes em 92 arquivos, sem acesso à rede</span>
+<span class="tok-cmd">npm</span> run typecheck
+<span class="tok-cmd">npm</span> run build</code></pre>
+  </div>
+
+  <div class="cartoes">
+    <div class="cartao"><div class="cartao__num">438</div><div class="cartao__rot">testes, todos passando</div></div>
+    <div class="cartao"><div class="cartao__num">92</div><div class="cartao__rot">arquivos de teste</div></div>
+    <div class="cartao"><div class="cartao__num">3</div><div class="cartao__rot">projetos no runner</div></div>
+    <div class="cartao"><div class="cartao__num">0</div><div class="cartao__rot">testes que dependem de rede</div></div>
+  </div>
+
+  <p>TypeScript estrito e ESM, Node ≥ 20.19, com o runner dividido em três projetos —
+  <code>servidor</code>, <code>ui</code> e <code>cli</code>. A suíte roda contra repositórios git locais
+  criados em tempo de teste: <strong>nenhum teste depende de rede nem do estado do GitHub.</strong></p>
+
+  <h2 id="dev-seguranca">Segurança e limites</h2>
+  <ul>
+    <li><strong>Nunca pede nem armazena credencial.</strong> Repositório privado usa a credencial de git já configurada na máquina</li>
+    <li><strong>Nunca escreve fora da raiz do projeto</strong></li>
+    <li><strong>Nunca escreve uma skill.</strong> O CLI busca e empacota; jamais edita conteúdo de skill</li>
+    <li><strong>Escrita atômica.</strong> Se falhar no meio, o <code>.expx/</code> anterior permanece intacto</li>
+    <li><strong>O painel e o watch são somente leitura</strong>, e o painel escuta apenas em <code>127.0.0.1</code></li>
+    <li>Toda escrita destrutiva pede confirmação, com flag para pular em ambiente não interativo</li>
+  </ul>
+
+  <h2 id="dev-divergencias">Divergências conhecidas entre código e contrato</h2>
+  <p>Registradas aqui porque quem for implementar um leitor precisa saber:</p>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Ponto</th><th>Situação</th></tr></thead>
+    <tbody>
+      <tr><td>O <code>kind: decisoes</code></td><td>existe no código e nas skills, mas não está descrito no contrato <code>expx-schema v1</code></td></tr>
+      <tr><td>O enum <code>ferramenta</code> do rastro</td><td>o código aceita as sete skills; o contrato ainda lista seis, sem a <code>prodx</code></td></tr>
+      <tr><td>A regra R8 (texto de uma linha)</td><td>tem validador escrito, mas ele não está aplicado a nenhum campo</td></tr>
+      <tr><td>A violação <code>chave_omitida</code></td><td>não tem rótulo em português na tela de Conformidade, e aparece pelo identificador</td></tr>
+      <tr><td>O <code>CONTRATO-expx-estado.md</code></td><td>numera as regras de 1 a 7, sem o prefixo <code>R</code> que as convenções exigem</td></tr>
+      <tr><td>A verificação de compatibilidade de schema</td><td>está implementada, mas não está ligada ao fluxo do <code>init</code> nem do <code>update</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="dev-licenca">Licença</h2>
+  <p>MIT.</p>
+</section>
+
+<footer class="rodape">
+  <p>Documentação do método <strong>Expx</strong> · gerada a partir do código-fonte do
+  <a href="https://github.com/bittencourtthulio/expxdev">expxdev</a> v0.4.1.</p>
+  <p>
+    <a href="https://github.com/bittencourtthulio/sprintx">sprintx</a> ·
+    <a href="https://github.com/bittencourtthulio/runx">runx</a> ·
+    <a href="https://github.com/bittencourtthulio/legadox">legadox</a> ·
+    <a href="https://github.com/bittencourtthulio/stackx">stackx</a> ·
+    <a href="https://github.com/bittencourtthulio/mergex">mergex</a> ·
+    <a href="https://github.com/bittencourtthulio/MemoX">memox</a> ·
+    <a href="https://github.com/bittencourtthulio/prodx">prodx</a>
+  </p>
+</footer>
+
+</div>
+<aside class="indice" id="indice" aria-label="Nesta página"></aside>
+</main>
+
+<script src="assets/diagramas.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

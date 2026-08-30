@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400" role="img" aria-label="O que cada skill grava no seu projeto e quem le o que: as skills escrevem, os hooks acrescentam o rastro, e o painel apenas le">
+  <rect width="1000" height="400" rx="12" fill="#ffffff"/>
+  <g font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+  <text x="30" y="32" font-size="12.5" fill="#59636e" letter-spacing="0.6">CADA SKILL ESCREVE NA PROPRIA PASTA · O PAINEL LE TODAS</text>
+  <rect x="30" y="36" width="660" height="32" rx="4" fill="#eaeef2"/>
+  <text x="46" y="56" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#1a7f37">docs/sprintx/features/&lt;slug&gt;/</text>
+  <text x="330" y="56" font-size="11" fill="#59636e">plano, decisoes, auditoria, estimativa</text>
+  <text x="676" y="56" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#1a7f37">sprintx</text>
+  <text x="46" y="88" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#bc4c00">docs/manutencao/&lt;OC-ID&gt;-&lt;slug&gt;/</text>
+  <text x="330" y="88" font-size="11" fill="#59636e">ocorrencia, causa raiz, plano, QA</text>
+  <text x="676" y="88" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#bc4c00">runx</text>
+  <rect x="30" y="100" width="660" height="32" rx="4" fill="#eaeef2"/>
+  <text x="46" y="120" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#bc4c00">docs/relatorios/&lt;data&gt;-&lt;OC-ID&gt;/</text>
+  <text x="330" y="120" font-size="11" fill="#59636e">relatorio tecnico e relatorio de uso</text>
+  <text x="676" y="120" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#bc4c00">runx</text>
+  <text x="46" y="152" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#cf222e">docs/legado/</text>
+  <text x="330" y="152" font-size="11" fill="#59636e">perfil, raio, divida, teste manual</text>
+  <text x="676" y="152" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#cf222e">legadox</text>
+  <rect x="30" y="164" width="660" height="32" rx="4" fill="#eaeef2"/>
+  <text x="46" y="184" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#8250df">docs/stack/</text>
+  <text x="330" y="184" font-size="11" fill="#59636e">CONVENCOES.md e LACUNAS.md</text>
+  <text x="676" y="184" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8250df">stackx</text>
+  <text x="46" y="216" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#0e7490">docs/entrega/&lt;trabalho_id&gt;/</text>
+  <text x="330" y="216" font-size="11" fill="#59636e">atencao, PR, pacote de QA, registro</text>
+  <text x="676" y="216" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#0e7490">mergex</text>
+  <rect x="30" y="228" width="660" height="32" rx="4" fill="#eaeef2"/>
+  <text x="46" y="248" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#0969da">docs/eventos/&lt;trabalho_id&gt;.jsonl</text>
+  <text x="330" y="248" font-size="11" fill="#59636e">o rastro append-only, uma linha por evento</text>
+  <text x="676" y="248" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#0969da">todas</text>
+  <text x="46" y="290" font-size="11" fill="#1f2328">&lt;trabalho_id&gt; e o mesmo nome em todas: o slug da feature, ou o OC-ID da ocorrencia.</text>
+  <text x="46" y="308" font-size="11" fill="#59636e">Um trabalho, um nome, do plano ate a entrega.</text>
+  <rect x="716" y="46" width="254" height="130" rx="7" fill="#f6f8fa" stroke="#1a7f37" stroke-width="1.6"/>
+  <text x="738" y="70" font-size="12" fill="#1a7f37" font-weight="600">quem ESCREVE</text>
+  <text x="738" y="94" font-size="11.5" fill="#1f2328">as skills</text>
+  <text x="738" y="110" font-size="10" fill="#59636e">o estado, em YAML + prosa</text>
+  <text x="738" y="134" font-size="11.5" fill="#1f2328">os hooks</text>
+  <text x="738" y="150" font-size="10" fill="#59636e">o rastro, uma linha JSON</text>
+  <text x="738" y="168" font-size="10" fill="#59636e">ninguem edita o rastro a mao</text>
+  <rect x="716" y="190" width="254" height="130" rx="7" fill="#f6f8fa" stroke="#0969da" stroke-width="1.6"/>
+  <text x="738" y="214" font-size="12" fill="#0969da" font-weight="600">quem LE</text>
+  <text x="738" y="238" font-size="11.5" fill="#1f2328">o painel</text>
+  <text x="738" y="254" font-size="10" fill="#59636e">somente leitura, sempre</text>
+  <text x="738" y="278" font-size="11.5" fill="#1f2328">as skills irmas</text>
+  <text x="738" y="294" font-size="10" fill="#59636e">CONVENCOES.md, PERFIL.md,</text>
+  <text x="738" y="308" font-size="10" fill="#59636e">causa raiz, raio de impacto</text>
+  <text x="738" y="344" font-size="10.5" fill="#59636e">A maquina le o YAML e o JSONL.</text>
+  <text x="738" y="360" font-size="10.5" fill="#59636e">A pessoa le a prosa abaixo deles.</text>
+  </g>
+</svg>

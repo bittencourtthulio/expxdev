@@ -1,0 +1,2 @@
+{"ts":"2026-08-28T09:00:00Z","expx_eventos":1,"trabalho_id":"exportacao-csv","ferramenta":"sprintx","origem":"skill","evento":"fase_iniciada","fase":"f6","task":null,"agente":"principal","resultado":"ok","detalhe":"inicio da execucao","arquivos":[]}
+{"ts":"2026-08-28T09:05:00Z","expx_eventos":1,"trabalho_id":"exportacao-csv","ferramenta":"sprintx","origem":"skill","evento":"task_iniciada","fase":"f6","task":"T-01.01","agente":"principal","resultado":"ok","detalhe":"config de ambiente","arquivos":[]}

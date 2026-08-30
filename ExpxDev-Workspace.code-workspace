@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../MergeX"
+		},
+		{
+			"path": "../StackX"
+		},
+		{
+			"path": "../Legadox"
+		},
+		{
+			"path": "../RunX"
+		},
+		{
+			"path": "../SprintX"
+		},
+		{
+			"path": "../MemoX"
+		},
+		{
+			"path": "../ProdX"
+		}
+	],
+	"settings": {}
+}

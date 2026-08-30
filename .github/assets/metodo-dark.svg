@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560" role="img" aria-label="O metodo Expx de ponta a ponta: o gatilho escolhe entre sprintx e runx, as camadas stackx e legadox modificam as duas, a mergex entrega e o painel le tudo">
+  <rect width="1000" height="560" rx="12" fill="#0d1117"/>
+  <g font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+  <text x="30" y="32" font-size="12.5" fill="#8b949e" letter-spacing="0.6">1 · O QUE CHEGOU</text>
+  <rect x="30" y="44" width="290" height="46" rx="7" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="175" y="64" text-anchor="middle" font-size="13.5" fill="#e6edf3" font-weight="600">uma ideia</text>
+  <text x="175" y="80" text-anchor="middle" font-size="10.5" fill="#8b949e">feature que nao existe</text>
+  <rect x="340" y="44" width="290" height="46" rx="7" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="485" y="64" text-anchor="middle" font-size="13.5" fill="#e6edf3" font-weight="600">um chamado</text>
+  <text x="485" y="80" text-anchor="middle" font-size="10.5" fill="#8b949e">algo quebrado em producao</text>
+  <rect x="680" y="44" width="290" height="46" rx="7" fill="#161b22" stroke="#a371f7" stroke-width="1"/>
+  <text x="825" y="64" text-anchor="middle" font-size="12" fill="#e6edf3" font-weight="600">o repositorio em que se vai mexer</text>
+  <text x="825" y="80" text-anchor="middle" font-size="10.5" fill="#8b949e">define quais camadas ligam</text>
+  <path d="M175 90 L175 116" stroke="#3fb950" stroke-width="1.6" fill="none"/>
+  <path d="M170 108 L175 118 L180 108 Z" fill="#3fb950"/>
+  <path d="M485 90 L485 116" stroke="#f0883e" stroke-width="1.6" fill="none"/>
+  <path d="M480 108 L485 118 L490 108 Z" fill="#f0883e"/>
+  <text x="30" y="140" font-size="12.5" fill="#8b949e" letter-spacing="0.6">2 · QUEM FAZ O TRABALHO</text>
+  <rect x="30" y="152" width="290" height="116" rx="7" fill="#161b22" stroke="#3fb950" stroke-width="1.8"/>
+  <text x="50" y="176" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="16" fill="#3fb950" font-weight="700">sprintx</text>
+  <text x="50" y="194" font-size="11" fill="#8b949e">Build — planeja e executa</text>
+  <text x="50" y="214" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">F1 ingestao</text>
+  <text x="182" y="214" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">F2 descoberta</text>
+  <text x="50" y="232" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">F3 plano</text>
+  <text x="182" y="232" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">F4 orquestrador</text>
+  <text x="50" y="250" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">F5 auditoria</text>
+  <text x="182" y="250" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">F6 execucao</text>
+  <rect x="340" y="152" width="290" height="116" rx="7" fill="#161b22" stroke="#f0883e" stroke-width="1.8"/>
+  <text x="360" y="176" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="16" fill="#f0883e" font-weight="700">runx</text>
+  <text x="360" y="194" font-size="11" fill="#8b949e">Run — investiga e corrige</text>
+  <text x="360" y="214" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">E1 investigacao</text>
+  <text x="492" y="214" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">E2 plano</text>
+  <text x="360" y="232" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">E3 fix</text>
+  <text x="492" y="232" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">E4 QA</text>
+  <text x="360" y="250" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10.5" fill="#8b949e">E5 relatorio</text>
+  <rect x="680" y="152" width="290" height="116" rx="7" fill="#161b22" stroke="#a371f7" stroke-width="1.8"/>
+  <text x="700" y="174" font-size="13" fill="#a371f7" font-weight="600">as camadas</text>
+  <text x="700" y="196" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#e6edf3">stackx</text>
+  <text x="700" y="210" font-size="10" fill="#8b949e">como este projeto escreve codigo</text>
+  <text x="700" y="232" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#e6edf3">legadox</text>
+  <text x="700" y="246" font-size="10" fill="#8b949e">o quanto ter medo de mexer</text>
+  <text x="700" y="262" font-size="9.5" fill="#a371f7">nao acrescentam fase: mudam o rigor</text>
+  <path d="M680 210 L650 210 L650 210" stroke="#a371f7" stroke-width="1.6" fill="none" stroke-dasharray="4 3"/>
+  <path d="M650 210 L638 210" stroke="#a371f7" stroke-width="1.6" fill="none"/>
+  <path d="M638 205 L646 210 L638 215 Z" fill="#a371f7"/>
+  <path d="M175 268 L175 296" stroke="#6e7681" stroke-width="1.6" fill="none"/>
+  <path d="M170 288 L175 298 L180 288 Z" fill="#6e7681"/>
+  <path d="M485 268 L485 296" stroke="#6e7681" stroke-width="1.6" fill="none"/>
+  <path d="M480 288 L485 298 L490 288 Z" fill="#6e7681"/>
+  <text x="30" y="320" font-size="12.5" fill="#8b949e" letter-spacing="0.6">3 · O ULTIMO METRO</text>
+  <rect x="30" y="332" width="600" height="74" rx="7" fill="#161b22" stroke="#39c5cf" stroke-width="1.8"/>
+  <text x="50" y="356" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="16" fill="#39c5cf" font-weight="700">mergex</text>
+  <text x="50" y="374" font-size="11" fill="#8b949e">branch · um commit por task · portao de prontidao · PR · pacote de QA</text>
+  <text x="50" y="394" font-size="10.5" fill="#39c5cf">classifica o diff: olho obrigatorio / leitura rapida / dispensavel</text>
+  <rect x="680" y="332" width="290" height="74" rx="7" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="825" y="358" text-anchor="middle" font-size="13" fill="#e6edf3" font-weight="600">o revisor humano</text>
+  <text x="825" y="376" text-anchor="middle" font-size="10.5" fill="#8b949e">recebe o diff ja priorizado</text>
+  <text x="825" y="392" text-anchor="middle" font-size="10.5" fill="#39c5cf">merge e sempre decisao dele</text>
+  <path d="M630 369 L672 369" stroke="#39c5cf" stroke-width="1.6" fill="none"/>
+  <path d="M664 364 L674 369 L664 374 Z" fill="#39c5cf"/>
+  <path d="M330 406 L330 434" stroke="#58a6ff" stroke-width="1.6" fill="none"/>
+  <path d="M325 426 L330 436 L335 426 Z" fill="#58a6ff"/>
+  <text x="30" y="458" font-size="12.5" fill="#8b949e" letter-spacing="0.6">4 · O QUE FICA GRAVADO</text>
+  <rect x="30" y="470" width="600" height="70" rx="7" fill="#161b22" stroke="#58a6ff" stroke-width="1.6"/>
+  <text x="50" y="492" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#58a6ff" font-weight="700">docs/</text>
+  <text x="110" y="492" font-size="11" fill="#8b949e">o estado — plano, tasks, causa raiz, QA, relatorios</text>
+  <text x="50" y="512" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#58a6ff" font-weight="700">docs/eventos/*.jsonl</text>
+  <text x="220" y="512" font-size="11" fill="#8b949e">o rastro — o que aconteceu e quando</text>
+  <text x="50" y="530" font-size="10" fill="#8b949e">expx-schema v1 e expx-eventos v1: os dois contratos que todas obedecem</text>
+  <rect x="680" y="470" width="290" height="70" rx="7" fill="#161b22" stroke="#58a6ff" stroke-width="1.6"/>
+  <text x="825" y="496" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" fill="#58a6ff" font-weight="700">expx panel</text>
+  <text x="825" y="516" text-anchor="middle" font-size="10.5" fill="#8b949e">le tudo · somente leitura · 127.0.0.1</text>
+  <path d="M630 505 L672 505" stroke="#58a6ff" stroke-width="1.6" fill="none"/>
+  <path d="M664 500 L674 505 L664 510 Z" fill="#58a6ff"/>
+  </g>
+</svg>

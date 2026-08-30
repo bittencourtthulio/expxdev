@@ -1,5 +1,6 @@
 import { interpretarSubcomando, ajudaGeral, type Subcomando } from "./subcomandos.js";
 import { principal as principalPainel } from "./principal.js";
+import { principalWatch } from "../watch/principal.js";
 import { interpretarFlagsInit } from "./init-flags.js";
 import { executarInit } from "./init.js";
 import { adicionarSkills, removerSkills } from "./selecionar.js";
@@ -60,6 +61,8 @@ function comoEscolherSkills(): string {
 
 const EXECUTORES: Partial<Record<Subcomando, Executor>> = {
   panel: async (resto) => principalPainel(resto),
+
+  watch: async (resto, saida) => principalWatch(resto, saida),
 
   init: async (resto, saida) => {
     const f = interpretarFlagsInit(resto);

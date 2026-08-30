@@ -20,7 +20,7 @@ function projetoTemporario(): string {
   return d;
 }
 
-describe("observador de arquivos", () => {
+describe.sequential("observador de arquivos", () => {
   it("integração: alterar um arquivo dispara exatamente uma releitura", async () => {
     dir = projetoTemporario();
     let disparos = 0;
@@ -49,7 +49,11 @@ describe("observador de arquivos", () => {
   });
 });
 
-describe("observação de .expx", () => {
+// Este arquivo mede AUSENCIA de evento ("nao disparou"), e por isso e o mais
+// sensivel a ruido de vizinho: rodando concorrente, o watcher de um teste
+// capta a atividade de arquivo que outro teste gera em /tmp, e a assercao
+// "disparos === 0" falha de forma intermitente. Em serie, o arquivo e estavel.
+describe.sequential("observação de .expx", () => {
   /**
    * Gravar o índice do memox NÃO pode disparar releitura: quem grava é o motor
    * do memox, disparado pelo hook `Stop`, e o painel não tem nada a reler por

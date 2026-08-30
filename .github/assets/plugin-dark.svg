@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="470" viewBox="0 0 1000 470" role="img" aria-label="Anatomia do que o expx init monta: o marketplace local, o plugin expx com so as skills escolhidas, e o lock que trava versao e hash de cada arquivo">
+  <rect width="1000" height="470" rx="12" fill="#0d1117"/>
+  <g font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+  <text x="30" y="32" font-size="12.5" fill="#8b949e" letter-spacing="0.6">O QUE O init MONTA NO SEU PROJETO</text>
+  <rect x="30" y="46" width="560" height="300" rx="7" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="52" y="74" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#58a6ff">.expx/</text>
+  <text x="70" y="96" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#e6edf3">expx-lock.json</text>
+  <text x="88" y="118" font-size="10.5" fill="#8b949e">versao exata + hash de cada arquivo</text>
+  <text x="70" y="140" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#e6edf3">marketplace/</text>
+  <text x="88" y="162" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#e6edf3">.claude-plugin/marketplace.json</text>
+  <text x="88" y="184" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#e6edf3">plugins/expx/</text>
+  <text x="106" y="206" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#e6edf3">.claude-plugin/plugin.json</text>
+  <text x="106" y="228" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#3fb950">skills/</text>
+  <text x="124" y="250" font-size="10.5" fill="#8b949e">so as que voce escolheu</text>
+  <text x="106" y="272" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#3fb950">commands/</text>
+  <text x="124" y="294" font-size="10.5" fill="#8b949e">so os comandos correspondentes</text>
+  <text x="52" y="322" font-size="11" fill="#58a6ff" font-weight="600">tudo isto e commitado</text>
+  <text x="52" y="340" font-size="10.5" fill="#8b949e">e o que faz quem clona receber as mesmas skills, sem rede</text>
+  <rect x="620" y="46" width="350" height="140" rx="7" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="642" y="70" font-size="12.5" fill="#8b949e" font-weight="600">fora do .expx/</text>
+  <text x="642" y="96" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#e6edf3">.claude/settings.json</text>
+  <text x="642" y="112" font-size="10" fill="#8b949e">mesclado, nunca sobrescrito · backup datado</text>
+  <text x="642" y="138" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#e6edf3">.opencode/commands/</text>
+  <text x="642" y="154" font-size="10" fill="#8b949e">se o OpenCode for escolhido</text>
+  <text x="642" y="174" font-size="10" fill="#f85149">JSON invalido nao e consertado: avisa e sai</text>
+  <rect x="620" y="206" width="350" height="140" rx="7" fill="#161b22" stroke="#58a6ff" stroke-width="1.6"/>
+  <text x="642" y="230" font-size="12.5" fill="#58a6ff" font-weight="600">o mesmo comando, dois nomes</text>
+  <text x="642" y="258" font-size="11" fill="#8b949e">Claude Code</text>
+  <text x="642" y="276" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12.5" fill="#e6edf3">/expx:sprintx-sprints</text>
+  <text x="642" y="296" font-size="10" fill="#8b949e">e um plugin, e plugin tem namespace</text>
+  <text x="642" y="320" font-size="11" fill="#8b949e">OpenCode</text>
+  <text x="642" y="338" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12.5" fill="#e6edf3">/sprintx-sprints</text>
+  <rect x="30" y="366" width="940" height="84" rx="7" fill="#161b22" stroke="#f85149" stroke-width="1.4"/>
+  <text x="52" y="390" font-size="12.5" fill="#f85149" font-weight="600">Por que nenhuma skill pode citar caminho fora da propria pasta</text>
+  <text x="52" y="412" font-size="11" fill="#8b949e">Ao instalar, o Claude Code COPIA o plugin para ~/.claude/plugins/cache/... e so a pasta do plugin vai junto.</text>
+  <text x="52" y="430" font-size="11" fill="#8b949e">Qualquer ../ dentro de uma skill sai da arvore copiada e deixa de resolver — em silencio. O CLI recusa instalar assim.</text>
+  </g>
+</svg>

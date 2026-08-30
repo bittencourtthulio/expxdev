@@ -1,0 +1,17 @@
+{
+  "expx_estado": 1,
+  "atualizado_em": "2026-08-29T16:05:00Z",
+  "trabalho": "OC-2026-0142",
+  "ferramenta": "runx",
+  "titulo_curto": "frete acima de 50kg",
+  "fase": "e3",
+  "task": "T-01.02",
+  "tasks_concluidas": 3,
+  "tasks_total": 5,
+  "raio": "alto",
+  "orcamento_arquivos": "2/3",
+  "orcamento_linhas": "31/40",
+  "branch": "fix/OC-2026-0142-calculo-frete",
+  "pr_estado": "aberto",
+  "bloqueios": 0
+}

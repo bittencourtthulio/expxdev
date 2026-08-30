@@ -1,0 +1,17 @@
+{
+  "expx_estado": 1,
+  "atualizado_em": "2026-08-29T14:32:10Z",
+  "trabalho": "exportacao-csv",
+  "ferramenta": "sprintx",
+  "titulo_curto": "exportacao de relatorios CSV",
+  "fase": "f6",
+  "task": "T-01.02",
+  "tasks_concluidas": 1,
+  "tasks_total": 3,
+  "raio": null,
+  "orcamento_arquivos": null,
+  "orcamento_linhas": null,
+  "branch": "feat/exportacao-csv",
+  "bloqueios": 0,
+  "pr_estado": null
+}
