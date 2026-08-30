@@ -26,10 +26,15 @@
   var SOL = '<circle cx="8" cy="8" r="3.1"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2 3.1 3.1"/>';
   var LUA = '<path d="M13.5 9.6A6 6 0 0 1 6.4 2.5a6 6 0 1 0 7.1 7.1z"/>';
 
+  /* matchMedia falta em alguns ambientes de renderizacao; sem ele o padrao e claro. */
+  var consultaEscuro = window.matchMedia
+    ? window.matchMedia("(prefers-color-scheme: dark)")
+    : null;
+
   function temaEscuro() {
     var marcado = raiz.getAttribute("data-theme");
     if (marcado) return marcado === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return consultaEscuro ? consultaEscuro.matches : false;
   }
 
   function pintarIcone() {
@@ -50,7 +55,9 @@
     pintarIcone();
   });
 
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", pintarIcone);
+  if (consultaEscuro && consultaEscuro.addEventListener) {
+    consultaEscuro.addEventListener("change", pintarIcone);
+  }
 
   /* ---------- navegacao por secao ---------- */
 
@@ -332,6 +339,8 @@
   });
 
   /* ---------- indice da secao acompanha a rolagem ---------- */
+
+  if (!window.IntersectionObserver) return;
 
   var observador = new IntersectionObserver(function (entradasObs) {
     entradasObs.forEach(function (entrada) {

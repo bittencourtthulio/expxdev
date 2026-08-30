@@ -1,0 +1,43 @@
+# Publica a documentacao de docs-site/ no GitHub Pages.
+#
+# O Pages so serve da raiz do repositorio ou de docs/, e docs/ aqui e a pasta
+# de artefatos do proprio metodo — plano, base de conhecimento e decisoes.
+# Por isso a publicacao vai por Actions, que aceita qualquer diretorio.
+
+name: documentacao
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs-site/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Uma publicacao por vez; nao cancela a que ja esta rodando.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

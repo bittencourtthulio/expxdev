@@ -24,7 +24,7 @@
       <path d="M7.6 7.4 L16.4 16.6 M16.4 7.4 L7.6 16.6" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/>
     </svg>
     <span class="marca__nome">expx<b>dev</b></span>
-    <span class="marca__versao" id="versao">v0.4.1</span>
+    <span class="marca__versao" id="versao">v0.5.0</span>
   </a>
 
   <div class="busca">
@@ -124,7 +124,7 @@
   <div class="cartoes">
     <div class="cartao"><div class="cartao__num">7</div><div class="cartao__rot">skills no catálogo</div></div>
     <div class="cartao"><div class="cartao__num">7</div><div class="cartao__rot">subcomandos do CLI</div></div>
-    <div class="cartao"><div class="cartao__num">438</div><div class="cartao__rot">testes, sem rede</div></div>
+    <div class="cartao"><div class="cartao__num">441</div><div class="cartao__rot">testes, sem rede</div></div>
     <div class="cartao"><div class="cartao__num">16</div><div class="cartao__rot">verificações do doctor</div></div>
   </div>
 
@@ -222,7 +222,7 @@
   <div class="terminal">
     <div class="terminal__barra"><span class="terminal__bolha" style="background:#ff5f57"></span><span class="terminal__bolha" style="background:#febc2e"></span><span class="terminal__bolha" style="background:#28c840"></span><span class="terminal__titulo">expx init</span></div>
     <pre><code><span class="t-ciano">  ███████ ██   ██ ██████  ██   ██</span>   <span class="t-cinza">dev</span>
-<span class="t-cinza">  o CLI do metodo Expx · v0.4.1</span>
+<span class="t-cinza">  o CLI do metodo Expx · v0.5.0</span>
 
 <span class="t-verde">?</span> <span class="t-azul">Quais skills instalar?</span> <span class="t-cinza">(espaço marca, enter confirma)</span>
  <span class="t-verde">◉</span> sprintx   <span class="t-cinza">planeja e executa features novas</span>
@@ -1266,7 +1266,7 @@ docs/legado/comparacao/&lt;trabalho_id&gt;.md  <span class="tok-com"># C9</span>
     <div class="codigo__topo"><span class="codigo__rotulo">.expx/expx-lock.json</span><button class="codigo__copiar">Copiar</button></div>
     <pre><code>{
   <span class="tok-key">"lock_version"</span>: <span class="tok-num">1</span>,
-  <span class="tok-key">"cli_version"</span>: <span class="tok-str">"0.4.1"</span>,
+  <span class="tok-key">"cli_version"</span>: <span class="tok-str">"0.5.0"</span>,
   <span class="tok-key">"harness"</span>: [<span class="tok-str">"claude"</span>],
   <span class="tok-key">"skills"</span>: {
     <span class="tok-key">"sprintx"</span>: {
@@ -1391,6 +1391,13 @@ docs/legado/comparacao/&lt;trabalho_id&gt;.md  <span class="tok-com"># C9</span>
     <code>GET</code> recebe <code>405</code> com a mensagem <code>o painel e somente leitura</code>. O servidor
     escuta exclusivamente em <code>127.0.0.1</code> — o host é constante no código, sem flag, opção ou variável
     de ambiente que mude isso.</p></div>
+  </div>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Porta já em uso não derruba o painel.</strong> O caso mais comum é o mais banal —
+    um painel anterior ainda no ar na mesma porta. Em vez de um <em>stack trace</em>, o CLI diz qual porta está
+    ocupada, oferece o endereço do painel que já está rodando e sugere uma porta livre.</p></div>
   </div>
 
   <h2 id="painel-fluxo">Como ele lê o projeto</h2>
@@ -2048,13 +2055,13 @@ docs/contrato/  <span class="tok-com">os contratos compartilhados pelas sete ski
   <div class="codigo" data-copiar>
     <div class="codigo__topo"><span class="codigo__rotulo">terminal</span><button class="codigo__copiar">Copiar</button></div>
     <pre><code><span class="tok-cmd">npm</span> install
-<span class="tok-cmd">npm</span> test          <span class="tok-com"># 438 testes em 92 arquivos, sem acesso à rede</span>
+<span class="tok-cmd">npm</span> test          <span class="tok-com"># 441 testes em 92 arquivos, sem acesso à rede</span>
 <span class="tok-cmd">npm</span> run typecheck
 <span class="tok-cmd">npm</span> run build</code></pre>
   </div>
 
   <div class="cartoes">
-    <div class="cartao"><div class="cartao__num">438</div><div class="cartao__rot">testes, todos passando</div></div>
+    <div class="cartao"><div class="cartao__num">441</div><div class="cartao__rot">testes, sem rede</div></div>
     <div class="cartao"><div class="cartao__num">92</div><div class="cartao__rot">arquivos de teste</div></div>
     <div class="cartao"><div class="cartao__num">3</div><div class="cartao__rot">projetos no runner</div></div>
     <div class="cartao"><div class="cartao__num">0</div><div class="cartao__rot">testes que dependem de rede</div></div>
@@ -2094,7 +2101,7 @@ docs/contrato/  <span class="tok-com">os contratos compartilhados pelas sete ski
 
 <footer class="rodape">
   <p>Documentação do método <strong>Expx</strong> · gerada a partir do código-fonte do
-  <a href="https://github.com/bittencourtthulio/expxdev">expxdev</a> v0.4.1.</p>
+  <a href="https://github.com/bittencourtthulio/expxdev">expxdev</a> v0.5.0.</p>
   <p>
     <a href="https://github.com/bittencourtthulio/sprintx">sprintx</a> ·
     <a href="https://github.com/bittencourtthulio/runx">runx</a> ·

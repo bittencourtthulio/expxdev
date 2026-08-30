@@ -6,6 +6,7 @@ ui/index.html
 ui/tsconfig.json
 fixtures/
 docs/
+docs-site/
 scripts/
 node_modules/
 *.tgz
