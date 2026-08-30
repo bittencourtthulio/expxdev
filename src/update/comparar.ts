@@ -1,6 +1,6 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { CATALOGO } from "../nucleo/catalogo.js";
+import { buscarNoCatalogo } from "../nucleo/catalogo.js";
 import { lerLock } from "../nucleo/lock.js";
 import { resolverAlvo } from "../nucleo/versao.js";
 
@@ -38,7 +38,7 @@ export type OpcoesComparar = {
 };
 
 function origemDe(nome: string, lockRepo: string, origens?: Record<string, string>): string {
-  return origens?.[nome] ?? lockRepo ?? CATALOGO.find((s) => s.nome === nome)?.repositorio ?? "";
+  return origens?.[nome] ?? lockRepo ?? buscarNoCatalogo(nome)?.repositorio ?? "";
 }
 
 /**

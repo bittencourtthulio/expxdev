@@ -1,8 +1,8 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { mkdtempSync, rmSync } from "node:fs";
+import { cpSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 const exec = promisify(execFile);
 
@@ -22,16 +22,49 @@ export type PedidoBusca = {
   nome: string;
   repositorio: string;
   referencia: string;
+  /**
+   * Origem local em desenvolvimento: copia a pasta em vez de clonar.
+   *
+   * Com `git clone`, mesmo de um caminho local, só chega o que foi COMMITADO —
+   * e o ponto do `EXPX_SKILLS_LOCAIS` é justamente editar a skill e ver o
+   * efeito no projeto sem commitar. A cópia é o que torna o ciclo curto.
+   */
+  local?: boolean;
 };
 
 export type ResultadoBusca =
   | { ok: true; nome: string; caminho: string; commit: string }
   | { ok: false; nome: string; erro: string };
 
+/**
+ * Copia a pasta local, com o working tree como está — alteração não commitada
+ * inclusive. O `.git` fica de fora: é grande e nada no plugin o usa.
+ *
+ * O commit registrado no lock é o do HEAD quando há repositório, com o sufixo
+ * `-local` para que o lock nunca afirme que aquele conteúdo é o daquele commit
+ * (ele pode ter edição por cima). Sem `.git`, `local` sozinho.
+ */
+async function copiarLocal(p: PedidoBusca, destino: string): Promise<ResultadoBusca> {
+  cpSync(p.repositorio, destino, {
+    recursive: true,
+    filter: (origem) => basename(origem) !== ".git",
+  });
+
+  let commit = "local";
+  try {
+    const { stdout } = await exec("git", ["rev-parse", "HEAD"], { cwd: p.repositorio });
+    commit = `${stdout.trim().slice(0, 12)}-local`;
+  } catch {
+    // pasta sem git é uso legítimo em desenvolvimento
+  }
+  return { ok: true, nome: p.nome, caminho: destino, commit };
+}
+
 /** Clona só a referência pedida, com profundidade 1. Devolve a pasta temporária. */
 export async function buscarSkill(p: PedidoBusca): Promise<ResultadoBusca> {
   const destino = mkdtempSync(join(tmpdir(), `expx-busca-${p.nome}-`));
   try {
+    if (p.local === true) return await copiarLocal(p, destino);
     await exec("git", [
       "clone",
       "--quiet",

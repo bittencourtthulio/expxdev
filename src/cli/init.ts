@@ -1,6 +1,6 @@
-import { rmSync, writeFileSync } from "node:fs";
+import { rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { CATALOGO } from "../nucleo/catalogo.js";
+import { buscarNoCatalogo } from "../nucleo/catalogo.js";
 import { resolverAlvo } from "../nucleo/versao.js";
 import { buscarSkill } from "../nucleo/busca.js";
 import { detectarLayout } from "../nucleo/layout.js";
@@ -46,8 +46,25 @@ export type ResultadoInit = {
   avisos: string[];
 };
 
+/**
+ * A origem é uma pasta em disco, e não uma URL de repositório?
+ *
+ * `git clone` aceita as duas, mas só a pasta pode ser copiada com o working
+ * tree. A checagem é sobre o disco, não sobre a forma do texto: um caminho que
+ * não existe cai no clone e produz a mensagem de erro do git, que é mais útil
+ * que um erro de cópia.
+ */
+function ehCaminhoLocal(origem: string): boolean {
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(origem) || origem.includes("@")) return false;
+  try {
+    return statSync(origem).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
 function origemDe(nome: string, origens?: Record<string, string>): string | undefined {
-  return origens?.[nome] ?? CATALOGO.find((s) => s.nome === nome)?.repositorio;
+  return origens?.[nome] ?? buscarNoCatalogo(nome)?.repositorio;
 }
 
 export async function executarInit(op: OpcoesInit): Promise<ResultadoInit> {
@@ -73,7 +90,15 @@ export async function executarInit(op: OpcoesInit): Promise<ResultadoInit> {
     }
     if (!alvo.travado) naoTravadas.push(nome);
 
-    const busca = await buscarSkill({ nome, repositorio, referencia: alvo.referencia });
+    // Origem em disco (EXPX_SKILLS_LOCAIS, ou `--origem` apontando para uma
+    // pasta) é COPIADA, não clonada: o clone traria só o commitado, e o ciclo
+    // de desenvolvimento de skill deixaria de ser curto.
+    const busca = await buscarSkill({
+      nome,
+      repositorio,
+      referencia: alvo.referencia,
+      ...(ehCaminhoLocal(repositorio) ? { local: true } : {}),
+    });
     if (!busca.ok) {
       falhas.push({ nome, erro: busca.erro });
       continue;

@@ -1,4 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
+import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { CATALOGO, buscarNoCatalogo, ehCamada, NOMES } from "./catalogo.js";
 
 describe("catálogo das skills", () => {
@@ -32,5 +35,63 @@ describe("catálogo das skills", () => {
     expect(ehCamada("stackx")).toBe(true);
     expect(ehCamada("sprintx")).toBe(false);
     expect(ehCamada("runx")).toBe(false);
+  });
+});
+
+/**
+ * Desenvolvimento das skills: apontar o `init` para o clone LOCAL.
+ *
+ * Sem isto, testar uma alteração de skill num projeto real exigia commitar e
+ * publicar a cada tentativa, porque o `init` só sabia clonar do GitHub. O
+ * `git clone` aceita caminho de sistema de arquivos como origem, então o
+ * override não precisa de nenhum caminho de código novo na busca.
+ */
+describe("origem local das skills", () => {
+  const salvo = process.env["EXPX_SKILLS_LOCAIS"];
+  const criados: string[] = [];
+  afterEach(() => {
+    if (salvo === undefined) delete process.env["EXPX_SKILLS_LOCAIS"];
+    else process.env["EXPX_SKILLS_LOCAIS"] = salvo;
+    for (const d of criados.splice(0)) rmSync(d, { recursive: true, force: true });
+  });
+
+  /** Raiz de mentira, para o teste não depender das pastas desta máquina. */
+  function raizCom(pasta: string): string {
+    const raiz = mkdtempSync(join(tmpdir(), "expx-locais-"));
+    criados.push(raiz);
+    mkdirSync(join(raiz, pasta), { recursive: true });
+    return raiz;
+  }
+
+  it("funcional: sem a variável, o catálogo aponta para o GitHub", () => {
+    delete process.env["EXPX_SKILLS_LOCAIS"];
+    expect(buscarNoCatalogo("runx")?.repositorio).toBe("https://github.com/bittencourtthulio/runx");
+  });
+
+  it("funcional: com a variável, a skill existente na pasta vem do disco", () => {
+    const raiz = raizCom("runx");
+    process.env["EXPX_SKILLS_LOCAIS"] = raiz;
+    expect(buscarNoCatalogo("runx")?.repositorio).toBe(join(raiz, "runx"));
+  });
+
+  it("funcional: acha a pasta pela capitalização real do repositório", () => {
+    // os repositórios reais são `RunX`, `MemoX`, `Legadox` — não `runx`
+    const raiz = raizCom("RunX");
+    process.env["EXPX_SKILLS_LOCAIS"] = raiz;
+    expect(buscarNoCatalogo("runx")?.repositorio).toBe(join(raiz, "RunX"));
+  });
+
+  it("funcional: skill sem pasta local continua vindo do GitHub", () => {
+    const raiz = raizCom("runx");
+    process.env["EXPX_SKILLS_LOCAIS"] = raiz;
+    // mexendo só na runx: a sprintx não está na raiz local
+    expect(buscarNoCatalogo("sprintx")?.repositorio).toBe(
+      "https://github.com/bittencourtthulio/sprintx",
+    );
+  });
+
+  it("funcional: variável vazia é tratada como ausente", () => {
+    process.env["EXPX_SKILLS_LOCAIS"] = "   ";
+    expect(buscarNoCatalogo("runx")?.repositorio).toBe("https://github.com/bittencourtthulio/runx");
   });
 });
