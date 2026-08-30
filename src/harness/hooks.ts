@@ -23,9 +23,18 @@ export type HookInstalado = {
   relativo: string;
 };
 
-/** As skills que trazem hook. Sem nenhuma, nada é criado — nem a pasta. */
+/**
+ * As skills que trazem hook. Sem nenhuma, nada é criado — nem a pasta.
+ *
+ * A árvore de hooks conta tanto quanto o arquivo solto. Quando a detecção
+ * passou a usar `arvoreHooks`, o `hooks` virou `[]` para TODAS as skills reais
+ * — elas guardam os hooks em subpasta — e esta função deixou de devolver
+ * qualquer coisa. O efeito não foi "nada é instalado": foi pior, porque a
+ * cópia da skill em `.claude/skills/` de instalações anteriores ficou órfã,
+ * com a descrição velha, competindo para sempre com a do plugin.
+ */
 export function comHooks(skills: readonly SkillMontavel[]): SkillMontavel[] {
-  return skills.filter((s) => (s.hooks?.length ?? 0) > 0);
+  return skills.filter((s) => (s.hooks?.length ?? 0) > 0 || s.arvoreHooks !== undefined);
 }
 
 /**

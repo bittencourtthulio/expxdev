@@ -1,0 +1,13 @@
+{
+  "name": "expx-local",
+  "owner": {
+    "name": "Expx"
+  },
+  "plugins": [
+    {
+      "name": "expx",
+      "source": "./plugins/expx",
+      "description": "Skills do metodo Expx instaladas neste projeto"
+    }
+  ]
+}

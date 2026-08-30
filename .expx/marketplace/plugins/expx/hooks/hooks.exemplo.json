@@ -1,0 +1,13 @@
+{
+  "_comentario": "Copie para .expx/hooks.json na raiz do repositorio para mudar o modo de cada hook. Modos: aviso (registra no rastro e deixa passar) | bloqueio (barra a acao) | desligado. Hook nao citado aqui fica no modo de nascimento: seguranca em bloqueio, metodo em aviso. Veja o estado atual com: python3 <plugin>/hooks/comum/doctor.py",
+
+  "hooks": {
+    "segredo-no-commit": "bloqueio",
+
+    "causa-antes-do-plano": "aviso",
+    "regressao-antes-do-fix": "aviso",
+    "task-so-fecha-verde": "aviso",
+    "escopo-da-ocorrencia": "aviso",
+    "sem-jargao-no-uso": "aviso"
+  }
+}

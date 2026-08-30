@@ -1,0 +1,68 @@
+{
+  "lock_version": 1,
+  "cli_version": "0.5.1",
+  "harness": [
+    "claude"
+  ],
+  "skills": {
+    "runx": {
+      "repositorio": "/Users/thuliobittencourt/Documents/Projetos/RunX",
+      "referencia": "main",
+      "travado": false,
+      "commit": "dd137bb188ff-local",
+      "resolvido_em": "2026-08-30",
+      "arquivos": {
+        "DECISOES-DA-SKILL.md": "389acbb5cdb3b44e2028ec88807318f7bf17fad3c7761cb157e77960ffc90bc5",
+        "SKILL.md": "6daef340c46d93a298437f6aa7c963e2bb539244d294b117b69d66f277cb18de",
+        "assets/TEMPLATE-INDICE.md": "79b8ab37f564d85cdf7c9f60d7a90df108805061cbcacb4179ef0dbaff583fd5",
+        "assets/TEMPLATE-ORQUESTRADOR.md": "2e96ec81aa7327be98a8e2cb7da8f90a268caa135f648dc8276a48510d0ca469",
+        "assets/TEMPLATE-analise-impacto.md": "5aff6f2d1892d87653702451d92a6d280177c0d64178bbf36b3ea6961c387d31",
+        "assets/TEMPLATE-base-area.md": "654f60b241aa3473e508948aecad0b94d982aa79fc072d38d1ebedb4a033d723",
+        "assets/TEMPLATE-causa-raiz.md": "8942741121c29f28b3b193ee828d52e92f289dacf9b37cd17129f004703fe2f2",
+        "assets/TEMPLATE-fases.md": "aea31aee16881bfc2bc0332bc40130dc2d6fa6a6f1c824d0dc099b6d9f33f340",
+        "assets/TEMPLATE-ocorrencia.md": "2b25b127cdbc8f40c4b8f094b0609072e1e77940b5f5466f701b80986e560f6d",
+        "assets/TEMPLATE-qa.md": "c28a37ed7bffd44b522fb3be96a762eeef2b2f4c31819f3a8a3fdaf1083aa65e",
+        "assets/TEMPLATE-relatorio-tecnico.md": "3a0ad8512752723e0d559a77cfb4ae4a45e3d5e9bb63fb27e3ff79be20de3442",
+        "assets/TEMPLATE-relatorio-uso.md": "7a221cec296106ac2e07a9beb7aaa6b1a9b706044f0ef1b3955598f69ed198f1",
+        "assets/TEMPLATE-sprint.md": "6ceb04579c082375d5988bf68aafac8ea29415b07eb20225c1d1194056a02723",
+        "assets/TEMPLATE-tasks.md": "9eb5765b76e49efcf98371c6f70079d7ef44a79bd1b33baaef9a8cd6cd5e4475",
+        "references/00-schema.md": "52c2d14a72a7c4d25a5f57abf234d2628eed995ece73e11e13f861444bd1c7f8",
+        "references/01-investigacao.md": "f42a57861c32d0fa5e8a6607b9a68c071ec07e498011b99fd1aca6b934bfb8ce",
+        "references/02-plano.md": "0f842fb1d37e40d4987e0c5b60c6ce35c2742c3e692bb9cee38eadec90430335",
+        "references/03-fix.md": "1bac7c37e26654b0dd9f15639851067b11101538e3607b465537c748c762c41e",
+        "references/04-qa.md": "f8f9456de8897219988d085b52b496f046ff755c44110a4cef6cc8705e64c533",
+        "references/05-relatorio.md": "95ab5cfa80f94aee09b2bb9e23313027f77b8323d30967e3b950fccd2502c1b2",
+        "references/06-estado.md": "c2f4ebcd83be48754b40c52f023d836b26c838139f352f7a51f54c89ebb90405",
+        "references/07-diagrama.md": "ecee2c7fb17c80298d2779a6c02fe2895ba775d6537fea0a792a82797cb66a73"
+      }
+    },
+    "prodx": {
+      "repositorio": "/Users/thuliobittencourt/Documents/Projetos/ProdX",
+      "referencia": "main",
+      "travado": false,
+      "commit": "7bff52cdb3b8-local",
+      "resolvido_em": "2026-08-30",
+      "arquivos": {
+        "DECISOES-DA-SKILL.md": "78dc8389b31770c4635ca0454f3ba9c8232aeb6b536d4a39f450b84c829c62aa",
+        "SKILL.md": "433f09c80469e7732ec5579b49353b7d36e0729d5df248cb215333d83a895413",
+        "assets/TEMPLATE-BRIEFING.md": "9c009a50f67550eaa7c895f3129eec750182736bb70eedd0f6da41c75ac018cd",
+        "assets/TEMPLATE-INDICE.md": "241200b57de3083d7c3a751eb8ea652c8807f156388f559bc587309a48cbfc2a",
+        "assets/TEMPLATE-PRODUTO.md": "7a40ff741afcdb662b96a43ed358b84fbcb8b5939462bb270c82340f9330593a",
+        "assets/TEMPLATE-VEREDITO.md": "257e9065f24d900028d685341659463af67b5fd5d062f676fcb8b53e31d7215a",
+        "assets/TEMPLATE-avaliacao.md": "002623cdc5835c3d6aa83fe8c43641c2158a0e2b3383ccddc6aba8125e693c50",
+        "assets/TEMPLATE-existencia.md": "60789c0e8c34a2b8f102ef7484870d9edb298011ac7e7f46e59bdbc4c6a4f96f",
+        "assets/TEMPLATE-pedido.md": "f78dd818dc4526894f9a430eba424679aea901ffe062421bb17221e55fd5fc0b",
+        "assets/TEMPLATE-resposta-cliente.md": "5b11a929eed4a1f7606b541d9b044c5c4d2ec9e1d1fe05850f84f610e4619925",
+        "references/00-triagem.md": "1d5bc0dc8c5c8a7a38a400d84f95d1a0a05aa09191252b3ed1833c8cff3c84ab",
+        "references/01-produto.md": "73470b45832e96204bf1145bb8fc7ad5f811bf5fbf0cb6dec5c1a32c2bd84173",
+        "references/02-pedido.md": "2e2fbcac6df2aa73d11082125ab6ead1825d95cf050aeca95136778dd72d20bd",
+        "references/03-existencia.md": "bf69af4e476a99ba5402dea3451f5ac3982a91dc6489becbfb52534f1043ff91",
+        "references/04-avaliacao.md": "4e3f75c7898e9bd860766feef666c21df29db7c81397df1d6341799b583b1e9f",
+        "references/05-veredito.md": "475fdd06cb8138530c89bd930fae3a60f259f15f2e9f5183f2ec6d9fb4b4cec5",
+        "references/integracao/memox.md": "a20270609b23f924977fe6f49805fb7a651ff3003415b690e12c53c86f16ffb1",
+        "references/integracao/runx.md": "f4197e4cb2604a685a986a239fbdd3999b38ad0464c786d01ede0d9dff9ca7b4",
+        "references/integracao/sprintx.md": "df4307bd683c81eb783acfde2b3c8086a323ad24acc02d4389a4a15d4adb0d85"
+      }
+    }
+  }
+}

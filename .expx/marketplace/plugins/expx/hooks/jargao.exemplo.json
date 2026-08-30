@@ -1,0 +1,7 @@
+{
+  "_comentario": "Copie para .expx/jargao.json na raiz do repositorio para ajustar o hook sem-jargao-no-uso ao vocabulario do seu cliente. `termos` acrescenta o que deve ser barrado no relatorio de uso; `ignorar` libera o que e jargao para o programador mas vocabulario normal do negocio do cliente.",
+
+  "termos": [],
+
+  "ignorar": []
+}
