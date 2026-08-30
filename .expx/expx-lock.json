@@ -1,6 +1,6 @@
 {
   "lock_version": 1,
-  "cli_version": "0.5.1",
+  "cli_version": "0.5.2",
   "harness": [
     "claude"
   ],
