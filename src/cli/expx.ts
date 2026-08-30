@@ -6,6 +6,9 @@ import { adicionarSkills, removerSkills } from "./selecionar.js";
 import { interpretarFlagsUpdate, executarUpdate } from "../update/flags.js";
 import { diagnosticar } from "../doctor/verificadores.js";
 import { avaliarSelecao } from "./selecao.js";
+import { executarWizard } from "./wizard.js";
+import { perguntadorDeTerminal, type Perguntador } from "./perguntar.js";
+import { NOMES } from "../nucleo/catalogo.js";
 import { instalarPlugin } from "../harness/instalar.js";
 import { join } from "node:path";
 
@@ -24,6 +27,35 @@ export type Saida = {
 
 export type Executor = (resto: readonly string[], saida: Required<Saida>) => Promise<number>;
 
+/**
+ * Há um humano capaz de responder?
+ *
+ * Precisa dos DOIS lados: `stdout` sozinho não basta, porque escrever no
+ * terminal não prova que existe teclado do outro lado — num `expx init < /dev/null`
+ * o `stdout` continua TTY e o wizard travaria esperando uma resposta que não vem.
+ * É `stdin` que decide se dá para perguntar.
+ */
+function ehInterativo(): boolean {
+  return process.stdin.isTTY === true && process.stdout.isTTY === true;
+}
+
+/** Injetável para o teste trocar o terminal por um roteiro de respostas. */
+let criarPerguntador: () => Perguntador = () => perguntadorDeTerminal();
+
+export function usarPerguntador(fabrica: () => Perguntador): void {
+  criarPerguntador = fabrica;
+}
+
+function comoEscolherSkills(): string {
+  return [
+    "escolha as skills com --skills, ou rode num terminal para responder na hora:",
+    "",
+    `  npx expxdev init --skills ${NOMES.slice(0, 2).join(",")} --yes`,
+    "",
+    `disponiveis: ${NOMES.join(", ")}`,
+  ].join("\n");
+}
+
 const EXECUTORES: Partial<Record<Subcomando, Executor>> = {
   panel: async (resto) => principalPainel(resto),
 
@@ -33,21 +65,43 @@ const EXECUTORES: Partial<Record<Subcomando, Executor>> = {
       saida.escreverErro(`${f.erro}\n`);
       return 1;
     }
-    const aval = avaliarSelecao(f.opcoes.skills);
+
+    let opcoes = f.opcoes;
+
+    // Faltou o que instalar e há alguém para responder? Pergunta, em vez de
+    // sair com "nenhuma skill selecionada" — que era o beco sem saída do
+    // `npx expxdev init` puro.
+    if (opcoes.skills.length === 0 && ehInterativo()) {
+      const p = criarPerguntador();
+      try {
+        const w = await executarWizard(p, opcoes, process.cwd());
+        if (!w.ok) {
+          saida.escreverErro(`${w.erro}\n`);
+          return 1;
+        }
+        opcoes = w.opcoes;
+      } finally {
+        p.fechar();
+      }
+    }
+
+    const aval = avaliarSelecao(opcoes.skills);
     if (!aval.permitido) {
       saida.escreverErro(`${aval.erros.join("\n")}\n`);
+      // Sem terminal para perguntar, a saída precisa dizer como resolver:
+      // o erro sozinho não ensina a próxima ação.
+      if (!ehInterativo()) saida.escreverErro(`\n${comoEscolherSkills()}\n`);
       return 1;
     }
     for (const a of aval.avisos) saida.escrever(`aviso: ${a}\n`);
 
-    const interativo = process.stdout.isTTY === true;
-    if (!f.opcoes.sim && !interativo) {
-      saida.escrever(`instalaria: ${f.opcoes.skills.join(", ")}\nuse --yes para aplicar sem perguntar\n`);
+    if (!opcoes.sim && !ehInterativo()) {
+      saida.escrever(`instalaria: ${opcoes.skills.join(", ")}\nuse --yes para aplicar sem perguntar\n`);
       return 0;
     }
 
-    const harness = f.opcoes.harness.length > 0 ? f.opcoes.harness : ["claude"];
-    const r = await executarInit({ raiz: process.cwd(), skills: f.opcoes.skills, harness });
+    const harness = opcoes.harness.length > 0 ? opcoes.harness : ["claude"];
+    const r = await executarInit({ raiz: process.cwd(), skills: opcoes.skills, harness });
     for (const a of r.avisos) saida.escrever(`aviso: ${a}\n`);
     for (const x of r.falhas) saida.escreverErro(`falhou ${x.nome}: ${x.erro}\n`);
     if (!r.ok) return 1;
