@@ -1,4 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { executarExpx, usarPerguntador } from "./expx.js";
 import { perguntadorDeRoteiro, perguntadorDeTerminal } from "./perguntar.js";
 
@@ -10,7 +13,9 @@ import { perguntadorDeRoteiro, perguntadorDeTerminal } from "./perguntar.js";
  */
 
 const tty = { entrada: process.stdin.isTTY, saida: process.stdout.isTTY };
+const cwdOriginal = process.cwd();
 afterEach(() => {
+  process.chdir(cwdOriginal);
   process.stdin.isTTY = tty.entrada;
   process.stdout.isTTY = tty.saida;
   usarPerguntador(() => perguntadorDeTerminal());
@@ -37,6 +42,9 @@ describe("init sem flags", () => {
   it("integração: num terminal, `init` puro pergunta em vez de sair com erro", async () => {
     process.stdin.isTTY = true;
     process.stdout.isTTY = true;
+    // Num diretório limpo: rodando dentro do próprio repo, o `init` encontra o
+    // .expx/ de verdade e pergunta "reconfigurar?" antes de chegar às skills.
+    process.chdir(mkdtempSync(join(tmpdir(), "expx-init-")));
     // Recusa a confirmação final: o teste comprova que PERGUNTOU, sem tocar
     // na rede nem no disco para instalar de verdade.
     const q = perguntadorDeRoteiro(["1", "", "n", "n"]);
