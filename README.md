@@ -19,6 +19,18 @@
 <strong>O CLI do método Expx</strong> — instala, atualiza e diagnostica o ecossistema<br>
 de skills para <a href="https://claude.com/claude-code">Claude Code</a> e <a href="https://opencode.ai">OpenCode</a>, e sobe o painel de operação.
 
+<p>
+  <a href="https://bittencourtthulio.github.io/expxdev/"><strong>📘 Documentação completa</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://bittencourtthulio.github.io/expxdev/#instalacao">Instalação</a>
+  &nbsp;·&nbsp;
+  <a href="https://bittencourtthulio.github.io/expxdev/#ecossistema">As sete skills</a>
+  &nbsp;·&nbsp;
+  <a href="https://bittencourtthulio.github.io/expxdev/#comandos">Referência do CLI</a>
+  &nbsp;·&nbsp;
+  <a href="https://bittencourtthulio.github.io/expxdev/#schema">Contratos</a>
+</p>
+
 </div>
 
 ```bash
