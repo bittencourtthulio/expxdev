@@ -110,3 +110,67 @@ describe("init de ponta a ponta", () => {
     expect(existsSync(join(p.raiz, ".opencode/skills"))).toBe(false);
   });
 });
+
+describe("skill sem tag publicada", () => {
+  it("integração: instala do topo da branch e NAO polui a saida com aviso", async () => {
+    // O caso real: nenhum dos seis repositorios do metodo publica tag hoje.
+    // Sem tag, o alvo e a branch padrao — e isso e instalacao valida, nao
+    // defeito. Um aviso que dispara para toda skill em toda instalacao deixa
+    // de ser lido e afoga os avisos que pedem atencao de verdade.
+    p = projetoTemporario("fixtures/cli/projeto-limpo");
+    const repo = criarRepoSkill({ nome: "sprintx", tags: [], layout: "embutido" });
+    repos.push(repo);
+
+    const r = await executarInit({
+      raiz: p.raiz,
+      skills: ["sprintx"],
+      harness: ["claude"],
+      origens: { sprintx: repo },
+    });
+
+    expect(r.ok).toBe(true);
+    expect(r.instaladas).toEqual(["sprintx"]);
+    expect(r.avisos.join(" ")).not.toContain("travada");
+  });
+
+  it("funcional: o fato continua no resultado e no lock, para o doctor achar", async () => {
+    // Silenciar o aviso nao apaga a informacao: quem procurar — o doctor, o
+    // lock — continua encontrando que a skill segue branch, nao versao.
+    p = projetoTemporario("fixtures/cli/projeto-limpo");
+    const repo = criarRepoSkill({ nome: "sprintx", tags: [], layout: "embutido" });
+    repos.push(repo);
+
+    const r = await executarInit({
+      raiz: p.raiz,
+      skills: ["sprintx"],
+      harness: ["claude"],
+      origens: { sprintx: repo },
+    });
+
+    expect(r.naoTravadas).toEqual(["sprintx"]);
+    const l = lerLock(p.raiz);
+    expect(l.ok).toBe(true);
+    if (!l.ok) return;
+    expect(l.lock.skills["sprintx"]?.travado).toBe(false);
+  });
+
+  it("funcional: skill COM tag continua travada na maior versao", async () => {
+    p = projetoTemporario("fixtures/cli/projeto-limpo");
+    const repo = criarRepoSkill({ nome: "sprintx", tags: ["v1.0.0", "v1.10.0", "v1.2.0"], layout: "embutido" });
+    repos.push(repo);
+
+    const r = await executarInit({
+      raiz: p.raiz,
+      skills: ["sprintx"],
+      harness: ["claude"],
+      origens: { sprintx: repo },
+    });
+
+    expect(r.naoTravadas).toEqual([]);
+    const l = lerLock(p.raiz);
+    expect(l.ok).toBe(true);
+    if (!l.ok) return;
+    expect(l.lock.skills["sprintx"]?.referencia).toBe("v1.10.0");
+    expect(l.lock.skills["sprintx"]?.travado).toBe(true);
+  });
+});

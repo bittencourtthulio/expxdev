@@ -139,10 +139,16 @@ export async function executarInit(op: OpcoesInit): Promise<ResultadoInit> {
   }
 
   for (const t of temporarios) rmSync(t, { recursive: true, force: true });
-  for (const n of naoTravadas) {
-    avisos.push(`${n} nao esta travada em versao publicada: o repositorio nao tem tag`);
-  }
 
+  // Skill sem tag NÃO vira aviso na instalação. Hoje nenhum dos seis
+  // repositórios publica tag, então o aviso disparava para todas, em toda
+  // instalação — e um aviso que aparece sempre deixa de ser lido, levando
+  // junto os avisos que realmente pedem atenção (settings.json em conflito,
+  // skill que falhou).
+  //
+  // O fato continua registrado onde é procurado de propósito: `travado: false`
+  // no lock, e o achado `skill-nao-travada` do `doctor`. Some o ruído da
+  // instalação, não a informação.
   return { ok: instaladas.length > 0, instaladas, falhas, naoTravadas, avisos };
 }
 
