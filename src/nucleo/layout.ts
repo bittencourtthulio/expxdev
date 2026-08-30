@@ -4,10 +4,10 @@ import { basename, join } from "node:path";
 /**
  * Normaliza os layouts de repositório de skill.
  *
- * Os seis repositórios reais têm DOIS layouts distintos
+ * Os sete repositórios reais têm DOIS layouts distintos
  * (`base/08-repositorios-reais.md`):
  *
- *   embutido — `.claude/skills/<nome>/` + `.claude/commands/`  (sprintx, stackx, mergex, memox)
+ *   embutido — `.claude/skills/<nome>/` + `.claude/commands/`  (sprintx, stackx, mergex, memox, prodx)
  *   plano    — `skill/` + `commands/`                          (runx, legadox)
  *
  * Por isso a detecção NÃO assume caminho fixo: procura o `SKILL.md` e toma o

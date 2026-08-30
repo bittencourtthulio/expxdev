@@ -10,7 +10,7 @@ import { join, relative } from "node:path";
  * para o vazio. O experimento está em
  * `docs/expx-cli/base/09-validacao-marketplace-local.md`.
  *
- * Hoje as seis skills reais estão limpas; a verificação existe para pegar a
+ * Hoje as sete skills reais estão limpas; a verificação existe para pegar a
  * regressão futura antes que ela chegue no usuário.
  */
 

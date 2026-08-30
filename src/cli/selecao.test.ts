@@ -22,6 +22,21 @@ describe("regras de seleção de skills", () => {
     expect(r.integracoes).toContain("mergex");
   });
 
+  it("funcional: prodx com runx sinaliza a integração disponível", () => {
+    // o briefing assinado do prodx é a entrada do trabalho na skill irmã
+    const r = avaliarSelecao(["prodx", "runx"]);
+    expect(r.permitido).toBe(true);
+    expect(r.integracoes).toContain("prodx");
+    expect(r.avisos).toHaveLength(0);
+  });
+
+  it("funcional: prodx sozinho avisa que é camada, e nunca bloqueia", () => {
+    const r = avaliarSelecao(["prodx"]);
+    expect(r.permitido).toBe(true);
+    expect(r.avisos.join(" ")).toContain("camada");
+    expect(r.integracoes).toHaveLength(0);
+  });
+
   it("funcional: nome fora do catálogo é recusado nomeando o nome", () => {
     const r = avaliarSelecao(["sprintx", "inexistente"]);
     expect(r.permitido).toBe(false);

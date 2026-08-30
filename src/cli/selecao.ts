@@ -41,6 +41,8 @@ export function avaliarSelecao(selecao: readonly string[]): Avaliacao {
     );
   }
   if (selecao.includes("mergex") && temBase) integracoes.push("mergex");
+  // o prodx entrega o BRIEFING.md que a sprintx lê na F1 e a runx vira 00-OCORRENCIA.md
+  if (selecao.includes("prodx") && temBase) integracoes.push("prodx");
 
   return {
     permitido: erros.length === 0,

@@ -41,7 +41,7 @@ com namespace no Claude Code (`/expx:sprintx-sprints`) e sem namespace no OpenCo
 | | |
 |---|---|
 | **[O problema que o método resolve](#o-problema-que-o-método-resolve)** | por que existe um método, e não só um prompt melhor |
-| **[O ecossistema](#o-ecossistema)** | as seis skills, o que cada uma faz e quando usar |
+| **[O ecossistema](#o-ecossistema)** | as sete skills, o que cada uma faz e quando usar |
 | **[Como as peças se encaixam](#como-as-peças-se-encaixam)** | o fluxo de ponta a ponta, com o diagrama |
 | **[As três camadas de garantia](#as-três-camadas-de-garantia)** | skill, hook e agente — da mais fraca à mais forte |
 | **[Os dois contratos](#os-dois-contratos-compartilhados)** | `expx-schema` e `expx-eventos`, o que faz tudo se encaixar |
@@ -87,7 +87,7 @@ painel que lê o que elas gravam.
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/bittencourtthulio/expxdev/main/.github/assets/ecossistema-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/bittencourtthulio/expxdev/main/.github/assets/ecossistema-light.svg">
-  <img alt="O CLI busca as seis skills, empacota como plugin e configura os dois harnesses" src="https://raw.githubusercontent.com/bittencourtthulio/expxdev/main/.github/assets/ecossistema-light.svg" width="100%">
+  <img alt="O CLI busca as sete skills, empacota como plugin e configura os dois harnesses" src="https://raw.githubusercontent.com/bittencourtthulio/expxdev/main/.github/assets/ecossistema-light.svg" width="100%">
 </picture>
 
 | Skill | O que faz | Quando usar |
@@ -98,10 +98,15 @@ painel que lê o que elas gravam.
 | **[stackx](https://github.com/bittencourtthulio/stackx)** | **Camada** que descobre o dialeto técnico do repositório — convenções, padrões e aderência — para o código novo parecer com o que já existe. | Entrar em base desconhecida |
 | **[mergex](https://github.com/bittencourtthulio/mergex)** | Versionamento, entrega e revisão: branch, um commit por task, portão de prontidão, descrição de PR, pacote de QA e abertura do pull request. | Levar o trabalho pronto até o merge |
 | **[memox](https://github.com/bittencourtthulio/MemoX)** | **Camada** de memória: indexa os artefatos já fechados — relatórios, causas raiz, decisões, QA, entregas — e responde o que já se sabe sobre um arquivo antes de alguém mexer nele. | Saber se este arquivo já quebrou antes |
+| **[prodx](https://github.com/bittencourtthulio/prodx)** | **Camada** de produto: recebe o pedido cru, tria, verifica se o que foi pedido já existe e emite um veredito com evidência para assinatura humana. Três dos quatro vereditos encerram o pedido sem gerar código. | Decidir se vale fazer, antes de planejar |
 
-**Camadas** (`legadox`, `stackx`, `memox`) sozinhas não fazem nada — elas modificam o
+**Camadas** (`legadox`, `stackx`, `memox`, `prodx`) sozinhas não fazem nada — elas modificam o
 comportamento de `sprintx` e `runx`. O CLI avisa se você selecionar uma camada sem base, mas
 nunca impede.
+
+A `prodx` é a única que roda **antes** das outras: ela decide *se* existe trabalho; as demais
+tratam de *como* fazê-lo. Sem ela, o método planeja com rigor uma feature que não deveria
+existir — o desperdício mais caro de uma software house, porque passa em todos os testes.
 
 ### Build e Run são a mesma disciplina
 
@@ -131,9 +136,9 @@ execução autônoma guiada por um arquivo orquestrador.
   <img alt="O metodo Expx de ponta a ponta: o gatilho escolhe entre sprintx e runx, as camadas stackx e legadox modificam as duas, a mergex entrega e o painel le tudo" src="https://raw.githubusercontent.com/bittencourtthulio/expxdev/main/.github/assets/metodo-light.svg" width="100%">
 </picture>
 
-Em uma frase: **`stackx` diz como este projeto escreve código, `legadox` diz o quanto ter
-medo, `sprintx` e `runx` fazem o trabalho, `mergex` entrega, e o `expxdev` instala todos e
-mostra o andamento.**
+Em uma frase: **`prodx` diz se vale fazer, `stackx` diz como este projeto escreve código,
+`legadox` diz o quanto ter medo, `sprintx` e `runx` fazem o trabalho, `mergex` entrega, e o
+`expxdev` instala todos e mostra o andamento.**
 
 A composição concreta, skill a skill:
 
@@ -142,8 +147,9 @@ A composição concreta, skill a skill:
 | **`docs/stack/CONVENCOES.md`** *(stackx)* | a ingestão lê as convenções; a descoberta transforma cada PROPOSTA em pergunta; o plano define caminho do teste, camada e padrão de erro **por task**, em vez de deixar para o executor; a auditoria roda a verificação de aderência | a investigação consulta o cartucho conforme o sintoma; o fix obedece o padrão de teste e o isolamento de banco |
 | **`docs/legado/PERFIL.md`** *(legadox)* | cada fase ganha rigor proporcional ao raio: caracterização antes de alterar, orçamento de diff por task, plano de reversão, aprovação humana em raio ALTO | idem, sobre os cinco estágios |
 | **`mergex` instalada** | abre a branch no início da F6, commita cada task, e entrega ao fim | abre a branch no início do E3, e entrega entre o E4 e o E5 |
+| **`docs/produto/` com veredito assinado** *(prodx)* | a F1 recebe o `BRIEFING.md` como entrada, e o plano referencia o `PD-ID` de origem | o `BRIEFING.md` vira o `00-OCORRENCIA.md`, com o tipo já classificado e o comportamento intencional já verificado |
 
-> **A ausência nunca quebra.** Sem `CONVENCOES.md`, sem `PERFIL.md` ou sem a `mergex`, as
+> **A ausência nunca quebra.** Sem `CONVENCOES.md`, sem `PERFIL.md`, sem a `mergex` ou sem a `prodx`, as
 > outras skills se comportam exatamente como se comportariam sem elas. Insumo que não existe
 > vira aviso do que falta — nunca invenção, e nunca um erro que trava o trabalho.
 
@@ -213,7 +219,7 @@ o contrato `expx-eventos`, documentado abaixo.
 
 ## Os dois contratos compartilhados
 
-As seis skills não se conhecem por código: elas se encontram em dois contratos escritos. É
+As sete skills não se conhecem por código: elas se encontram em dois contratos escritos. É
 isso que permite instalar três delas e não as outras duas, atualizar uma sem tocar nas demais,
 ou escrever uma sexta amanhã.
 
@@ -610,7 +616,7 @@ src/
   servidor/   o painel: HTTP, websocket e o observador de arquivos (somente leitura)
   cli/        linha de comando: roteamento de subcomando, flags e seleção interativa
 ui/           a interface do painel (React + Vite)
-docs/contrato/  os dois contratos compartilhados pelas seis skills
+docs/contrato/  os dois contratos compartilhados pelas sete skills
 ```
 
 Este projeto foi planejado e executado com o próprio método — o plano completo, a base de

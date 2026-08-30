@@ -76,8 +76,8 @@ describe("chaves extras", () => {
 });
 
 describe("ferramenta e agente", () => {
-  it("integração: as seis skills do método emitem rastro válido", () => {
-    for (const f of ["sprintx", "runx", "mergex", "legadox", "stackx", "memox"]) {
+  it("integração: as sete skills do método emitem rastro válido", () => {
+    for (const f of ["sprintx", "runx", "mergex", "legadox", "stackx", "memox", "prodx"]) {
       const r = validarRastro(j(linha({ ferramenta: f })));
       expect(r.defeitos, `ferramenta ${f}`).toEqual([]);
     }
