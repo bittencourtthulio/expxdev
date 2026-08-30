@@ -63,3 +63,49 @@ describe("merge do settings.json", () => {
     expect(settings(p.raiz)).toEqual(primeira);
   });
 });
+
+describe("registro dos hooks no settings", () => {
+  /**
+   * `mesclarSettings` não conhece a lista de skills instaladas — inferir ali
+   * acoplaria o harness ao catálogo. Por isso os hooks chegam por parâmetro
+   * (decisão D-22). Sem hooks, o arquivo mantém exatamente a forma de sempre
+   * (D-23): um projeto sem memox não ganha chave nova.
+   */
+  const HOOKS = [
+    { skill: "memox", relativo: ".claude/hooks/memox-injetar.sh" },
+    { skill: "memox", relativo: ".claude/hooks/memox-reindexar.sh" },
+  ];
+
+  it("integração: registra os dois eventos preservando o que já existia", () => {
+    p = projetoTemporario("fixtures/cli/settings-valido");
+    const r = mesclarSettings(p.raiz, "/caminho/do/marketplace", HOOKS);
+    expect(r.ok).toBe(true);
+
+    const d = settings(p.raiz) as Record<string, any>;
+    expect(d["hooks"]["UserPromptSubmit"]).toHaveLength(1);
+    expect(d["hooks"]["Stop"]).toHaveLength(1);
+    // nada do que já estava no arquivo se perde
+    expect(d["extraKnownMarketplaces"]).toBeDefined();
+    expect(d["enabledPlugins"]).toBeDefined();
+  });
+
+  it("funcional: sem hooks o arquivo mantém só as duas chaves de sempre", () => {
+    p = projetoTemporario("fixtures/cli/settings-ausente");
+    mesclarSettings(p.raiz, "/caminho/do/marketplace", []);
+    const d = settings(p.raiz);
+    expect(Object.keys(d).sort()).toEqual(["enabledPlugins", "extraKnownMarketplaces"]);
+  });
+
+  it("funcional: rodar duas vezes com os mesmos hooks não duplica a entrada", () => {
+    p = projetoTemporario("fixtures/cli/settings-ausente");
+    mesclarSettings(p.raiz, "/caminho/do/marketplace", HOOKS);
+    const primeira = JSON.stringify(settings(p.raiz));
+
+    mesclarSettings(p.raiz, "/caminho/do/marketplace", HOOKS);
+    const d = settings(p.raiz) as Record<string, any>;
+    // hook duplicado faria o memox rodar duas vezes por prompt (D-16)
+    expect(d["hooks"]["UserPromptSubmit"]).toHaveLength(1);
+    expect(d["hooks"]["Stop"]).toHaveLength(1);
+    expect(JSON.stringify(d)).toBe(primeira);
+  });
+});

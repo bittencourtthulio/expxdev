@@ -30,6 +30,13 @@ export const Icone = {
       <path d="M1.8 6.1h12.4M6.4 6.1v7.6" />
     </Svg>
   ),
+  /** Camadas empilhadas com um marcador: o que já se sabe sobre este código. */
+  Memoria: (p: { tamanho?: number }): JSX.Element => (
+    <Svg {...p}>
+      <path d="M8 1.9 14 4.7 8 7.5 2 4.7z" />
+      <path d="M2 8l6 2.8L14 8M2 11.3l6 2.8 6-2.8" />
+    </Svg>
+  ),
   Conformidade: (p: { tamanho?: number }): JSX.Element => (
     <Svg {...p}>
       <path d="M8 1.8 13.6 4v3.7c0 3-2.3 5.6-5.6 6.5C4.7 13.3 2.4 10.7 2.4 7.7V4z" />

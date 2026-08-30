@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { existsSync, rmSync } from "node:fs";
+import { existsSync, rmSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { criarRepoSkill } from "../teste/repo-fixture.js";
 import { detectarLayout } from "./layout.js";
@@ -53,5 +53,59 @@ describe("detecção de layout do repositório de skill", () => {
     rmSync(join(vazio, ".claude/skills/x/SKILL.md"));
     const r = detectarLayout(vazio, "x");
     expect(r.ok).toBe(false);
+  });
+});
+
+describe("detecção de hooks", () => {
+  it("integração: devolve os hooks da skill quando o repositório os traz", () => {
+    const raiz = criarRepoSkill({
+      nome: "memox",
+      tags: [],
+      hooks: ["memox-injetar.sh", "memox-reindexar.sh"],
+      assets: { "memox.py": "print('memox')\n" },
+    });
+    criados.push(raiz);
+    const l = detectarLayout(raiz, "memox");
+    expect(l.ok).toBe(true);
+    if (l.ok) expect(l.hooks).toHaveLength(2);
+  });
+
+  it("funcional: só os hooks com o prefixo da skill entram; sem hooks, lista vazia", () => {
+    const comHooks = criarRepoSkill({
+      nome: "memox",
+      tags: [],
+      // o `.sh` de outra skill não pode ser arrastado junto
+      hooks: ["memox-injetar.sh", "outra-coisa.sh"],
+    });
+    criados.push(comHooks);
+    const l = detectarLayout(comHooks, "memox");
+    expect(l.ok).toBe(true);
+    if (l.ok) {
+      expect(l.hooks).toHaveLength(1);
+      expect(l.hooks[0]).toContain("memox-injetar.sh");
+    }
+
+    const semHooks = criarRepoSkill({ nome: "sprintx", tags: [] });
+    criados.push(semHooks);
+    const s = detectarLayout(semHooks, "sprintx");
+    expect(s.ok).toBe(true);
+    if (s.ok) expect(s.hooks).toEqual([]);
+  });
+
+  it("funcional: PASTA de hook não é confundida com hook", () => {
+    // a sprintx real tem `.claude/hooks/sprintx/` como DIRETÓRIO. Tratá-lo como
+    // arquivo faz o `cp` do init falhar com EISDIR e derruba a instalação
+    // inteira. A pasta já viaja junto na cópia da própria skill.
+    const repo = criarRepoSkill({ nome: "sprintx", tags: [], hooks: ["sprintx-um.sh"] });
+    criados.push(repo);
+    mkdirSync(join(repo, ".claude/hooks/sprintx"), { recursive: true });
+    writeFileSync(join(repo, ".claude/hooks/sprintx/interno.sh"), "#!/usr/bin/env bash\n");
+
+    const l = detectarLayout(repo, "sprintx");
+    expect(l.ok).toBe(true);
+    if (l.ok) {
+      expect(l.hooks).toHaveLength(1);
+      expect(l.hooks[0]).toContain("sprintx-um.sh");
+    }
   });
 });

@@ -29,7 +29,11 @@ export async function observar(
 
   const watcher: FSWatcher = watch(raiz, {
     ignoreInitial: true,
-    ignored: (caminho: string) => /(^|[/\\])(node_modules|\.git|dist)([/\\]|$)/.test(caminho),
+    // `.expx` está aqui por um motivo próprio: é onde o memox grava o índice.
+    // Sem ignorá-lo, reindexar dispara o watcher, que recarrega o estado, que
+    // relê o índice — e uma reindexação disparada por mudança em `docs/`
+    // realimentaria a recarga sem dado novo nenhum (decisão D-06).
+    ignored: (caminho: string) => /(^|[/\\])(node_modules|\.git|dist|\.expx)([/\\]|$)/.test(caminho),
     awaitWriteFinish: { stabilityThreshold: Math.max(50, debounceMs / 3), pollInterval: 20 },
   });
 

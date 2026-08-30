@@ -21,6 +21,13 @@ export type OpcoesRepo = {
   layout?: Layout;
   /** Conteúdo extra do SKILL.md, para fixtures que precisam de um corpo específico. */
   corpo?: string;
+  /**
+   * Hooks da skill, gravados em `.claude/hooks/` com bit de execução. O memox é
+   * a primeira skill do catálogo que traz hooks; antes dele nenhuma trazia.
+   */
+  hooks?: readonly string[];
+  /** Arquivos de `assets/` da skill, por nome. É onde mora o motor do memox. */
+  assets?: Readonly<Record<string, string>>;
 };
 
 function git(cwd: string, ...args: readonly string[]): void {
@@ -66,6 +73,26 @@ export function criarRepoSkill(op: OpcoesRepo): string {
     join(raiz, comandos, `${op.nome}.md`),
     `---\ndescription: comando ${op.nome}\n---\n\nInvoque a skill \`${op.nome}\`.\n`,
   );
+
+  // Os hooks nascem executáveis: o README do memox manda `chmod +x`, e um hook
+  // sem o bit sai `0` em silêncio — indistinguível de "nada a injetar".
+  if (op.hooks !== undefined && op.hooks.length > 0) {
+    const dirHooks = join(raiz, ".claude", "hooks");
+    mkdirSync(dirHooks, { recursive: true });
+    for (const h of op.hooks) {
+      writeFileSync(join(dirHooks, h), `#!/usr/bin/env bash\n# hook de fixture ${h}\nexit 0\n`, {
+        mode: 0o755,
+      });
+    }
+  }
+
+  if (op.assets !== undefined) {
+    const dirAssets = join(raiz, skill, "assets");
+    mkdirSync(dirAssets, { recursive: true });
+    for (const [nome, conteudo] of Object.entries(op.assets)) {
+      writeFileSync(join(dirAssets, nome), conteudo);
+    }
+  }
 
   git(raiz, "init", "-q", "-b", "main");
   git(raiz, "add", "-A");

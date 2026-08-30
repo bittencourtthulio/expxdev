@@ -4,10 +4,10 @@ import { basename, join } from "node:path";
 /**
  * Normaliza os layouts de repositório de skill.
  *
- * Os cinco repositórios reais têm DOIS layouts distintos
+ * Os seis repositórios reais têm DOIS layouts distintos
  * (`base/08-repositorios-reais.md`):
  *
- *   embutido — `.claude/skills/<nome>/` + `.claude/commands/`  (sprintx, stackx, mergex)
+ *   embutido — `.claude/skills/<nome>/` + `.claude/commands/`  (sprintx, stackx, mergex, memox)
  *   plano    — `skill/` + `commands/`                          (runx, legadox)
  *
  * Por isso a detecção NÃO assume caminho fixo: procura o `SKILL.md` e toma o
@@ -16,11 +16,13 @@ import { basename, join } from "node:path";
  */
 
 export type Layout =
-  | { ok: true; nome: string; raizSkill: string; comandos: string[] }
+  | { ok: true; nome: string; raizSkill: string; comandos: string[]; hooks: string[] }
   | { ok: false; erro: string };
 
 const IGNORADAS = new Set([".git", "node_modules", ".github", "dist"]);
 const CANDIDATAS_COMANDOS = [join(".claude", "commands"), "commands", join(".opencode", "commands"), join(".opencode", "command")];
+/** Hooks são mecanismo do Claude Code; o OpenCode não tem equivalente mapeado. */
+const CANDIDATAS_HOOKS = [join(".claude", "hooks"), "hooks"];
 
 /** Procura o SKILL.md mais raso, ignorando pastas de infraestrutura. */
 function acharSkillMd(raiz: string, profundidadeMax = 5): string | undefined {
@@ -72,6 +74,32 @@ function acharComandos(raiz: string, nome: string): string[] {
   return [];
 }
 
+/**
+ * Os hooks da skill. Mesmo PREFIXO usado para os comandos (`<nome>` ou
+ * `<nome>-*`), mas sem o filtro de extensão: hooks são `.sh`, não `.md`.
+ */
+function acharHooks(raiz: string, nome: string): string[] {
+  for (const c of CANDIDATAS_HOOKS) {
+    const dir = join(raiz, c);
+    if (!existsSync(dir)) continue;
+    const arquivos = readdirSync(dir)
+      .filter((a) => a === nome || a.startsWith(`${nome}-`) || a.startsWith(`${nome}.`))
+      .map((a) => join(dir, a))
+      // Repositório real tem PASTA de hook (a sprintx tem `.claude/hooks/sprintx/`),
+      // e não só arquivo solto. Só arquivo é hook copiável; pasta é organização
+      // interna da skill e já viaja junto na cópia da própria skill.
+      .filter((a) => {
+        try {
+          return statSync(a).isFile();
+        } catch {
+          return false;
+        }
+      });
+    if (arquivos.length > 0) return arquivos;
+  }
+  return [];
+}
+
 export function detectarLayout(raizRepo: string, nomeEsperado: string): Layout {
   const skillMd = acharSkillMd(raizRepo);
   if (skillMd === undefined) return { ok: false, erro: `SKILL.md nao encontrado em ${raizRepo}` };
@@ -81,5 +109,11 @@ export function detectarLayout(raizRepo: string, nomeEsperado: string): Layout {
   if (nome !== nomeEsperado) {
     return { ok: false, erro: `nome da skill e "${nome}", esperado "${nomeEsperado}"` };
   }
-  return { ok: true, nome, raizSkill, comandos: acharComandos(raizRepo, nome) };
+  return {
+    ok: true,
+    nome,
+    raizSkill,
+    comandos: acharComandos(raizRepo, nome),
+    hooks: acharHooks(raizRepo, nome),
+  };
 }

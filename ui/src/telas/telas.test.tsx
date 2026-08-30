@@ -7,8 +7,10 @@ import { Detalhe } from "./Detalhe.js";
 import { Conformidade } from "./Conformidade.js";
 import { Historico } from "./Historico.js";
 import { ForaDoSchema } from "./ForaDoSchema.js";
-import { estadoFixture, estadoRuimFixture } from "./fixture.js";
+import { Memoria } from "./Memoria.js";
+import { estadoFixture, estadoRuimFixture, estadoMemoriaFixture } from "./fixture.js";
 import { PERIODO_PADRAO } from "../periodo.js";
+import { csvDaMemoria } from "./Memoria.js";
 
 const propsPeriodo = { periodo: PERIODO_PADRAO, aoMudarPeriodo: () => undefined };
 
@@ -184,5 +186,39 @@ describe("fora do schema", () => {
     expect(screen.queryByText("sem frontmatter valido")).toBeNull();
     fireEvent.click(screen.getByRole("tab", { name: /Anteriores ao schema/ }));
     expect(screen.getAllByText("sem frontmatter valido").length).toBeGreaterThan(0);
+  });
+});
+
+describe("memória", () => {
+  const comIndice: Estado = estadoMemoriaFixture();
+
+  it("integração: mostra as quatro seções da memória", () => {
+    render(<Memoria estado={comIndice} />);
+    expect(screen.getByText("Arquivos de risco")).toBeDefined();
+    expect(screen.getByText("Regressões")).toBeDefined();
+    expect(screen.getByText("Coincidências de arquivo")).toBeDefined();
+    expect(screen.getByText("Artefatos contaminados")).toBeDefined();
+  });
+
+  it("funcional: lista o arquivo de risco e o artefato contaminado da fixture", () => {
+    const { container } = render(<Memoria estado={comIndice} />);
+    const texto = container.textContent ?? "";
+    expect(texto).toContain("src/frete/calculo.ts");
+    expect(texto).toContain("docs/relatorios/2026-08-25-OC-2026-0199-integracao/tecnico.md");
+  });
+
+  it("funcional: sem índice, ensina a gerar e não mostra tabela nenhuma", () => {
+    const { container } = render(<Memoria estado={{ ...ok, memoria: null }} />);
+    expect(container.textContent).toContain("memox.py");
+    expect(container.querySelector("table")).toBeNull();
+  });
+
+  it("funcional: o CSV traz cabeçalho com ponto e vírgula e uma linha por arquivo", () => {
+    const { container } = render(<Memoria estado={comIndice} />);
+    expect(container.querySelector(".botao")).not.toBeNull();
+    const csv = csvDaMemoria(comIndice.memoria);
+    const linhas = csv.split("\n");
+    expect(linhas[0]).toBe("arquivo;trabalhos;regressoes;reprovacoes_qa;ultimo_trabalho_em;faixa_atencao");
+    expect(linhas).toHaveLength((comIndice.memoria?.arquivos_de_risco.length ?? 0) + 1);
   });
 });

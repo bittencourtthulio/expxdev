@@ -8,14 +8,16 @@ import { Detalhe } from "./telas/Detalhe.js";
 import { Conformidade } from "./telas/Conformidade.js";
 import { Historico } from "./telas/Historico.js";
 import { ForaDoSchema } from "./telas/ForaDoSchema.js";
+import { Memoria } from "./telas/Memoria.js";
 
-type Secao = "dashboard" | "trabalhos" | "conformidade" | "historico" | "schema";
+type Secao = "dashboard" | "trabalhos" | "conformidade" | "historico" | "memoria" | "schema";
 
 const SECOES: Array<{ id: Secao; rotulo: string; Ic: (p: { tamanho?: number }) => JSX.Element }> = [
   { id: "dashboard", rotulo: "Dashboard", Ic: Icone.Painel },
   { id: "trabalhos", rotulo: "Trabalhos", Ic: Icone.Feature },
   { id: "conformidade", rotulo: "Conformidade", Ic: Icone.Conformidade },
   { id: "historico", rotulo: "Histórico", Ic: Icone.Historico },
+  { id: "memoria", rotulo: "Memória", Ic: Icone.Memoria },
   { id: "schema", rotulo: "Fora do schema", Ic: Icone.Alerta },
 ];
 
@@ -40,6 +42,8 @@ export function App(): JSX.Element {
 
   const contagens: Partial<Record<Secao, number>> = {
     conformidade: recortado.violacoes.length,
+    // regressões, não trabalhos: é o sinal que diz "este arquivo já voltou"
+    memoria: estado.memoria?.regressoes.length ?? 0,
     schema: estado.rejeicoes.length,
   };
   return (
@@ -107,6 +111,8 @@ export function App(): JSX.Element {
         {secao === "historico" ? (
           <Historico estado={recortado} periodo={periodo} aoMudarPeriodo={setPeriodo} />
         ) : null}
+        {/* a memória não é recortada por período: o valor do sinal é o antigo (D-08) */}
+        {secao === "memoria" ? <Memoria estado={estado} /> : null}
         {secao === "schema" ? <ForaDoSchema estado={estado} /> : null}
       </main>
 

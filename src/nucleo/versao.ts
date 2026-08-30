@@ -11,7 +11,7 @@ const exec = promisify(execFile);
  * explicitamente que a skill não está travada em versão publicada — nunca
  * segue a branch em silêncio quando existe tag.
  *
- * Hoje NENHUMA das cinco skills tem tag (`base/08-repositorios-reais.md`), então
+ * Hoje NENHUMA das seis skills tem tag (`base/08-repositorios-reais.md`), então
  * o caminho de fallback é o corrente na prática, não a exceção.
  */
 

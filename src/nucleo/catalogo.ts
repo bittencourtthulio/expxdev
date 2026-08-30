@@ -1,5 +1,5 @@
 /**
- * As cinco skills do ecossistema Expx.
+ * As seis skills do ecossistema Expx.
  *
  * Fonte única do que o CLI sabe instalar. `papel` é o texto mostrado na seleção
  * do `init`; `camada` marca as skills que, sozinhas, não fazem nada — elas
@@ -44,6 +44,12 @@ export const CATALOGO: readonly Skill[] = [
     repositorio: "https://github.com/bittencourtthulio/mergex",
     papel: "versionamento, entrega e revisao de pull requests",
     camada: false,
+  },
+  {
+    nome: "memox",
+    repositorio: "https://github.com/bittencourtthulio/MemoX",
+    papel: "memoria do projeto, indexa os artefatos ja fechados",
+    camada: true,
   },
 ] as const;
 

@@ -3,6 +3,9 @@ import { descobrirTrabalhos, type Trabalho } from "../descoberta/trabalhos.js";
 import type { Aceito, Rejeicao } from "../leitura/rejeicao.js";
 import type { Fase as FaseYaml, Task, Bloqueio } from "../esquema/kinds.js";
 import type { StatusTrabalho } from "../esquema/enums.js";
+import { lerIndice } from "../memoria/ler.js";
+import { projetar } from "../memoria/projetar.js";
+import type { Memoria } from "../memoria/tipos.js";
 
 /** Uma task já situada no seu arquivo, para a conformidade poder apontar arquivo e linha. */
 export type TaskSituada = Task & {
@@ -81,6 +84,12 @@ export type Projeto = {
   rejeicoes: Rejeicao[];
   /** Violações da R6, colhidas na leitura (ver `colherOmitidas`). */
   omitidas: ChaveOmitida[];
+  /**
+   * A memória do projeto, do índice que o memox grava em
+   * `.expx/memoria/indice.json`. É `null` quando não há índice — o caso comum,
+   * já que o índice é local e gitignorado (decisão D-02).
+   */
+  memoria: Memoria | null;
   lido_em: string;
 };
 
@@ -238,6 +247,10 @@ export function montarProjeto(raiz: string, agora: Date = new Date()): Projeto {
     })),
   );
 
+  // A leitura falha aberta: índice ausente ou corrompido vira `null`, nunca
+  // derruba a montagem do projeto inteiro (decisão D-05).
+  const indice = lerIndice(raiz);
+
   return {
     raiz,
     trabalhos: montados,
@@ -245,6 +258,7 @@ export function montarProjeto(raiz: string, agora: Date = new Date()): Projeto {
     historico: montarHistorico(aceitos),
     rejeicoes,
     omitidas,
+    memoria: indice === null ? null : projetar(indice),
     lido_em: agora.toISOString(),
   };
 }

@@ -11,6 +11,7 @@ import { escreverAtomico } from "../plugin/atomico.js";
 import { montarMarketplace, type SkillMontavel } from "../plugin/montagem.js";
 import { materializarOpenCode } from "../harness/opencode.js";
 import { mesclarSettings } from "../harness/settings.js";
+import { instalarHooks } from "../harness/hooks.js";
 import { ORIGEM_DO_PLUGIN } from "../plugin/manifestos.js";
 
 /**
@@ -97,7 +98,7 @@ export async function executarInit(op: OpcoesInit): Promise<ResultadoInit> {
       continue;
     }
 
-    montaveis.push({ nome, raizSkill: layout.raizSkill, comandos: layout.comandos });
+    montaveis.push({ nome, raizSkill: layout.raizSkill, comandos: layout.comandos, hooks: layout.hooks });
     travadas[nome] = {
       repositorio,
       referencia: alvo.referencia,
@@ -125,9 +126,13 @@ export async function executarInit(op: OpcoesInit): Promise<ResultadoInit> {
       writeFileSync(join(tmp, "expx-lock.json"), `${JSON.stringify(lock, null, 2)}\n`);
     });
 
+    // A cópia acontece AQUI, antes do `rmSync` dos clones lá embaixo: feita
+    // depois, leria pasta já apagada (decisão D-26).
+    const hooksInstalados = instalarHooks(op.raiz, montaveis);
+
     if (op.harness.includes("claude")) {
       const marketplace = join(op.raiz, ".expx", "marketplace");
-      const r = mesclarSettings(op.raiz, marketplace);
+      const r = mesclarSettings(op.raiz, marketplace, hooksInstalados);
       if (!r.ok) avisos.push(r.erro);
     }
     if (op.harness.includes("opencode")) materializarOpenCode(op.raiz, montaveis);

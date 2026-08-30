@@ -1,0 +1,795 @@
+{
+  "versao": 1,
+  "gerado_em": "2026-08-29",
+  "duracao_ms": 5,
+  "raiz": ".",
+  "totais": {
+    "trabalhos": 6,
+    "arquivos": 4,
+    "modulos": 3,
+    "regressoes": 1,
+    "coincidencias": 2,
+    "artefatos_contaminados": 1
+  },
+  "trabalhos": {
+    "OC-2026-0100": {
+      "trabalho_id": "OC-2026-0100",
+      "titulo": "Faixa de peso com limite exclusivo",
+      "tipo": "bug",
+      "tipo_trabalho": null,
+      "ferramenta": "runx",
+      "data": "2026-05-10",
+      "modulos": [
+        "frete"
+      ],
+      "arquivos_alterados": [
+        "src/frete/calculo.ts",
+        "src/frete/tabela.ts"
+      ],
+      "arquivos_impactados": [
+        "src/frete/tabela.ts"
+      ],
+      "causa": "A faixa de peso tinha o limite superior exclusivo onde deveria ser inclusivo.",
+      "modo": "causa_raiz",
+      "comprovada": true,
+      "risco_residual": "O arredondamento do valor final continua usando floor.",
+      "decisoes": [
+        {
+          "id": "D-01",
+          "decisao": "Ajustar limite superior da faixa",
+          "alternativa_descartada": "Reescrever a tabela inteira",
+          "motivo": "Escopo menor",
+          "status": "fechada",
+          "origem": "docs/manutencao/OC-2026-0100-faixa-peso/01-CAUSA-RAIZ.md"
+        }
+      ],
+      "lacunas": [],
+      "qa": null,
+      "entrega": null,
+      "resumo": "A faixa de peso tinha o limite superior exclusivo onde deveria ser inclusivo.",
+      "fontes": [
+        "docs/relatorios/2026-05-10-OC-2026-0100-faixa-peso/tecnico.md",
+        "docs/relatorios/INDICE.md",
+        "docs/manutencao/OC-2026-0100-faixa-peso/01-CAUSA-RAIZ.md"
+      ]
+    },
+    "OC-2026-0150": {
+      "trabalho_id": "OC-2026-0150",
+      "titulo": "Rotulo do frete no checkout",
+      "tipo": "melhoria-ui",
+      "tipo_trabalho": null,
+      "ferramenta": "runx",
+      "data": "2026-08-20",
+      "modulos": [
+        "checkout"
+      ],
+      "arquivos_alterados": [
+        "src/checkout/label.tsx"
+      ],
+      "arquivos_impactados": [
+        "src/frete/calculo.ts"
+      ],
+      "causa": "Troca do rotulo exibido ao lado do valor de frete.",
+      "modo": "analise_impacto",
+      "comprovada": null,
+      "risco_residual": null,
+      "decisoes": [],
+      "lacunas": [],
+      "qa": null,
+      "entrega": null,
+      "resumo": "Troca do rotulo exibido ao lado do valor de frete.",
+      "fontes": [
+        "docs/relatorios/2026-08-20-OC-2026-0150-label-frete/tecnico.md",
+        "docs/relatorios/INDICE.md",
+        "docs/manutencao/OC-2026-0150-label-frete/01-CAUSA-RAIZ.md"
+      ]
+    },
+    "OC-2026-0199": {
+      "trabalho_id": "OC-2026-0199",
+      "titulo": "Integracao com gateway de pagamento",
+      "tipo": "bug",
+      "tipo_trabalho": null,
+      "ferramenta": "runx",
+      "data": "2026-08-25",
+      "modulos": [
+        "pagamento"
+      ],
+      "arquivos_alterados": [
+        "src/pagamento/gateway.ts"
+      ],
+      "arquivos_impactados": [],
+      "causa": "A chave usada em homologacao era [redigido pelo memox] e estava hardcoded.",
+      "modo": null,
+      "comprovada": null,
+      "risco_residual": null,
+      "decisoes": [],
+      "lacunas": [],
+      "qa": null,
+      "entrega": null,
+      "resumo": "A chave usada em homologacao era [redigido pelo memox] e estava hardcoded.",
+      "fontes": [
+        "docs/relatorios/2026-08-25-OC-2026-0199-integracao/tecnico.md"
+      ]
+    },
+    "OC-2026-0142": {
+      "trabalho_id": "OC-2026-0142",
+      "titulo": "Calculo de frete divergente acima de 50kg",
+      "tipo": "bug",
+      "tipo_trabalho": null,
+      "ferramenta": "runx",
+      "data": "2026-08-29",
+      "modulos": [
+        "checkout",
+        "frete"
+      ],
+      "arquivos_alterados": [
+        "src/frete/calculo.ts"
+      ],
+      "arquivos_impactados": [
+        "src/frete/calculo.ts"
+      ],
+      "causa": "O arredondamento acima de 50kg usava floor onde deveria usar round meio-para-cima.",
+      "modo": "causa_raiz",
+      "comprovada": true,
+      "risco_residual": "A faixa exata de 50kg depende do mesmo caminho de codigo.",
+      "decisoes": [
+        {
+          "id": "D-01",
+          "decisao": "Corrigir arredondamento na faixa de peso",
+          "alternativa_descartada": "Reescrever a tabela de faixas",
+          "motivo": "Escopo menor e risco menor de regressao",
+          "status": "fechada",
+          "origem": "docs/manutencao/OC-2026-0142-arredondamento/01-CAUSA-RAIZ.md"
+        }
+      ],
+      "lacunas": [],
+      "qa": {
+        "veredito": "reprovado",
+        "executado_em": "2026-08-29",
+        "achados": [
+          {
+            "severidade": "alta",
+            "arquivo": "src/frete/calculo.ts",
+            "problema": "Faixa de 50kg exata voltou a arredondar para baixo"
+          }
+        ],
+        "origem": "docs/manutencao/OC-2026-0142-arredondamento/QA.md"
+      },
+      "entrega": {
+        "branch": "fix/OC-2026-0142-arredondamento",
+        "commits": [
+          "a1b2c3d",
+          "e4f5g6h"
+        ],
+        "faixa_atencao": {
+          "src/frete/calculo.ts": "alta"
+        },
+        "faixa": "alta",
+        "origem": "docs/entregas/OC-2026-0142/ENTREGA.md"
+      },
+      "resumo": "O arredondamento acima de 50kg usava floor onde deveria usar round meio-para-cima.",
+      "fontes": [
+        "docs/relatorios/2026-08-29-OC-2026-0142-arredondamento/tecnico.md",
+        "docs/relatorios/INDICE.md",
+        "docs/manutencao/OC-2026-0142-arredondamento/01-CAUSA-RAIZ.md",
+        "docs/manutencao/OC-2026-0142-arredondamento/QA.md",
+        "docs/entregas/OC-2026-0142/ENTREGA.md"
+      ]
+    },
+    "exportacao-csv-relatorios": {
+      "trabalho_id": "exportacao-csv-relatorios",
+      "titulo": "Exportacao de relatorios em CSV",
+      "tipo": null,
+      "tipo_trabalho": "feature",
+      "ferramenta": "sprintx",
+      "data": "2026-07-01",
+      "modulos": [],
+      "arquivos_alterados": [],
+      "arquivos_impactados": [],
+      "causa": null,
+      "modo": null,
+      "comprovada": null,
+      "risco_residual": null,
+      "decisoes": [
+        {
+          "id": "D-01",
+          "decisao": "Envio assincrono via fila existente",
+          "alternativa_descartada": "Envio sincrono na request",
+          "motivo": "Nao segurar a resposta do usuario",
+          "status": "fechada",
+          "origem": "docs/exportacao-csv/00-DECISOES.md"
+        }
+      ],
+      "lacunas": [],
+      "qa": null,
+      "entrega": null,
+      "resumo": null,
+      "fontes": [
+        "docs/exportacao-csv/00-DECISOES.md",
+        "docs/exportacao-csv/ORQUESTRADOR.md"
+      ]
+    },
+    "OC-2026-0142-arredondamento": {
+      "trabalho_id": "OC-2026-0142-arredondamento",
+      "titulo": null,
+      "tipo": null,
+      "tipo_trabalho": null,
+      "ferramenta": null,
+      "data": null,
+      "modulos": [],
+      "arquivos_alterados": [],
+      "arquivos_impactados": [],
+      "causa": null,
+      "modo": null,
+      "comprovada": null,
+      "risco_residual": null,
+      "decisoes": [],
+      "lacunas": [
+        {
+          "lacuna": "A documentacao nao dizia qual regra de arredondamento o contrato exige.",
+          "origem": "docs/manutencao/OC-2026-0142-arredondamento/base/00-LACUNAS.md"
+        },
+        {
+          "lacuna": "Nao havia registro de qual faixa de peso e inclusiva.",
+          "origem": "docs/manutencao/OC-2026-0142-arredondamento/base/00-LACUNAS.md"
+        },
+        {
+          "lacuna": "A documentacao nao dizia qual regra de arredondamento o contrato exige.",
+          "origem": "docs/manutencao/OC-2026-0142-arredondamento/base/00-LACUNAS.md"
+        },
+        {
+          "lacuna": "Nao havia registro de qual faixa de peso e inclusiva.",
+          "origem": "docs/manutencao/OC-2026-0142-arredondamento/base/00-LACUNAS.md"
+        }
+      ],
+      "qa": null,
+      "entrega": null,
+      "resumo": null,
+      "fontes": [
+        "docs/manutencao/OC-2026-0142-arredondamento/base/00-LACUNAS.md"
+      ]
+    }
+  },
+  "por_arquivo": {
+    "src/frete/calculo.ts": [
+      {
+        "trabalho_id": "OC-2026-0100",
+        "titulo": "Faixa de peso com limite exclusivo",
+        "data": "2026-05-10",
+        "tipo": "bug",
+        "ferramenta": "runx",
+        "causa": "A faixa de peso tinha o limite superior exclusivo onde deveria ser inclusivo.",
+        "papel": "alterado",
+        "artefato": "docs/relatorios/2026-05-10-OC-2026-0100-faixa-peso/tecnico.md"
+      },
+      {
+        "trabalho_id": "OC-2026-0150",
+        "titulo": "Rotulo do frete no checkout",
+        "data": "2026-08-20",
+        "tipo": "melhoria-ui",
+        "ferramenta": "runx",
+        "causa": "Troca do rotulo exibido ao lado do valor de frete.",
+        "papel": "impactado",
+        "artefato": "docs/relatorios/2026-08-20-OC-2026-0150-label-frete/tecnico.md"
+      },
+      {
+        "trabalho_id": "OC-2026-0142",
+        "titulo": "Calculo de frete divergente acima de 50kg",
+        "data": "2026-08-29",
+        "tipo": "bug",
+        "ferramenta": "runx",
+        "causa": "O arredondamento acima de 50kg usava floor onde deveria usar round meio-para-cima.",
+        "papel": "alterado",
+        "artefato": "docs/relatorios/2026-08-29-OC-2026-0142-arredondamento/tecnico.md"
+      }
+    ],
+    "src/frete/tabela.ts": [
+      {
+        "trabalho_id": "OC-2026-0100",
+        "titulo": "Faixa de peso com limite exclusivo",
+        "data": "2026-05-10",
+        "tipo": "bug",
+        "ferramenta": "runx",
+        "causa": "A faixa de peso tinha o limite superior exclusivo onde deveria ser inclusivo.",
+        "papel": "alterado",
+        "artefato": "docs/relatorios/2026-05-10-OC-2026-0100-faixa-peso/tecnico.md"
+      }
+    ],
+    "src/checkout/label.tsx": [
+      {
+        "trabalho_id": "OC-2026-0150",
+        "titulo": "Rotulo do frete no checkout",
+        "data": "2026-08-20",
+        "tipo": "melhoria-ui",
+        "ferramenta": "runx",
+        "causa": "Troca do rotulo exibido ao lado do valor de frete.",
+        "papel": "alterado",
+        "artefato": "docs/relatorios/2026-08-20-OC-2026-0150-label-frete/tecnico.md"
+      }
+    ],
+    "src/pagamento/gateway.ts": [
+      {
+        "trabalho_id": "OC-2026-0199",
+        "titulo": "Integracao com gateway de pagamento",
+        "data": "2026-08-25",
+        "tipo": "bug",
+        "ferramenta": "runx",
+        "causa": "A chave usada em homologacao era [redigido pelo memox] e estava hardcoded.",
+        "papel": "alterado",
+        "artefato": "docs/relatorios/2026-08-25-OC-2026-0199-integracao/tecnico.md"
+      }
+    ]
+  },
+  "por_modulo": {
+    "frete": [
+      {
+        "trabalho_id": "OC-2026-0100",
+        "titulo": "Faixa de peso com limite exclusivo",
+        "data": "2026-05-10",
+        "tipo": "bug",
+        "ferramenta": "runx",
+        "causa": "A faixa de peso tinha o limite superior exclusivo onde deveria ser inclusivo.",
+        "papel": "modulo",
+        "artefato": "docs/relatorios/2026-05-10-OC-2026-0100-faixa-peso/tecnico.md"
+      },
+      {
+        "trabalho_id": "OC-2026-0142",
+        "titulo": "Calculo de frete divergente acima de 50kg",
+        "data": "2026-08-29",
+        "tipo": "bug",
+        "ferramenta": "runx",
+        "causa": "O arredondamento acima de 50kg usava floor onde deveria usar round meio-para-cima.",
+        "papel": "modulo",
+        "artefato": "docs/relatorios/2026-08-29-OC-2026-0142-arredondamento/tecnico.md"
+      }
+    ],
+    "checkout": [
+      {
+        "trabalho_id": "OC-2026-0150",
+        "titulo": "Rotulo do frete no checkout",
+        "data": "2026-08-20",
+        "tipo": "melhoria-ui",
+        "ferramenta": "runx",
+        "causa": "Troca do rotulo exibido ao lado do valor de frete.",
+        "papel": "modulo",
+        "artefato": "docs/relatorios/2026-08-20-OC-2026-0150-label-frete/tecnico.md"
+      },
+      {
+        "trabalho_id": "OC-2026-0142",
+        "titulo": "Calculo de frete divergente acima de 50kg",
+        "data": "2026-08-29",
+        "tipo": "bug",
+        "ferramenta": "runx",
+        "causa": "O arredondamento acima de 50kg usava floor onde deveria usar round meio-para-cima.",
+        "papel": "modulo",
+        "artefato": "docs/relatorios/2026-08-29-OC-2026-0142-arredondamento/tecnico.md"
+      }
+    ],
+    "pagamento": [
+      {
+        "trabalho_id": "OC-2026-0199",
+        "titulo": "Integracao com gateway de pagamento",
+        "data": "2026-08-25",
+        "tipo": "bug",
+        "ferramenta": "runx",
+        "causa": "A chave usada em homologacao era [redigido pelo memox] e estava hardcoded.",
+        "papel": "modulo",
+        "artefato": "docs/relatorios/2026-08-25-OC-2026-0199-integracao/tecnico.md"
+      }
+    ]
+  },
+  "por_decisao": {
+    "frete": [
+      {
+        "id": "D-01",
+        "decisao": "Ajustar limite superior da faixa",
+        "alternativa_descartada": "Reescrever a tabela inteira",
+        "motivo": "Escopo menor",
+        "status": "fechada",
+        "origem": "docs/manutencao/OC-2026-0100-faixa-peso/01-CAUSA-RAIZ.md",
+        "trabalho_id": "OC-2026-0100"
+      },
+      {
+        "id": "D-01",
+        "decisao": "Corrigir arredondamento na faixa de peso",
+        "alternativa_descartada": "Reescrever a tabela de faixas",
+        "motivo": "Escopo menor e risco menor de regressao",
+        "status": "fechada",
+        "origem": "docs/manutencao/OC-2026-0142-arredondamento/01-CAUSA-RAIZ.md",
+        "trabalho_id": "OC-2026-0142"
+      }
+    ],
+    "checkout": [
+      {
+        "id": "D-01",
+        "decisao": "Corrigir arredondamento na faixa de peso",
+        "alternativa_descartada": "Reescrever a tabela de faixas",
+        "motivo": "Escopo menor e risco menor de regressao",
+        "status": "fechada",
+        "origem": "docs/manutencao/OC-2026-0142-arredondamento/01-CAUSA-RAIZ.md",
+        "trabalho_id": "OC-2026-0142"
+      }
+    ]
+  },
+  "por_termo": {
+    "superior": [
+      "OC-2026-0100"
+    ],
+    "com": [
+      "OC-2026-0100",
+      "OC-2026-0199"
+    ],
+    "limite": [
+      "OC-2026-0100"
+    ],
+    "tinha": [
+      "OC-2026-0100"
+    ],
+    "exclusivo": [
+      "OC-2026-0100"
+    ],
+    "ser": [
+      "OC-2026-0100"
+    ],
+    "deveria": [
+      "OC-2026-0100",
+      "OC-2026-0142"
+    ],
+    "peso": [
+      "OC-2026-0100",
+      "OC-2026-0142"
+    ],
+    "onde": [
+      "OC-2026-0100",
+      "OC-2026-0142"
+    ],
+    "faixa": [
+      "OC-2026-0100",
+      "OC-2026-0142"
+    ],
+    "inclusivo": [
+      "OC-2026-0100"
+    ],
+    "ajustar": [
+      "OC-2026-0100"
+    ],
+    "valor": [
+      "OC-2026-0150"
+    ],
+    "exibido": [
+      "OC-2026-0150"
+    ],
+    "frete": [
+      "OC-2026-0150",
+      "OC-2026-0142"
+    ],
+    "rotulo": [
+      "OC-2026-0150"
+    ],
+    "checkout": [
+      "OC-2026-0150"
+    ],
+    "troca": [
+      "OC-2026-0150"
+    ],
+    "lado": [
+      "OC-2026-0150"
+    ],
+    "estava": [
+      "OC-2026-0199"
+    ],
+    "integracao": [
+      "OC-2026-0199"
+    ],
+    "pagamento": [
+      "OC-2026-0199"
+    ],
+    "gateway": [
+      "OC-2026-0199"
+    ],
+    "pelo": [
+      "OC-2026-0199"
+    ],
+    "era": [
+      "OC-2026-0199"
+    ],
+    "homologacao": [
+      "OC-2026-0199"
+    ],
+    "hardcoded": [
+      "OC-2026-0199"
+    ],
+    "memox": [
+      "OC-2026-0199"
+    ],
+    "chave": [
+      "OC-2026-0199"
+    ],
+    "usada": [
+      "OC-2026-0199"
+    ],
+    "redigido": [
+      "OC-2026-0199"
+    ],
+    "acima": [
+      "OC-2026-0142"
+    ],
+    "round": [
+      "OC-2026-0142"
+    ],
+    "corrigir": [
+      "OC-2026-0142"
+    ],
+    "floor": [
+      "OC-2026-0142"
+    ],
+    "calculo": [
+      "OC-2026-0142"
+    ],
+    "divergente": [
+      "OC-2026-0142"
+    ],
+    "50kg": [
+      "OC-2026-0142"
+    ],
+    "meio-para-cima": [
+      "OC-2026-0142"
+    ],
+    "usava": [
+      "OC-2026-0142"
+    ],
+    "usar": [
+      "OC-2026-0142"
+    ],
+    "arredondamento": [
+      "OC-2026-0142"
+    ],
+    "fila": [
+      "exportacao-csv-relatorios"
+    ],
+    "csv": [
+      "exportacao-csv-relatorios"
+    ],
+    "existente": [
+      "exportacao-csv-relatorios"
+    ],
+    "relatorios": [
+      "exportacao-csv-relatorios"
+    ],
+    "assincrono": [
+      "exportacao-csv-relatorios"
+    ],
+    "envio": [
+      "exportacao-csv-relatorios"
+    ],
+    "exportacao": [
+      "exportacao-csv-relatorios"
+    ],
+    "via": [
+      "exportacao-csv-relatorios"
+    ]
+  },
+  "sinais": {
+    "arquivo": {
+      "src/frete/calculo.ts": {
+        "trabalhos": 3,
+        "ultimo_trabalho_em": "2026-08-29",
+        "reprovacoes_qa": 1,
+        "detalhe_reprovacoes": [
+          {
+            "trabalho_id": "OC-2026-0142",
+            "executado_em": "2026-08-29",
+            "origem": "docs/manutencao/OC-2026-0142-arredondamento/QA.md"
+          }
+        ],
+        "regressoes": [
+          {
+            "arquivos": [
+              "src/frete/calculo.ts"
+            ],
+            "trabalho_anterior": "OC-2026-0100",
+            "data_anterior": "2026-05-10",
+            "trabalho_posterior": "OC-2026-0142",
+            "data_posterior": "2026-08-29",
+            "evidencia": "causa raiz comprovada de OC-2026-0142 aponta para arquivo alterado por OC-2026-0100",
+            "origem_causa": "docs/manutencao/OC-2026-0142-arredondamento/01-CAUSA-RAIZ.md",
+            "origem_alteracao": "docs/relatorios/2026-05-10-OC-2026-0100-faixa-peso/tecnico.md"
+          }
+        ],
+        "zona_de_risco": {
+          "motivo": "Calculo monetario sem cobertura de teste na faixa alta",
+          "origem": "docs/legado/PERFIL.md"
+        },
+        "divida": {
+          "descricao": "Funcao de 300 linhas sem separacao entre faixa e arredondamento",
+          "risco": "alto",
+          "origem": "docs/legado/DIVIDA.md"
+        },
+        "faixa_atencao_frequente": "alta"
+      },
+      "src/frete/tabela.ts": {
+        "trabalhos": 1,
+        "ultimo_trabalho_em": "2026-05-10",
+        "reprovacoes_qa": 0,
+        "detalhe_reprovacoes": [],
+        "regressoes": [],
+        "zona_de_risco": null,
+        "divida": null,
+        "faixa_atencao_frequente": null
+      },
+      "src/checkout/label.tsx": {
+        "trabalhos": 1,
+        "ultimo_trabalho_em": "2026-08-20",
+        "reprovacoes_qa": 0,
+        "detalhe_reprovacoes": [],
+        "regressoes": [],
+        "zona_de_risco": null,
+        "divida": null,
+        "faixa_atencao_frequente": null
+      },
+      "src/pagamento/gateway.ts": {
+        "trabalhos": 1,
+        "ultimo_trabalho_em": "2026-08-25",
+        "reprovacoes_qa": 0,
+        "detalhe_reprovacoes": [],
+        "regressoes": [],
+        "zona_de_risco": null,
+        "divida": null,
+        "faixa_atencao_frequente": null
+      }
+    },
+    "modulo": {
+      "frete": {
+        "trabalhos": 2,
+        "ultimo_trabalho_em": "2026-08-29",
+        "reprovacoes_qa": 1,
+        "regressoes": [
+          {
+            "arquivos": [
+              "src/frete/calculo.ts"
+            ],
+            "trabalho_anterior": "OC-2026-0100",
+            "data_anterior": "2026-05-10",
+            "trabalho_posterior": "OC-2026-0142",
+            "data_posterior": "2026-08-29",
+            "evidencia": "causa raiz comprovada de OC-2026-0142 aponta para arquivo alterado por OC-2026-0100",
+            "origem_causa": "docs/manutencao/OC-2026-0142-arredondamento/01-CAUSA-RAIZ.md",
+            "origem_alteracao": "docs/relatorios/2026-05-10-OC-2026-0100-faixa-peso/tecnico.md"
+          }
+        ],
+        "arquivos": [
+          "src/frete/calculo.ts",
+          "src/frete/tabela.ts"
+        ]
+      },
+      "checkout": {
+        "trabalhos": 2,
+        "ultimo_trabalho_em": "2026-08-29",
+        "reprovacoes_qa": 1,
+        "regressoes": [
+          {
+            "arquivos": [
+              "src/frete/calculo.ts"
+            ],
+            "trabalho_anterior": "OC-2026-0100",
+            "data_anterior": "2026-05-10",
+            "trabalho_posterior": "OC-2026-0142",
+            "data_posterior": "2026-08-29",
+            "evidencia": "causa raiz comprovada de OC-2026-0142 aponta para arquivo alterado por OC-2026-0100",
+            "origem_causa": "docs/manutencao/OC-2026-0142-arredondamento/01-CAUSA-RAIZ.md",
+            "origem_alteracao": "docs/relatorios/2026-05-10-OC-2026-0100-faixa-peso/tecnico.md"
+          }
+        ],
+        "arquivos": [
+          "src/checkout/label.tsx",
+          "src/frete/calculo.ts"
+        ]
+      },
+      "pagamento": {
+        "trabalhos": 1,
+        "ultimo_trabalho_em": "2026-08-25",
+        "reprovacoes_qa": 0,
+        "regressoes": [],
+        "arquivos": [
+          "src/pagamento/gateway.ts"
+        ]
+      }
+    }
+  },
+  "regressoes": [
+    {
+      "arquivos": [
+        "src/frete/calculo.ts"
+      ],
+      "trabalho_anterior": "OC-2026-0100",
+      "data_anterior": "2026-05-10",
+      "trabalho_posterior": "OC-2026-0142",
+      "data_posterior": "2026-08-29",
+      "evidencia": "causa raiz comprovada de OC-2026-0142 aponta para arquivo alterado por OC-2026-0100",
+      "origem_causa": "docs/manutencao/OC-2026-0142-arredondamento/01-CAUSA-RAIZ.md",
+      "origem_alteracao": "docs/relatorios/2026-05-10-OC-2026-0100-faixa-peso/tecnico.md"
+    }
+  ],
+  "coincidencias_arquivo": [
+    {
+      "arquivos": [
+        "src/frete/calculo.ts"
+      ],
+      "trabalhos": [
+        "OC-2026-0100",
+        "OC-2026-0150"
+      ],
+      "motivo": "trabalho posterior sem causa raiz (modo analise de impacto)"
+    },
+    {
+      "arquivos": [
+        "src/frete/calculo.ts"
+      ],
+      "trabalhos": [
+        "OC-2026-0142",
+        "OC-2026-0150"
+      ],
+      "motivo": "ordem cronologica nao estabelecida; trabalho posterior sem causa raiz (modo analise de impacto)"
+    }
+  ],
+  "linha_do_tempo": [
+    {
+      "trabalho_id": "OC-2026-0142",
+      "data": "2026-08-29",
+      "tipo": "bug",
+      "modulo": "frete",
+      "resumo": "Arredondamento errado acima de 50kg",
+      "pasta": "2026-08-29-OC-2026-0142-arredondamento",
+      "origem": "docs/relatorios/INDICE.md"
+    },
+    {
+      "trabalho_id": "OC-2026-0150",
+      "data": "2026-08-20",
+      "tipo": "melhoria-ui",
+      "modulo": "checkout",
+      "resumo": "Rotulo do frete no checkout",
+      "pasta": "2026-08-20-OC-2026-0150-label-frete",
+      "origem": "docs/relatorios/INDICE.md"
+    },
+    {
+      "trabalho_id": "OC-2026-0100",
+      "data": "2026-05-10",
+      "tipo": "bug",
+      "modulo": "frete",
+      "resumo": "Faixa de peso com limite exclusivo",
+      "pasta": "2026-05-10-OC-2026-0100-faixa-peso",
+      "origem": "docs/relatorios/INDICE.md"
+    }
+  ],
+  "artefatos_contaminados": {
+    "docs/relatorios/2026-08-25-OC-2026-0199-integracao/tecnico.md": [
+      "chave_api",
+      "token_github"
+    ]
+  },
+  "fora_do_indice": [],
+  "config": {
+    "max_entradas_recentes": 3,
+    "teto_entradas": 8,
+    "sempre_incluir": [
+      "regressao",
+      "reprovacao_qa",
+      "zona_de_risco"
+    ],
+    "fontes": {
+      "relatorios": "docs/relatorios",
+      "manutencao": "docs/manutencao",
+      "entregas": "docs/entregas",
+      "legado": "docs/legado",
+      "features": "docs"
+    },
+    "ignorar": [
+      ".git",
+      "node_modules",
+      ".expx",
+      "dist",
+      "build",
+      "vendor"
+    ]
+  }
+}

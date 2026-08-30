@@ -100,6 +100,94 @@ export type EntradaHistorico = {
   uso: Record<string, unknown> | null;
 };
 
+/**
+ * A memória do projeto: a projeção enxuta do índice que o memox grava em
+ * `.expx/memoria/indice.json`.
+ *
+ * É `null` sempre que não há índice — e isso é o caso COMUM, não um erro: o
+ * índice é local e gitignorado, então um clone recém-feito não tem nenhum. A
+ * tela trata ausência como estado legítimo (decisão D-02).
+ *
+ * Espelho de `src/parser/memoria/tipos.ts`. Os dois andam juntos; quem prova
+ * isso é `ui/src/tipos-memoria.test.ts`, em runtime, porque o cast da fixture
+ * apagaria a divergência.
+ */
+
+export type EntradaMemoria = {
+  trabalho_id: string;
+  titulo: string | null;
+  data: string | null;
+  tipo: string | null;
+  ferramenta: string | null;
+  causa: string | null;
+  papel: string;
+  artefato: string;
+};
+
+export type Regressao = {
+  arquivos: string[];
+  trabalho_anterior: string;
+  data_anterior: string | null;
+  trabalho_posterior: string;
+  data_posterior: string | null;
+  evidencia: string;
+  origem_causa: string | null;
+  origem_alteracao: string | null;
+};
+
+/** Vínculo que NÃO virou regressão, com o motivo — a prova de que o índice não inventa relação. */
+export type Coincidencia = {
+  arquivos: string[];
+  trabalhos: string[];
+  motivo: string;
+};
+
+export type ArquivoDeRisco = {
+  arquivo: string;
+  trabalhos: number;
+  ultimo_trabalho_em: string | null;
+  reprovacoes_qa: number;
+  regressoes: number;
+  zona_de_risco: string | null;
+  divida: string | null;
+  risco_divida: string | null;
+  faixa_atencao: string | null;
+  entradas: EntradaMemoria[];
+};
+
+export type ModuloMemoria = {
+  modulo: string;
+  trabalhos: number;
+  ultimo_trabalho_em: string | null;
+  reprovacoes_qa: number;
+  regressoes: number;
+  arquivos: string[];
+};
+
+/** Artefato onde o memox detectou segredo. O valor já foi redigido na origem. */
+export type Contaminado = {
+  artefato: string;
+  tipos: string[];
+};
+
+export type Memoria = {
+  gerado_em: string;
+  versao: number;
+  totais: {
+    trabalhos: number;
+    arquivos: number;
+    modulos: number;
+    regressoes: number;
+    coincidencias: number;
+    artefatos_contaminados: number;
+  };
+  arquivos_de_risco: ArquivoDeRisco[];
+  regressoes: Regressao[];
+  coincidencias: Coincidencia[];
+  contaminados: Contaminado[];
+  modulos: ModuloMemoria[];
+};
+
 export type Estado = {
   raiz: string;
   trabalhos: Trabalho[];
@@ -107,6 +195,8 @@ export type Estado = {
   historico: EntradaHistorico[];
   rejeicoes: Rejeicao[];
   violacoes: Violacao[];
+  /** `null` quando não há índice de memória — o caso comum num clone (D-02). */
+  memoria: Memoria | null;
   lido_em: string;
 };
 

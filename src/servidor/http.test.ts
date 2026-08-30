@@ -46,3 +46,37 @@ describe("rotas de leitura", () => {
     }
   });
 });
+
+describe("rota de memória", () => {
+  it("integração: GET responde 200 com JSON e POST responde 405", async () => {
+    servidor = await criarServidor({ raiz: "fixtures/projeto-memoria", porta: 0 });
+    const r = await fetch(`${servidor.url()}/api/memoria`);
+    expect(r.status).toBe(200);
+    expect(r.headers.get("content-type")).toContain("application/json");
+
+    // o painel é somente leitura: nenhum método além de GET passa
+    const post = await fetch(`${servidor.url()}/api/memoria`, { method: "POST" });
+    expect(post.status).toBe(405);
+  });
+
+  it("funcional: a fixture com índice traz uma regressão; sem índice traz null", async () => {
+    servidor = await criarServidor({ raiz: "fixtures/projeto-memoria", porta: 0 });
+    const corpo = (await (await fetch(`${servidor.url()}/api/memoria`)).json()) as {
+      memoria: { totais: { regressoes: number } } | null;
+    };
+    expect(corpo.memoria?.totais.regressoes).toBe(1);
+
+    // e o estado inteiro carrega a mesma chave (decisão D-03)
+    const projeto = (await (await fetch(`${servidor.url()}/api/projeto`)).json()) as {
+      memoria: unknown;
+    };
+    expect(projeto.memoria).not.toBeNull();
+
+    await servidor.fechar();
+    servidor = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0 });
+    const semIndice = (await (await fetch(`${servidor.url()}/api/memoria`)).json()) as {
+      memoria: unknown;
+    };
+    expect(semIndice.memoria).toBeNull();
+  });
+});

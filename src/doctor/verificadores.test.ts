@@ -77,3 +77,38 @@ describe("doctor", () => {
     expect(a).toBeDefined();
   });
 });
+
+describe("diagnóstico da instalação do memox", () => {
+  /**
+   * O hook do memox sai `0` em SILÊNCIO em qualquer erro — é falha aberta por
+   * projeto. O efeito colateral é que uma instalação quebrada fica idêntica a
+   * um projeto sem artefatos, e ninguém percebe. O doctor é o único lugar onde
+   * isso vira visível (decisão D-17).
+   *
+   * O critério é a ausência do id `memox-sem-motor`, não "nenhum achado": o
+   * diagnóstico emite outros achados que não têm relação com o memox.
+   */
+  it("integração: hook sem o motor irmão vira achado de erro", () => {
+    p = projetoTemporario("fixtures/cli/projeto-com-expx");
+    mkdirSync(join(p.raiz, ".claude/hooks"), { recursive: true });
+    writeFileSync(join(p.raiz, ".claude/hooks/memox-injetar.sh"), "#!/usr/bin/env bash\nexit 0\n");
+
+    const d = diagnosticar(p.raiz);
+    const achado = d.achados.find((a) => a.id === "memox-sem-motor");
+    expect(achado).toBeDefined();
+    expect(achado?.severidade).toBe("erro");
+    expect(achado?.correcao.length).toBeGreaterThan(0);
+  });
+
+  it("funcional: com o motor no lugar, o achado some", () => {
+    p = projetoTemporario("fixtures/cli/projeto-com-expx");
+    mkdirSync(join(p.raiz, ".claude/hooks"), { recursive: true });
+    writeFileSync(join(p.raiz, ".claude/hooks/memox-injetar.sh"), "#!/usr/bin/env bash\nexit 0\n");
+    expect(diagnosticar(p.raiz).achados.some((a) => a.id === "memox-sem-motor")).toBe(true);
+
+    // o caminho é exatamente o que o hook resolve: DIR_HOOK/../skills/...
+    mkdirSync(join(p.raiz, ".claude/skills/memox/assets"), { recursive: true });
+    writeFileSync(join(p.raiz, ".claude/skills/memox/assets/memox.py"), "print('memox')\n");
+    expect(diagnosticar(p.raiz).achados.some((a) => a.id === "memox-sem-motor")).toBe(false);
+  });
+});

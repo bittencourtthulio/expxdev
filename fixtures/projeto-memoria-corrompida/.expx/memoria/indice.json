@@ -1,0 +1,35 @@
+{
+  "versao": 1,
+  "gerado_em": "2026-08-29",
+  "duracao_ms": 5,
+  "raiz": ".",
+  "totais": {
+    "trabalhos": 6,
+    "arquivos": 4,
+    "modulos": 3,
+    "regressoes": 1,
+    "coincidencias": 2,
+    "artefatos_contaminados": 1
+  },
+  "trabalhos": {
+    "OC-2026-0100": {
+      "trabalho_id": "OC-2026-0100",
+      "titulo": "Faixa de peso com limite exclusivo",
+      "tipo": "bug",
+      "tipo_trabalho": null,
+      "ferramenta": "runx",
+      "data": "2026-05-10",
+      "modulos": [
+        "frete"
+      ],
+      "arquivos_alterados": [
+        "src/frete/calculo.ts",
+        "src/frete/tabela.ts"
+      ],
+      "arquivos_impactados": [
+        "src/frete/tabela.ts"
+      ],
+      "causa": "A faixa de peso tinha o limite superior exclusivo onde deveria ser inclusivo.",
+      "modo": "causa_raiz",
+      "comprovada": true,
+      "risco_residual": "O arredondamento do valor final continua 

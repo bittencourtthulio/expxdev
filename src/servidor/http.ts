@@ -91,6 +91,11 @@ export async function criarServidor(op: OpcoesServidor): Promise<ServidorPainel>
       case "/api/historico":
         json(res, { historico: estado.historico });
         return;
+      case "/api/memoria":
+        // `memoria` é `null` quando não há índice — estado legítimo, não erro:
+        // `.expx/memoria/` é gitignorado, então um clone não tem índice (D-02)
+        json(res, { memoria: estado.memoria });
+        return;
       case "/api/saude":
         json(res, { ok: true, raiz: estado.raiz, lido_em: estado.lido_em });
         return;

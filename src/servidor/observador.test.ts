@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { mkdtempSync, writeFileSync, rmSync, cpSync } from "node:fs";
+import { mkdtempSync, writeFileSync, rmSync, cpSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { observar, type Observador } from "./observador.js";
@@ -46,5 +46,41 @@ describe("observador de arquivos", () => {
 
     await new Promise((r) => setTimeout(r, 600));
     expect(disparos).toBe(1);
+  });
+});
+
+describe("observação de .expx", () => {
+  /**
+   * Gravar o índice do memox NÃO pode disparar releitura: quem grava é o motor
+   * do memox, disparado pelo hook `Stop`, e o painel não tem nada a reler por
+   * causa disso além do próprio índice — que ele relê na próxima montagem.
+   * Sem isso, reindexar realimenta a recarga (decisão D-06).
+   */
+  it("integração: gravar em .expx não dispara, gravar em docs dispara", async () => {
+    dir = projetoTemporario();
+    let disparos = 0;
+    obs = await observar(dir, () => disparos++, 80);
+
+    mkdirSync(join(dir, ".expx/memoria"), { recursive: true });
+    writeFileSync(join(dir, ".expx/memoria/indice.json"), '{"versao":1}');
+    await new Promise((r) => setTimeout(r, 400));
+    expect(disparos).toBe(0);
+
+    writeFileSync(join(dir, "docs/exportacao-csv/ORQUESTRADOR.md"), "x\n", { flag: "a" });
+    await new Promise((r) => setTimeout(r, 400));
+    expect(disparos).toBe(1);
+  });
+
+  it("funcional: reescrever o índice várias vezes segue sem disparar", async () => {
+    dir = projetoTemporario();
+    let disparos = 0;
+    obs = await observar(dir, () => disparos++, 80);
+
+    mkdirSync(join(dir, ".expx/memoria"), { recursive: true });
+    for (let i = 0; i < 3; i++) {
+      writeFileSync(join(dir, ".expx/memoria/indice.json"), `{"versao":1,"n":${String(i)}}`);
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    expect(disparos).toBe(0);
   });
 });

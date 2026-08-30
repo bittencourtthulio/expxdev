@@ -190,6 +190,7 @@ export function diagnosticar(raiz: string): Diagnostico {
     }
   }
 
+  verificarHooks(raiz, push);
   verificarRastro(raiz, push);
 
   return { saudavel: achados.filter((a) => a.severidade === "erro").length === 0, achados };
@@ -249,5 +250,50 @@ function verificarRastro(raiz: string, push: (a: Achado) => void): void {
           "e vir depois das doze obrigatorias",
       });
     }
+  }
+}
+
+/**
+ * Hook instalado sem o motor ao lado.
+ *
+ * Todo caminho de erro dos hooks do memox termina em `exit 0`, de propósito:
+ * falha aberta nunca trava o prompt de quem está trabalhando. O preço é que
+ * uma instalação quebrada fica indistinguível de um projeto sem artefatos —
+ * silêncio dos dois lados. Este verificador é o único lugar onde a diferença
+ * aparece (decisão D-17).
+ *
+ * O caminho conferido é exatamente o que o hook resolve por conta própria:
+ * `DIR_HOOK/../skills/<skill>/assets/`.
+ */
+function verificarHooks(raiz: string, push: (a: Achado) => void): void {
+  const dirHooks = join(raiz, ".claude", "hooks");
+  if (!existsSync(dirHooks)) return;
+
+  let arquivos: string[];
+  try {
+    arquivos = readdirSync(dirHooks);
+  } catch {
+    return;
+  }
+
+  // uma entrada por skill dona de hook, para não repetir o achado por arquivo
+  const skills = new Set(
+    arquivos
+      .filter((a) => a.endsWith(".sh"))
+      .map((a) => a.split("-")[0] ?? "")
+      .filter((n) => n !== ""),
+  );
+
+  for (const skill of skills) {
+    const motor = join(raiz, ".claude", "skills", skill, "assets");
+    if (existsSync(motor)) continue;
+    push({
+      id: `${skill}-sem-motor`,
+      severidade: "erro",
+      problema:
+        `o hook de ${skill} esta em .claude/hooks mas o motor nao esta em ` +
+        `.claude/skills/${skill}/assets: o hook sai 0 em silencio e nao faz nada`,
+      correcao: `rode \`expx init\` incluindo ${skill}: o hook e a skill precisam ser instalados juntos`,
+    });
   }
 }

@@ -16,6 +16,13 @@ export type SkillMontavel = {
   raizSkill: string;
   /** Arquivos de comando da skill, no repositório de origem. */
   comandos: readonly string[];
+  /**
+   * Arquivos de hook da skill, no repositório de origem. Opcional de propósito:
+   * `montagem.test.ts` e `opencode.test.ts` constroem este objeto por literal, e
+   * o `tsconfig` exclui `**\/*.test.ts` — um campo obrigatório não seria
+   * acusado pelo typecheck e quebraria só em runtime.
+   */
+  hooks?: readonly string[];
 };
 
 /**

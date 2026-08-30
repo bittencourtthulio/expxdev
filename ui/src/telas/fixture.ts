@@ -20,3 +20,15 @@ export function estadoRuimFixture(): Estado {
     new Date("2026-08-29T12:00:00Z"),
   ) as unknown as Estado;
 }
+
+/**
+ * Estado de um projeto COM índice de memória. `estadoFixture()` lê
+ * `projeto-ok`, que por decisão não tem índice — é ele quem prova o caso
+ * "clone recém-feito, sem memória nenhuma" (decisão D-19).
+ */
+export function estadoMemoriaFixture(): Estado {
+  return lerEstado(
+    { raiz: "fixtures/projeto-memoria", diasBloqueio: 7 },
+    new Date("2026-08-29T12:00:00Z"),
+  ) as unknown as Estado;
+}
