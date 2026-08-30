@@ -6,7 +6,7 @@ import { lerEstadoExpx } from "./fontes/estado.js";
 import { observarFontes, type ObservadorFontes } from "./fontes/observar.js";
 import { lerRastro } from "./fontes/rastro.js";
 import type { Opcoes } from "./opcoes.js";
-import { criarTela, type Tela } from "./terminal/tela.js";
+import { criarTela, type LimitesTela, type Tela } from "./terminal/tela.js";
 import { projetarVisao, type Visao } from "./visao/projetar.js";
 
 /**
@@ -32,6 +32,8 @@ export type OpcoesExecucao = {
   escrever: (texto: string) => void;
   cor: boolean;
   debounceMs?: number;
+  /** Intervalo do redesenho por relógio. `0` desliga (teste). */
+  pulsoMs?: number;
   /** Gancho de teste: chamado toda vez que o PLANO é relido do disco. */
   aoLerPlano?: () => void;
 };
@@ -43,6 +45,24 @@ function larguraDe(op: OpcoesExecucao): number {
   // Abaixo de 80 continuamos desenhando: o corte é elegante por construção.
   return typeof cols === "number" && cols > 0 ? cols : 80;
 }
+
+/** Altura de trabalho: a do terminal, ou um valor generoso quando não há TTY. */
+function alturaDe(): number {
+  const linhas = process.stdout.rows;
+  // Sem TTY (teste, redirecionamento) nada rola: a altura não limita.
+  return typeof linhas === "number" && linhas > 0 ? linhas : Number.MAX_SAFE_INTEGER;
+}
+
+/**
+ * De quanto em quanto tempo a tela se redesenha sozinha.
+ *
+ * O watch é movido a evento de arquivo, mas duas coisas na tela andam com o
+ * relógio e não com o disco: o tempo decorrido das tasks em andamento e a
+ * barra de atividade. Sem este pulso, uma task que roda dez minutos mostraria
+ * "0s" o tempo todo — e "parado ha 40 min", que é o sintoma de execução
+ * travada, nunca apareceria.
+ */
+const PULSO_MS = 1000;
 
 export async function executarWatch(op: OpcoesExecucao): Promise<SessaoWatch> {
   // Sem `.expx/`, o projeto não tem o Expx instalado. Mensagem curta e saída
@@ -61,7 +81,16 @@ export async function executarWatch(op: OpcoesExecucao): Promise<SessaoWatch> {
 
   const subiuEm = new Date();
   const colunas = larguraDe(op);
-  const tela: Tela = criarTela(op.escrever);
+
+  // A tela recebe os limites do terminal como FUNÇÃO, não como número: quem
+  // redimensiona a janela no meio da execução muda os dois, e uma tela presa
+  // à largura da subida passa a desenhar linhas que não cabem — que é
+  // exatamente o que embaralhava o painel.
+  const limites = (): LimitesTela => ({
+    colunas: op.opcoes.colunas ?? larguraDe(op),
+    linhas: alturaDe(),
+  });
+  const tela: Tela = criarTela(op.escrever, limites);
 
   // A visão fica guardada de propósito: é ela que carrega a árvore, cara de
   // montar. O gatilho de estado NÃO a reconstrói.
@@ -76,13 +105,33 @@ export async function executarWatch(op: OpcoesExecucao): Promise<SessaoWatch> {
   }
 
   function redesenhar(): void {
+    const c = op.opcoes.colunas ?? larguraDe(op);
     const linhas = op.opcoes.todos
-      ? desenharLista(visao, colunas, op.cor)
-      : desenhar(visao, { colunas, cor: op.cor, agora: new Date() });
+      ? desenharLista(visao, c, op.cor)
+      : desenhar(visao, {
+          colunas: c,
+          cor: op.cor,
+          agora: new Date(),
+          arvore: op.opcoes.arvore,
+        });
     tela.desenhar(linhas);
   }
 
   redesenhar();
+
+  // O pulso do relógio. `unref` para não segurar o processo sozinho: quem
+  // mantém o watch vivo é o observador de arquivos, e um timer que segura o
+  // event loop faria o processo não morrer depois do `parar()`.
+  const pulso = op.pulsoMs ?? PULSO_MS;
+  const relogio = pulso > 0 ? setInterval(redesenhar, pulso) : null;
+  relogio?.unref();
+
+  // Redimensionar a janela muda a largura E a altura: sem redesenhar aqui, a
+  // tela fica com as linhas da largura antiga até o próximo evento de arquivo.
+  const aoRedimensionar = (): void => {
+    redesenhar();
+  };
+  process.stdout.on("resize", aoRedimensionar);
 
   const observador: ObservadorFontes = await observarFontes(
     op.raiz,
@@ -121,6 +170,8 @@ export async function executarWatch(op: OpcoesExecucao): Promise<SessaoWatch> {
 
   return {
     parar: async () => {
+      if (relogio !== null) clearInterval(relogio);
+      process.stdout.off("resize", aoRedimensionar);
       await observador.parar();
     },
     codigo: 0,

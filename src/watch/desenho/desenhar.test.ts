@@ -41,15 +41,44 @@ describe("composição do painel", () => {
     }
   });
 
-  it("integração: com bloqueio aberto, a seção de bloqueios vem antes da árvore", () => {
+  it("integração: com bloqueio aberto, a seção de bloqueios vem antes do trabalho", () => {
     const v = projetarVisao(raiz("com-bloqueio"), {}, AGORA);
     const linhas = desenhar(v, { colunas: 80, cor: false, agora: AGORA });
 
     const iBloqueio = linhas.findIndex((l) => l.includes("B-01"));
-    const iArvore = linhas.findIndex((l) => l.includes("sprint-01"));
+    // O bloco do trabalho, não a árvore: a árvore completa saiu do desenho
+    // padrão e virou `--arvore`.
+    const iTrabalho = linhas.findIndex((l) => l.includes("exportacao-csv"));
     expect(iBloqueio).toBeGreaterThanOrEqual(0);
-    expect(iArvore).toBeGreaterThanOrEqual(0);
-    expect(iBloqueio).toBeLessThan(iArvore);
+    expect(iTrabalho).toBeGreaterThanOrEqual(0);
+    expect(iBloqueio).toBeLessThan(iTrabalho);
+  });
+
+  it("funcional: `--arvore` traz a árvore completa, que o padrão não traz", () => {
+    const v = projetarVisao(raiz("com-estado"), {}, AGORA);
+    const padrao = desenhar(v, { colunas: 100, cor: false, agora: AGORA });
+    const comArvore = desenhar(v, { colunas: 100, cor: false, agora: AGORA, arvore: true });
+
+    // A tela padrão mostra só as tasks ATIVAS: era a árvore inteira despejada
+    // que fazia o painel virar um dump.
+    expect(padrao.some((l) => l.includes("sprint-01"))).toBe(false);
+    expect(comArvore.some((l) => l.includes("sprint-01"))).toBe(true);
+    // A task pendente só aparece na árvore.
+    expect(comArvore.some((l) => l.includes("T-01.03"))).toBe(true);
+  });
+
+  it("funcional: cada trabalho aberto ganha barra e contagem própria", () => {
+    const v = projetarVisao(raiz("varios-trabalhos"), {}, AGORA);
+    const linhas = desenhar(v, { colunas: 100, cor: false, agora: AGORA });
+
+    // A frota é a promessa da tela: os três trabalhos aparecem juntos, e não
+    // um por vez como no watch antigo.
+    for (const id of ["em-andamento", "bloqueado", "nao-iniciado"]) {
+      expect(linhas.some((l) => l.includes(id)), id).toBe(true);
+    }
+    // E cada um traz sua própria barra de progresso.
+    const comBarra = linhas.filter((l) => l.includes("░") || l.includes("█"));
+    expect(comBarra.length).toBeGreaterThanOrEqual(3);
   });
 
   it("funcional: o rodapé conta só as violações posteriores à subida do watch", () => {

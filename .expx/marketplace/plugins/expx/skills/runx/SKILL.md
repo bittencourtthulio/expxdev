@@ -1,6 +1,6 @@
 ---
 name: runx
-description: "Use para qualquer trabalho de manutenção e sustentação de sistema que já existe em produção — corrigir bug, investigar defeito ou erro relatado, apurar cálculo divergente, melhorar tela ou layout, ajustar fluxo e usabilidade, alterar regra de negócio ou fórmula, adicionar campo em formulário ou entidade, criar relatório dentro de estrutura existente, tratar chamado, ticket ou ocorrência de suporte. Use mesmo quando o usuário não disser runx, chamado nem ocorrência por nome: basta ele descrever um problema no sistema, algo que parou de funcionar, algo que está trazendo valor errado, ou pedir um ajuste em algo que já existe. Cobre investigação com base de conhecimento, causa raiz comprovada ou análise de impacto, plano de sprints/fases/tasks com TDD, execução autônoma, QA e relatórios de fechamento. Fronteira: runx é para o que já existe em produção; feature nova planejada do zero é a skill sprintx."
+description: "Use ao relatar defeito em sistema que já existe: não funciona como deveria, não segue o padrão esperado, trava, some ou dá valor errado — mesmo sem a palavra bug. Inclui falha de interface e interação (arrastar, clicar, salvar) e ajuste de tela, cálculo ou campo. Feature nova é sprintx."
 ---
 
 # runx

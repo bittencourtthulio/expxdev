@@ -1,5 +1,8 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { criarServidor, ErroDePorta, type ServidorPainel } from "./http.js";
+import { mkdtempSync, mkdirSync, cpSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 let servidor: ServidorPainel | null = null;
 afterEach(async () => {
@@ -121,5 +124,66 @@ describe("porta ocupada", () => {
     const segundo = await criarServidor({ raiz: "fixtures/projeto-ok", porta });
     expect(segundo.endereco().port).toBe(porta);
     await segundo.fechar();
+  });
+});
+
+/**
+ * A metade servidor da correção do índice que nasce tarde. O watcher dedicado
+ * (ver `observador.test.ts`) avisa que o índice mudou; é aqui que o painel
+ * troca `estado.memoria` sem remontar o projeto inteiro.
+ */
+describe("releitura só do índice", () => {
+  let dir: string | null = null;
+  afterEach(() => {
+    if (dir) rmSync(dir, { recursive: true, force: true });
+    dir = null;
+  });
+
+  it("integração: índice que nasce depois da subida aparece sem remontar", async () => {
+    dir = mkdtempSync(join(tmpdir(), "expx-mem-"));
+    cpSync("fixtures/projeto-ok", dir, { recursive: true });
+
+    // sobe SEM índice — o estado inicial é o "sem índice de memória" da tela
+    servidor = await criarServidor({ raiz: dir, porta: 0 });
+    expect(servidor.estado().memoria).toBeNull();
+
+    // o memox indexa agora, com o painel já no ar
+    const origem = "fixtures/projeto-memoria/.expx/memoria/indice.json";
+    mkdirSync(join(dir, ".expx/memoria"), { recursive: true });
+    cpSync(origem, join(dir, ".expx/memoria/indice.json"));
+
+    const depois = servidor.recarregarMemoria();
+    expect(depois.memoria).not.toBeNull();
+    expect(depois.memoria?.totais.regressoes).toBe(1);
+
+    // e o resto do projeto seguiu intacto: releitura de índice não é remontagem
+    expect(depois.trabalhos).toHaveLength(2);
+  });
+
+  it("funcional: reescrever o índice sem mudar nada não difunde de novo", async () => {
+    dir = mkdtempSync(join(tmpdir(), "expx-mem-"));
+    cpSync("fixtures/projeto-memoria", dir, { recursive: true });
+
+    servidor = await criarServidor({ raiz: dir, porta: 0 });
+    let difusoes = 0;
+    servidor.aoAtualizar(() => difusoes++);
+
+    // o motor reescreve o arquivo inteiro a cada reconstrução, mesmo quando o
+    // conteúdo é idêntico; difundir aí empurraria o estado inteiro à toa (D-28)
+    servidor.recarregarMemoria();
+    servidor.recarregarMemoria();
+    expect(difusoes).toBe(0);
+  });
+
+  it("funcional: índice corrompido volta a null em vez de derrubar o painel", async () => {
+    dir = mkdtempSync(join(tmpdir(), "expx-mem-"));
+    cpSync("fixtures/projeto-memoria", dir, { recursive: true });
+
+    servidor = await criarServidor({ raiz: dir, porta: 0 });
+    expect(servidor.estado().memoria).not.toBeNull();
+
+    // JSON truncado é o que se lê no instante da gravação (D-05: falha aberta)
+    writeFileSync(join(dir, ".expx/memoria/indice.json"), '{"versao":1,"tota');
+    expect(servidor.recarregarMemoria().memoria).toBeNull();
   });
 });

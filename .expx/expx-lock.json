@@ -9,11 +9,11 @@
       "repositorio": "https://github.com/bittencourtthulio/runx",
       "referencia": "main",
       "travado": false,
-      "commit": "2816e1dc2e7d36e28ace07723e134db99ed22992",
+      "commit": "253e666f807608e6083a28d821a4a3bba60506c2",
       "resolvido_em": "2026-08-30",
       "arquivos": {
         "DECISOES-DA-SKILL.md": "389acbb5cdb3b44e2028ec88807318f7bf17fad3c7761cb157e77960ffc90bc5",
-        "SKILL.md": "7fb886bd07e1c98115a8630474128c35176f47b5bc6d0a02866b37cb78fca046",
+        "SKILL.md": "a70bb336d5de2f39939d42e2ab96452d43d0e11ee008f46641b25127276c32f2",
         "assets/TEMPLATE-INDICE.md": "79b8ab37f564d85cdf7c9f60d7a90df108805061cbcacb4179ef0dbaff583fd5",
         "assets/TEMPLATE-ORQUESTRADOR.md": "2e96ec81aa7327be98a8e2cb7da8f90a268caa135f648dc8276a48510d0ca469",
         "assets/TEMPLATE-analise-impacto.md": "5aff6f2d1892d87653702451d92a6d280177c0d64178bbf36b3ea6961c387d31",
@@ -40,7 +40,7 @@
       "repositorio": "https://github.com/bittencourtthulio/prodx",
       "referencia": "main",
       "travado": false,
-      "commit": "7bff52cdb3b8275c4c6f9ccf3725933df9ec4e8b",
+      "commit": "ae16c09547ba6776230850be301a781c70ac88b0",
       "resolvido_em": "2026-08-30",
       "arquivos": {
         "DECISOES-DA-SKILL.md": "78dc8389b31770c4635ca0454f3ba9c8232aeb6b536d4a39f450b84c829c62aa",

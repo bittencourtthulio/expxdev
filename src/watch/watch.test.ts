@@ -73,21 +73,38 @@ describe("loop do watch", () => {
     expect(leiturasDoPlano, "mudança só no rastro NÃO deveria reler o plano").toBe(depoisDoPlano);
   });
 
-  it("funcional: id posicional seleciona o trabalho nomeado", async () => {
+  it("funcional: id posicional marca o trabalho nomeado como o corrente", async () => {
     dir = copiar("varios-trabalhos");
     const f = saidaFalsa();
 
     sessao = await executarWatch({
       raiz: dir,
-      opcoes: { trabalho: "bloqueado", todos: false, ajuda: false, colunas: 80 },
+      opcoes: {
+        trabalho: "bloqueado",
+        todos: false,
+        arvore: false,
+        ajuda: false,
+        colunas: 100,
+      },
       escrever: f.escrever,
       cor: false,
       debounceMs: 40,
+      pulsoMs: 0,
     });
 
-    const texto = f.linhas.flat().join("");
-    expect(texto).toContain("bloqueado");
-    expect(texto).not.toContain("em-andamento");
+    const linhas = f.linhas.flat().join("").split("\n");
+
+    // O painel é uma FROTA: os outros trabalhos continuam na tela, porque
+    // acompanhar várias ocorrências ao mesmo tempo é o ponto dele. O que o id
+    // posicional faz é dizer qual é o corrente — o que leva a marca `▸` e sobe
+    // para o topo.
+    const iBloqueado = linhas.findIndex((l) => l.includes("bloqueado"));
+    const iAndamento = linhas.findIndex((l) => l.includes("em-andamento"));
+    expect(iBloqueado).toBeGreaterThanOrEqual(0);
+    expect(iAndamento).toBeGreaterThanOrEqual(0);
+    expect(iBloqueado, "o corrente vem primeiro").toBeLessThan(iAndamento);
+    expect(linhas[iBloqueado]).toContain("▸");
+    expect(linhas[iAndamento]).not.toContain("▸");
   });
 
   it("funcional: projeto sem .expx escreve mensagem clara e devolve código zero", async () => {

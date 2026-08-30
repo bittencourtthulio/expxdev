@@ -4,6 +4,7 @@ import type { EstadoExpx } from "../fontes/estado-schema.js";
 import { lerEstadoExpx } from "../fontes/estado.js";
 import { lerRastro } from "../fontes/rastro.js";
 import { abertos, escolherTrabalho } from "./escolher.js";
+import { montarNaFrota, type TrabalhoNaFrota } from "./frota.js";
 
 /**
  * A visão que o desenho consome — as três fontes reunidas numa estrutura só.
@@ -39,6 +40,14 @@ export type Visao = {
   eventos: LinhaEvento[];
   /** Violações em modo aviso desde que o watch subiu (decisão D-07). */
   violacoesAviso: number;
+  /**
+   * Os trabalhos abertos com o que o painel mostra de cada um: progresso,
+   * estágio, tasks ativas e último evento.
+   *
+   * O trabalho corrente vem primeiro; os demais seguem por atividade mais
+   * recente, que é a ordem em que a pessoa quer varrer a tela.
+   */
+  frota: TrabalhoNaFrota[];
   /** Instante da leitura, para o rodapé calcular "tempo desde o último evento". */
   lidoEm: Date;
 };
@@ -54,6 +63,26 @@ export type OpcoesVisao = {
   /** Quantas linhas do rastro exibir. */
   linhasRastro?: number;
 };
+
+/**
+ * Quantas linhas do rastro a estimativa de progresso enxerga.
+ *
+ * Bem mais que as dez da tela: a estimativa procura marcos (`task_iniciada`,
+ * `arquivo_alterado`, suíte verde) que uma execução ruidosa empurra para longe
+ * do fim do arquivo. Continua sendo leitura de cauda, não varredura.
+ */
+const FUNDO_DA_ESTIMATIVA = 200;
+
+/** Por quantos dias um trabalho concluído continua visível na frota. */
+const DIAS_NA_FROTA = 2;
+
+/** O trabalho fechou nos últimos dias? `atualizado_em` é `AAAA-MM-DD`. */
+function recemFechado(atualizadoEm: string, agora: Date): boolean {
+  const q = Date.parse(`${atualizadoEm}T00:00:00Z`);
+  if (Number.isNaN(q)) return false;
+  const hoje = Date.UTC(agora.getUTCFullYear(), agora.getUTCMonth(), agora.getUTCDate());
+  return (hoje - q) / 86_400_000 <= DIAS_NA_FROTA;
+}
 
 export function projetarVisao(
   raizProjeto: string,
@@ -78,6 +107,50 @@ export function projetarVisao(
   const eventos =
     trabalho === null ? [] : lerRastro(raizProjeto, trabalho.trabalho_id, op.linhasRastro);
 
+  // A frota lê o rastro de CADA trabalho, não só o do corrente: é o que permite
+  // dizer "e3 rodando, e2 parado há 40 min" numa tela só. É leitura de cauda
+  // (as últimas linhas de cada arquivo), não varredura — o custo cresce com o
+  // número de trabalhos abertos, que é unidade, não milhar.
+  //
+  // Entram os abertos MAIS os concluídos recentemente: um trabalho que fecha some da
+  // tela no meio de uma sessão de acompanhamento, e quem estava olhando fica
+  // sem saber se acabou ou se quebrou. Ele fica, marcado como concluído.
+  const emFrota = [
+    ...abertos(projeto.trabalhos),
+    ...projeto.trabalhos.filter(
+      (t) => t.status === "concluido" && recemFechado(t.atualizado_em, agora),
+    ),
+  ];
+  // O trabalho corrente entra mesmo se estiver concluído: quem abriu o watch
+  // para conferir o fechamento não pode encontrar a tela vazia (D-19).
+  const listaFrota =
+    trabalho !== null && !emFrota.some((t) => t.trabalho_id === trabalho.trabalho_id)
+      ? [trabalho, ...emFrota]
+      : emFrota;
+
+  const frota = listaFrota
+    .map((t) =>
+      montarNaFrota(
+        t,
+        // A frota lê MAIS FUNDO que a lista de atividade de propósito: o
+        // `task_iniciada` de uma task que roda há uma hora fica soterrado por
+        // dezenas de `suite_executada`, e com a janela curta o tempo decorrido
+        // — que é justamente o sinal de execução travada — não apareceria.
+        lerRastro(raizProjeto, t.trabalho_id, FUNDO_DA_ESTIMATIVA),
+        estado,
+        t.trabalho_id === trabalho?.trabalho_id,
+      ),
+    )
+    .sort((a, b) => {
+      // o corrente primeiro: é o que a pessoa veio ver
+      if (a.corrente !== b.corrente) return a.corrente ? -1 : 1;
+      // depois, quem se mexeu mais recentemente
+      const ta = a.ultimoEventoTs ?? "";
+      const tb = b.ultimoEventoTs ?? "";
+      if (ta !== tb) return ta > tb ? -1 : 1;
+      return a.trabalho.trabalho_id < b.trabalho.trabalho_id ? -1 : 1;
+    });
+
   // "Modo aviso" é vocabulário de hook e só existe no rastro: `regra_violada` é
   // gravado por hook em modo aviso, `acao_bloqueada` em modo bloqueio. Não
   // confundir com as `Violacao` da conformidade, que são defeitos do método nos
@@ -97,6 +170,7 @@ export function projetarVisao(
     bloqueiosAbertos: (trabalho?.bloqueios ?? []).filter((b) => b.aberto),
     eventos,
     violacoesAviso,
+    frota,
     lidoEm: agora,
   };
 }

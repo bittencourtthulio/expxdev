@@ -51,13 +51,19 @@ export async function iniciarPainel(op: OpcoesPainel): Promise<Painel> {
 
   servidor.aoAtualizar(difundir);
 
-  const observador: Observador = await observar(
-    op.raiz,
-    () => {
+  const observador: Observador = await observar(op.raiz, {
+    aoMudar: () => {
       servidor.recarregar();
     },
-    op.debounceMs ?? 300,
-  );
+    // O índice do memox tem caminho próprio: nasce e é reescrito fora de
+    // `docs/`, e releitura total ali seria varrer o projeto inteiro por um
+    // dado que não veio de `docs/`. Ver `observador.ts` para o porquê da
+    // separação em dois watchers.
+    aoMudarMemoria: () => {
+      servidor.recarregarMemoria();
+    },
+    debounceMs: op.debounceMs ?? 300,
+  });
 
   return {
     url: () => servidor.url(),

@@ -2,6 +2,8 @@ import { createServer, type Server, type IncomingMessage, type ServerResponse } 
 import { readFileSync, existsSync } from "node:fs";
 import { extname, join, normalize, resolve, sep } from "node:path";
 import { lerEstado, type EstadoPainel } from "./estado.js";
+import { lerIndice } from "../parser/memoria/ler.js";
+import { projetar } from "../parser/memoria/projetar.js";
 import { paginaRelatorio, type DadosRelatorio } from "../relatorio/pagina.js";
 
 /**
@@ -44,6 +46,11 @@ export type ServidorPainel = {
   url: () => string;
   estado: () => EstadoPainel;
   recarregar: () => EstadoPainel;
+  /**
+   * Relê SÓ o índice do memox e troca `estado.memoria`, sem voltar ao disco
+   * para o resto do projeto. Ver o watcher dedicado em `observador.ts`.
+   */
+  recarregarMemoria: () => EstadoPainel;
   aoAtualizar: (ouvinte: (e: EstadoPainel) => void) => void;
   http: Server;
   fechar: () => Promise<void>;
@@ -74,6 +81,32 @@ export async function criarServidor(op: OpcoesServidor): Promise<ServidorPainel>
 
   function recarregar(): EstadoPainel {
     estado = lerEstado({ raiz: op.raiz, diasBloqueio });
+    for (const o of ouvintes) o(estado);
+    return estado;
+  }
+
+  /**
+   * Releitura barata para o caso em que só o índice mudou.
+   *
+   * Não remonta o projeto de propósito: montar varre `docs/` inteiro, e o
+   * índice nasce justamente quando o memox termina de indexar — remontar ali
+   * seria pagar a varredura completa por um dado que não veio de `docs/`.
+   *
+   * A leitura falha aberta como em toda parte (D-05): índice ausente ou
+   * corrompido vira `null`, que é o mesmo estado legítimo de sempre.
+   *
+   * Só difunde quando a projeção REALMENTE mudou. Sem essa comparação, cada
+   * reescrita do índice — o motor reescreve o arquivo inteiro a cada
+   * reconstrução — empurraria o estado inteiro para todos os clientes (D-28)
+   * sem nada de novo na tela.
+   */
+  function recarregarMemoria(): EstadoPainel {
+    const indice = lerIndice(op.raiz);
+    const memoria = indice === null ? null : projetar(indice);
+
+    if (JSON.stringify(memoria) === JSON.stringify(estado.memoria)) return estado;
+
+    estado = { ...estado, memoria };
     for (const o of ouvintes) o(estado);
     return estado;
   }
@@ -157,6 +190,7 @@ export async function criarServidor(op: OpcoesServidor): Promise<ServidorPainel>
     url: () => `http://${HOST}:${String(endereco().port)}`,
     estado: () => estado,
     recarregar,
+    recarregarMemoria,
     aoAtualizar: (o) => ouvintes.push(o),
     http,
     fechar: () =>

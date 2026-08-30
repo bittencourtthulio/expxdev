@@ -7,3 +7,6 @@ ui/dist/
 # Notas de trabalho: a especificacao original que originou o CLI.
 promptcli1.md
 promptcli2.md
+
+# backups gerados por hook
+.claude/settings.json.backup-*

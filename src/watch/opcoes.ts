@@ -11,6 +11,8 @@ export type Opcoes = {
   trabalho: string | undefined;
   /** `--todos` — lista os trabalhos abertos, um por linha, sem a árvore. */
   todos: boolean;
+  /** `--arvore` — mostra a árvore completa do trabalho corrente. */
+  arvore: boolean;
   ajuda: boolean;
   /** Largura fixa, para teste e para quem quer saída estável. */
   colunas: number | undefined;
@@ -19,11 +21,14 @@ export type Opcoes = {
 export type Resultado = { ok: true; opcoes: Opcoes } | { ok: false; erro: string };
 
 const AJUDA = `
-expx watch — acompanha um trabalho no terminal, ao vivo (somente leitura)
+expx watch — painel dos trabalhos no terminal, ao vivo (somente leitura)
 
-  expx watch                 segue o trabalho atual, lido do .expx/estado.json
-  expx watch <trabalho_id>   segue um trabalho especifico
-  expx watch --todos         lista os trabalhos abertos, um por linha, sem arvore
+  expx watch                 painel de todos os trabalhos abertos, com barra de
+                             progresso, task em execucao e atividade recente
+  expx watch <trabalho_id>   destaca um trabalho como o corrente, no topo
+  expx watch --todos         uma linha por trabalho, sem detalhe
+
+  --arvore                   acrescenta a arvore completa (sprints, fases, tasks)
 
   --colunas <n>              largura fixa, em vez da largura do terminal
   --ajuda                    mostra esta ajuda
@@ -40,6 +45,7 @@ export function interpretarOpcoes(argv: readonly string[]): Resultado {
   const opcoes: Opcoes = {
     trabalho: undefined,
     todos: false,
+    arvore: false,
     ajuda: false,
     colunas: undefined,
   };
@@ -55,6 +61,9 @@ export function interpretarOpcoes(argv: readonly string[]): Resultado {
     switch (nome) {
       case "--todos":
         opcoes.todos = true;
+        break;
+      case "--arvore":
+        opcoes.arvore = true;
         break;
       case "--colunas": {
         const v = embutido ?? argv[++i];
