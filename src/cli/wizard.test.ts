@@ -93,7 +93,7 @@ describe("wizard do init", () => {
 
     const r = await executarWizard(q, VAZIAS, p.raiz);
 
-    expect(q.escrito()).toContain("escolha ao menos uma");
+    expect(q.escrito()).toContain("ao menos uma");
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.opcoes.skills).toEqual(["sprintx"]);
@@ -159,5 +159,68 @@ describe("wizard do init", () => {
     const r = await executarWizard(q, VAZIAS, p.raiz);
 
     expect(r.ok).toBe(false);
+  });
+});
+
+describe("wizard navegavel (checkbox)", () => {
+  it("integração: marcar na lista produz a mesma selecao que os numeros", async () => {
+    p = projetoTemporario();
+    // Marca sprintx+mergex no menu de skills, claude no de harness.
+    const q = perguntadorDeRoteiro(["n", ""], [["sprintx", "mergex"], ["claude"]]);
+
+    const r = await executarWizard(q, VAZIAS, p.raiz);
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.opcoes.skills).toEqual(["sprintx", "mergex"]);
+    expect(r.opcoes.harness).toEqual(["claude"]);
+  });
+
+  it("funcional: o menu mostra papel e camada, como a lista numerada", async () => {
+    p = projetoTemporario();
+    const q = perguntadorDeRoteiro(["n", ""], [["sprintx"], ["claude"]]);
+
+    await executarWizard(q, VAZIAS, p.raiz);
+
+    const tela = q.escrito();
+    expect(tela).toContain("Quais skills instalar");
+    expect(tela).toContain("planeja e executa features novas");
+    expect(tela).toContain("(camada)");
+  });
+
+  it("funcional: nada marcado repergunta em vez de instalar vazio", async () => {
+    p = projetoTemporario();
+    const q = perguntadorDeRoteiro(["n", ""], [[], ["sprintx"], ["claude"]]);
+
+    const r = await executarWizard(q, VAZIAS, p.raiz);
+
+    expect(q.escrito()).toContain("ao menos uma");
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.opcoes.skills).toEqual(["sprintx"]);
+  });
+
+  it("funcional: camada marcada sozinha avisa tambem no menu", async () => {
+    p = projetoTemporario();
+    // legadox sozinho → confirma o aviso → harness → painel nao → confirma
+    const q = perguntadorDeRoteiro(["s", "n", ""], [["legadox"], ["claude"]]);
+
+    const r = await executarWizard(q, VAZIAS, p.raiz);
+
+    expect(q.escrito()).toContain("camada");
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.opcoes.skills).toEqual(["legadox"]);
+  });
+
+  it("funcional: os dois harnesses juntos pelo menu", async () => {
+    p = projetoTemporario();
+    const q = perguntadorDeRoteiro(["n", ""], [["runx"], ["claude", "opencode"]]);
+
+    const r = await executarWizard(q, VAZIAS, p.raiz);
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.opcoes.harness).toEqual(["claude", "opencode"]);
   });
 });

@@ -3,6 +3,7 @@ import { avaliarSelecao } from "./selecao.js";
 import { detectarProjeto } from "./projeto.js";
 import { HARNESS_VALIDOS, type Harness, type OpcoesInitCli } from "./init-flags.js";
 import { interpretarEscolhaMultipla, interpretarSimNao, type Perguntador } from "./perguntar.js";
+import { pintar, secao, temCor } from "./visual.js";
 
 /**
  * As quatro perguntas do `init` interativo (especificação, promptcli1.md:51-68).
@@ -14,6 +15,11 @@ import { interpretarEscolhaMultipla, interpretarSimNao, type Perguntador } from 
  *
  * Toda pergunta respeita o que já veio por flag: quem passou `--harness` não é
  * perguntado de novo. Isso permite responder metade por flag e metade na mão.
+ *
+ * Há dois modos de responder. O padrão é navegar e marcar com as setas; onde
+ * isso não funciona — CI, pipe, `TERM=dumb` — o mesmo wizard cai para a
+ * escolha por número, que não exige nada do terminal. Os dois produzem a
+ * mesma seleção, e é o `Perguntador` que decide qual está disponível.
  */
 
 export type ResultadoWizard =
@@ -22,57 +28,108 @@ export type ResultadoWizard =
 
 const TENTATIVAS = 3;
 
-function listarSkills(p: Perguntador): void {
-  p.escrever("\nQuais skills instalar neste projeto?\n\n");
-  CATALOGO.forEach((s, i) => {
-    const marca = s.camada ? " (camada)" : "";
-    p.escrever(`  ${String(i + 1)}. ${s.nome}${marca} — ${s.papel}\n`);
-  });
-  p.escrever("\nResponda com os numeros separados por virgula (ex.: 1,5).\n");
+/** Cancelar no menu (Esc/Ctrl+C) vira erro; aqui vira "cancelado", não travamento. */
+function foiCancelado(e: unknown): boolean {
+  return e instanceof Error && (e.name === "ExitPromptError" || e.name === "AbortPromptError");
 }
 
-async function escolherSkills(p: Perguntador): Promise<string[] | undefined> {
-  listarSkills(p);
+function rotuloDaSkill(nome: string, papel: string, camada: boolean, cor: boolean): string {
+  const marca = camada ? ` ${pintar("(camada)", "cinza", cor)}` : "";
+  return `${pintar(nome, "branco", cor)}${marca}  ${pintar(papel, "cinza", cor)}`;
+}
+
+async function marcarSkills(p: Perguntador): Promise<string[] | undefined> {
+  const cor = temCor();
 
   for (let tentativa = 0; tentativa < TENTATIVAS; tentativa++) {
-    const resposta = await p.linha("skills: ");
-    const indices = interpretarEscolhaMultipla(resposta, CATALOGO.length);
+    let selecao: string[];
 
-    if (indices === undefined) {
-      p.escrever(`numero invalido: responda entre 1 e ${String(CATALOGO.length)}\n`);
+    if (p.marcar !== undefined) {
+      const escolhido = await p.marcar({
+        titulo: "Quais skills instalar neste projeto?",
+        itens: CATALOGO.map((s) => ({
+          valor: s.nome,
+          rotulo: rotuloDaSkill(s.nome, s.papel, s.camada, cor),
+        })),
+      });
+      if (escolhido === undefined) return undefined;
+      selecao = escolhido;
+    } else {
+      const lido = await escolherPorNumero(p);
+      if (lido === undefined) continue;
+      selecao = lido;
+    }
+
+    if (selecao.length === 0) {
+      p.escrever(`${pintar("nenhuma skill marcada: marque ao menos uma", "cinza", cor)}\n`);
       continue;
     }
-    if (indices.length === 0) {
-      p.escrever("nenhuma skill escolhida: escolha ao menos uma\n");
-      continue;
-    }
 
-    const selecao = indices.map((i) => CATALOGO[i]?.nome ?? "");
     const aval = avaliarSelecao(selecao);
 
     // Aviso nunca impede: a combinação incomum pode ser exatamente a pedida.
     // O CLI explica a consequência e deixa a pessoa confirmar (selecao.ts).
     if (aval.precisaConfirmar) {
-      for (const a of aval.avisos) p.escrever(`\naviso: ${a}\n`);
-      const segue = interpretarSimNao(await p.linha("seguir assim mesmo? [s/N] "), false);
-      if (!segue) {
+      for (const a of aval.avisos) p.escrever(`\n${pintar("aviso:", "negrito", cor)} ${a}\n`);
+      if (!(await p.confirmar("seguir assim mesmo?", false))) {
         p.escrever("\nescolha de novo:\n");
         continue;
       }
     }
     for (const i of aval.integracoes) {
-      p.escrever(`integracao disponivel: ${i} se conecta com as skills escolhidas\n`);
+      p.escrever(`${pintar("integracao:", "azulClaro", cor)} ${i} se conecta com as skills escolhidas\n`);
     }
     return selecao;
   }
   return undefined;
 }
 
-async function escolherHarness(p: Perguntador): Promise<Harness[] | undefined> {
-  p.escrever("\nQual harness configurar?\n\n");
-  p.escrever("  1. claude — Claude Code\n");
-  p.escrever("  2. opencode — OpenCode\n");
-  p.escrever("\nOs dois: 1,2. Vazio usa claude.\n");
+/** O caminho sem navegação: a lista numerada e uma linha de resposta. */
+async function escolherPorNumero(p: Perguntador): Promise<string[] | undefined> {
+  const cor = temCor();
+  p.escrever(secao("Quais skills instalar neste projeto?", cor));
+  CATALOGO.forEach((s, i) => {
+    p.escrever(`  ${String(i + 1)}. ${rotuloDaSkill(s.nome, s.papel, s.camada, cor)}\n`);
+  });
+  p.escrever(`\n${pintar("numeros separados por virgula (ex.: 1,5)", "cinza", cor)}\n`);
+
+  const indices = interpretarEscolhaMultipla(await p.linha("skills: "), CATALOGO.length);
+  if (indices === undefined) {
+    p.escrever(`numero invalido: responda entre 1 e ${String(CATALOGO.length)}\n`);
+    return undefined;
+  }
+  return indices.map((i) => CATALOGO[i]?.nome ?? "");
+}
+
+async function marcarHarness(p: Perguntador): Promise<Harness[] | undefined> {
+  const cor = temCor();
+  const descricao: Record<Harness, string> = {
+    claude: "Claude Code",
+    opencode: "OpenCode",
+  };
+
+  if (p.marcar !== undefined) {
+    for (let tentativa = 0; tentativa < TENTATIVAS; tentativa++) {
+      const escolhido = await p.marcar({
+        titulo: "Qual harness configurar?",
+        itens: HARNESS_VALIDOS.map((h) => ({
+          valor: h,
+          rotulo: `${pintar(h, "branco", cor)}  ${pintar(descricao[h], "cinza", cor)}`,
+          marcado: h === "claude",
+        })),
+      });
+      if (escolhido === undefined) return undefined;
+      if (escolhido.length > 0) return escolhido as Harness[];
+      p.escrever(`${pintar("marque ao menos um harness", "cinza", cor)}\n`);
+    }
+    return undefined;
+  }
+
+  p.escrever(secao("Qual harness configurar?", cor));
+  HARNESS_VALIDOS.forEach((h, i) => {
+    p.escrever(`  ${String(i + 1)}. ${h} — ${descricao[h]}\n`);
+  });
+  p.escrever(`\n${pintar("os dois: 1,2. vazio usa claude.", "cinza", cor)}\n`);
 
   for (let tentativa = 0; tentativa < TENTATIVAS; tentativa++) {
     const resposta = await p.linha("harness [1]: ");
@@ -97,9 +154,10 @@ async function escolherHarness(p: Perguntador): Promise<Harness[] | undefined> {
 async function confirmarReconfiguracao(p: Perguntador, raiz: string): Promise<boolean> {
   if (!detectarProjeto(raiz).existe) return true;
 
-  p.escrever("\nEste projeto ja tem um .expx/ instalado.\n");
-  p.escrever("Seguir remonta a instalacao a partir da nova selecao, substituindo a atual.\n");
-  return interpretarSimNao(await p.linha("reconfigurar? [s/N] "), false);
+  const cor = temCor();
+  p.escrever(`\n${pintar("este projeto ja tem um .expx/ instalado", "negrito", cor)}\n`);
+  p.escrever(`${pintar("seguir remonta a instalacao a partir da nova selecao", "cinza", cor)}\n`);
+  return p.confirmar("reconfigurar?", false);
 }
 
 export async function executarWizard(
@@ -107,27 +165,40 @@ export async function executarWizard(
   parciais: OpcoesInitCli,
   raiz: string,
 ): Promise<ResultadoWizard> {
-  if (!(await confirmarReconfiguracao(p, raiz))) {
-    return { ok: false, erro: "reconfiguracao cancelada: nada foi alterado" };
+  const cor = temCor();
+  try {
+    if (!(await confirmarReconfiguracao(p, raiz))) {
+      return { ok: false, erro: "reconfiguracao cancelada: nada foi alterado" };
+    }
+
+    const skills = parciais.skills.length > 0 ? parciais.skills : await marcarSkills(p);
+    if (skills === undefined) return { ok: false, erro: "cancelado: nada foi alterado" };
+
+    const harness = parciais.harness.length > 0 ? parciais.harness : await marcarHarness(p);
+    if (harness === undefined) return { ok: false, erro: "cancelado: nada foi alterado" };
+
+    const painel = parciais.painel
+      ? true
+      : await p.confirmar("instalar o painel como devDependency?", false);
+
+    p.escrever(secao("Resumo", cor));
+    p.escrever(`  skills   ${pintar(skills.join(", "), "branco", cor)}\n`);
+    p.escrever(`  harness  ${pintar(harness.join(", "), "branco", cor)}\n`);
+    if (painel) p.escrever(`  painel   ${pintar("sim", "branco", cor)}\n`);
+    p.escrever("\n");
+
+    if (!(await p.confirmar("confirmar?", true))) {
+      return { ok: false, erro: "cancelado: nada foi alterado" };
+    }
+
+    return {
+      ok: true,
+      opcoes: { skills: [...skills], harness: [...harness], painel, sim: true, simular: parciais.simular },
+    };
+  } catch (e) {
+    if (foiCancelado(e)) return { ok: false, erro: "cancelado: nada foi alterado" };
+    throw e;
   }
-
-  const skills = parciais.skills.length > 0 ? parciais.skills : await escolherSkills(p);
-  if (skills === undefined) return { ok: false, erro: "selecao de skills invalida apos varias tentativas" };
-
-  const harness = parciais.harness.length > 0 ? parciais.harness : await escolherHarness(p);
-  if (harness === undefined) return { ok: false, erro: "harness invalido apos varias tentativas" };
-
-  const painel = parciais.painel
-    ? true
-    : interpretarSimNao(await p.linha("\nInstalar o painel como devDependency? [s/N] "), false);
-
-  p.escrever(`\nvai instalar: ${skills.join(", ")}\n`);
-  p.escrever(`harness: ${harness.join(", ")}\n`);
-  if (painel) p.escrever("painel: sim\n");
-
-  if (!interpretarSimNao(await p.linha("\nconfirmar? [S/n] "), true)) {
-    return { ok: false, erro: "cancelado: nada foi alterado" };
-  }
-
-  return { ok: true, opcoes: { skills: [...skills], harness: [...harness], painel, sim: true, simular: parciais.simular } };
 }
+
+export { interpretarSimNao };

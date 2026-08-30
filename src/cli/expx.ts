@@ -9,6 +9,8 @@ import { avaliarSelecao } from "./selecao.js";
 import { executarWizard } from "./wizard.js";
 import { perguntadorDeTerminal, type Perguntador } from "./perguntar.js";
 import { NOMES } from "../nucleo/catalogo.js";
+import { hero, sucesso, temCor } from "./visual.js";
+import { versaoDoCli } from "../nucleo/lock.js";
 import { instalarPlugin } from "../harness/instalar.js";
 import { join } from "node:path";
 
@@ -72,6 +74,7 @@ const EXECUTORES: Partial<Record<Subcomando, Executor>> = {
     // sair com "nenhuma skill selecionada" — que era o beco sem saída do
     // `npx expxdev init` puro.
     if (opcoes.skills.length === 0 && ehInterativo()) {
+      saida.escrever(hero(versaoDoCli()));
       const p = criarPerguntador();
       try {
         const w = await executarWizard(p, opcoes, process.cwd());
@@ -106,13 +109,22 @@ const EXECUTORES: Partial<Record<Subcomando, Executor>> = {
     for (const x of r.falhas) saida.escreverErro(`falhou ${x.nome}: ${x.erro}\n`);
     if (!r.ok) return 1;
 
-    saida.escrever(`instaladas: ${r.instaladas.join(", ")}\n`);
+    const fecho = [`instaladas: ${r.instaladas.join(", ")}`];
     if (harness.includes("claude")) {
       const inst = await instalarPlugin(join(process.cwd(), ".expx", "marketplace"));
-      if (inst.instrucao !== undefined) saida.escrever(`\n${inst.instrucao}\n`);
-      else if (inst.erro !== undefined) saida.escreverErro(`nao foi possivel registrar o plugin: ${inst.erro}\n`);
-      else saida.escrever("plugin registrado: os comandos /expx: estao disponiveis\n");
+      if (inst.instrucao !== undefined) {
+        saida.escrever(sucesso(fecho, temCor()));
+        saida.escrever(`\n${inst.instrucao}\n`);
+        return 0;
+      }
+      if (inst.erro !== undefined) {
+        saida.escrever(sucesso(fecho, temCor()));
+        saida.escreverErro(`nao foi possivel registrar o plugin: ${inst.erro}\n`);
+        return 0;
+      }
+      fecho.push("plugin registrado: os comandos /expx: estao disponiveis");
     }
+    saida.escrever(sucesso(fecho, temCor()));
     return 0;
   },
 
