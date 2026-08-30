@@ -62,8 +62,8 @@ describe.skipIf(!temRepos)("gatilhos: o relato como as pessoas realmente escreve
     const ancoras = [
       "não funciona como deveria",
       "não segue o padrão",
-      "comportamento errado",
-      "está estranho",
+      "valor errado",
+      "trava",
     ];
     const presentes = ancoras.filter((a) => d.includes(a));
     expect(presentes.length).toBeGreaterThanOrEqual(2);
@@ -74,7 +74,7 @@ describe.skipIf(!temRepos)("gatilhos: o relato como as pessoas realmente escreve
     // "arrastar", "clicar", "botão": o relato de UI é concreto, não categórico
     // "tela" já existia e NÃO basta: o relato fala de INTERAÇÃO (arrastar,
     // clicar), que é onde mora a maior parte do defeito de front-end.
-    const ui = ["arrastar", "clicar", "botão", "interface"];
+    const ui = ["arrastar", "clicar", "salvar", "interface"];
     expect(ui.filter((t) => d.includes(t)).length).toBeGreaterThanOrEqual(2);
   });
 
@@ -93,11 +93,15 @@ describe.skipIf(!temRepos)("gatilhos: o relato como as pessoas realmente escreve
     expect(construir.filter((t) => RELATO_DO_CARD.includes(t))).toEqual([]);
   });
 
-  it("funcional: a descrição da runx cabe no limite prático de 1024 caracteres", () => {
-    // descrição longa demais é truncada, e o gatilho ampliado se perde
-    // justamente no fim, que é onde a fronteira mora
+  /**
+   * A recomendação oficial é 200–300 caracteres. O limite duro de truncamento
+   * é 1536, mas descrição longa dilui o gatilho: o modelo lê dezenas delas de
+   * uma vez, e a que decide rápido é a curta e específica. A versão de 1020
+   * caracteres não acionava; esta cabe no que a documentação recomenda.
+   */
+  it("funcional: a descrição da runx é objetiva — no máximo 300 caracteres", () => {
     const d = descricaoDe("runx");
     expect(d.length).toBeGreaterThan(0);
-    expect(d.length).toBeLessThanOrEqual(1024);
+    expect(d.length).toBeLessThanOrEqual(300);
   });
 });

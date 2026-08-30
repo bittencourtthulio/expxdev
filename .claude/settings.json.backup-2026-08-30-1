@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "expx-local": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/thuliobittencourt/Documents/Projetos/Expx/.expx/marketplace"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "expx@expx-local": true
+  }
+}
