@@ -5,6 +5,10 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { interpretar, textoDeAjuda } from "./argumentos.js";
 import { iniciarPainel } from "../servidor/painel.js";
+import { ErroDePorta } from "../servidor/http.js";
+
+/** O painel escuta exclusivamente em loopback (ver http.ts). */
+const HOST_PAINEL = "127.0.0.1";
 
 /** Abre o navegador no sistema em que estamos, sem dependência externa. */
 function abrirNavegador(url: string): void {
@@ -44,12 +48,34 @@ export async function principal(argv: readonly string[]): Promise<number> {
   }
 
   const estaticos = pastaEstaticos();
-  const painel = await iniciarPainel({
-    raiz,
-    porta: r.opcoes.porta,
-    diasBloqueio: r.opcoes.diasBloqueio,
-    ...(estaticos !== undefined ? { estaticos } : {}),
-  });
+  let painel: Awaited<ReturnType<typeof iniciarPainel>>;
+  try {
+    painel = await iniciarPainel({
+      raiz,
+      porta: r.opcoes.porta,
+      diasBloqueio: r.opcoes.diasBloqueio,
+      ...(estaticos !== undefined ? { estaticos } : {}),
+    });
+  } catch (e: unknown) {
+    if (e instanceof ErroDePorta) {
+      // Quase sempre é um painel que já está no ar: mandar abrir aquele
+      // resolve mais rápido do que mandar matar processo.
+      process.stderr.write(
+        [
+          `a porta ${String(e.porta)} ja esta em uso`,
+          "",
+          "  se o painel ja estiver rodando, abra:",
+          `    http://${HOST_PAINEL}:${String(e.porta)}`,
+          "",
+          "  ou suba numa porta livre:",
+          `    npx expxdev panel --porta ${String(e.porta + 1)}`,
+          "",
+        ].join("\n"),
+      );
+      return 1;
+    }
+    throw e;
+  }
 
   const e = painel.estado();
   const url = painel.url();

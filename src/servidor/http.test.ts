@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { criarServidor, type ServidorPainel } from "./http.js";
+import { criarServidor, ErroDePorta, type ServidorPainel } from "./http.js";
 
 let servidor: ServidorPainel | null = null;
 afterEach(async () => {
@@ -78,5 +78,48 @@ describe("rota de memória", () => {
       memoria: unknown;
     };
     expect(semIndice.memoria).toBeNull();
+  });
+});
+
+describe("porta ocupada", () => {
+  it("integração: a segunda instancia na mesma porta falha com erro tipado, nao com crash", async () => {
+    // O caso real: um painel ja rodando e o usuario sobe outro. Antes, o
+    // `error` do servidor nao era tratado junto do listen e virava excecao
+    // nao capturada — o processo morria com stack trace de Node.
+    const primeiro = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0 });
+    const porta = primeiro.endereco().port;
+
+    try {
+      await expect(criarServidor({ raiz: "fixtures/projeto-ok", porta })).rejects.toThrow(ErroDePorta);
+    } finally {
+      await primeiro.fechar();
+    }
+  });
+
+  it("funcional: o erro carrega a porta, para a mensagem poder cita-la", async () => {
+    const primeiro = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0 });
+    const porta = primeiro.endereco().port;
+
+    try {
+      await criarServidor({ raiz: "fixtures/projeto-ok", porta });
+      expect.unreachable("deveria ter falhado com a porta ocupada");
+    } catch (e) {
+      expect(e).toBeInstanceOf(ErroDePorta);
+      expect((e as ErroDePorta).porta).toBe(porta);
+      expect(String(e)).toContain(String(porta));
+    } finally {
+      await primeiro.fechar();
+    }
+  });
+
+  it("funcional: liberada a porta, subir de novo volta a funcionar", async () => {
+    const primeiro = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0 });
+    const porta = primeiro.endereco().port;
+    await primeiro.fechar();
+
+    // O listener de erro nao pode ficar pendurado impedindo o uso seguinte.
+    const segundo = await criarServidor({ raiz: "fixtures/projeto-ok", porta });
+    expect(segundo.endereco().port).toBe(porta);
+    await segundo.fechar();
   });
 });

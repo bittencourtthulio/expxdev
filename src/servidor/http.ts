@@ -14,6 +14,23 @@ import { paginaRelatorio, type DadosRelatorio } from "../relatorio/pagina.js";
  */
 const HOST = "127.0.0.1" as const;
 
+/**
+ * Porta ocupada, tipada — para o CLI reconhecer o caso e explicar a saída em
+ * vez de repassar um `EADDRINUSE` cru.
+ *
+ * Na prática quase sempre é um painel anterior ainda no ar, e a ação certa é
+ * abrir aquele, não matar processo.
+ */
+export class ErroDePorta extends Error {
+  readonly porta: number;
+
+  constructor(porta: number) {
+    super(`a porta ${String(porta)} ja esta em uso`);
+    this.name = "ErroDePorta";
+    this.porta = porta;
+  }
+}
+
 export type OpcoesServidor = {
   raiz: string;
   porta: number;
@@ -110,7 +127,24 @@ export async function criarServidor(op: OpcoesServidor): Promise<ServidorPainel>
     res.end("nao encontrado");
   });
 
-  await new Promise<void>((ok) => http.listen(op.porta, HOST, ok));
+  // O `error` do servidor precisa ser tratado JUNTO do listen. Sem isto, uma
+  // porta ocupada vira exceção não capturada e o processo morre com stack
+  // trace de Node na cara de quem só queria subir o painel — o caso comum é
+  // um painel que já está rodando na mesma porta.
+  await new Promise<void>((ok, falhar) => {
+    const aoErrar = (e: NodeJS.ErrnoException): void => {
+      falhar(
+        e.code === "EADDRINUSE"
+          ? new ErroDePorta(op.porta)
+          : e,
+      );
+    };
+    http.once("error", aoErrar);
+    http.listen(op.porta, HOST, () => {
+      http.removeListener("error", aoErrar);
+      ok();
+    });
+  });
 
   const endereco = (): { address: string; port: number } => {
     const e = http.address();
