@@ -4,12 +4,16 @@ import { ExpxTool } from "./enums.js";
 /** Versão do contrato que este painel sabe ler (decisão D-09). */
 export const VERSAO_SUPORTADA = 1;
 
-/** Os dezenove kinds que o painel reconhece. */
+/** Os vinte kinds que o painel reconhece. */
 export const KINDS = [
   "orquestrador",
   "sprint",
   "fases",
   "tasks",
+  // Plano condensado: `sprint`, `fases` e `tasks` no MESMO frontmatter, gravado
+  // em `sprint-NN/tasks.md`. Substitui os tres acima quando o plano tem uma
+  // sprint e uma fase; os tres continuam validos e sao o formato dos demais casos.
+  "plano",
   "bloqueios",
   "decisoes",
   "ocorrencia",

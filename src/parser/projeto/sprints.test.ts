@@ -25,6 +25,50 @@ describe("montagem de sprints, fases e tasks", () => {
   });
 });
 
+describe("plano condensado (kind: plano)", () => {
+  it("integração: o trabalho com plano condensado traz sprint, fases e tasks montadas", () => {
+    const p = montarProjeto("fixtures/projeto-condensado");
+    const t = p.trabalhos.find((x) => x.trabalho_id === "OC-2026-0143");
+    expect(t, "o trabalho condensado precisa ser descoberto").toBeDefined();
+    expect(t?.sprints).toHaveLength(1);
+    const s = t?.sprints[0];
+    // Os tres blocos saem do MESMO arquivo, e nada pode ficar no fallback.
+    expect(s?.sprint_id).toBe("sprint-01");
+    expect(s?.titulo).toBe("Corrigir o tooltip do badge");
+    expect(s?.status).toBe("em_andamento");
+    expect(s?.criterio_saida).toBe("O tooltip aparece ao passar o mouse no badge");
+    expect(s?.riscos).toEqual(["O componente de badge e usado em quatro telas"]);
+    expect(s?.fases).toHaveLength(1);
+    expect(s?.tasks).toHaveLength(2);
+  });
+
+  it("funcional: a task do condensado se liga a fase pelo campo `fase`, como no formato de tres arquivos", () => {
+    const p = montarProjeto("fixtures/projeto-condensado");
+    const t = p.trabalhos.find((x) => x.trabalho_id === "OC-2026-0143");
+    const f = t?.sprints[0].fases.find((x) => x.id === "F-01.1");
+    expect(f?.tasks.map((x) => x.id)).toEqual(["T-01.01", "T-01.02"]);
+  });
+
+  it("funcional: `suite: parcial` sobrevive a montagem e chega na task", () => {
+    const p = montarProjeto("fixtures/projeto-condensado");
+    const t = p.trabalhos.find((x) => x.trabalho_id === "OC-2026-0143");
+    const task = t?.sprints[0].tasks.find((x) => x.id === "T-01.01");
+    expect(task?.suite).toBe("parcial");
+  });
+
+  it("regressão: o formato de tres arquivos continua montando igual ao que montava antes", () => {
+    // A garantia de compatibilidade para tras: o caminho antigo nao muda de
+    // comportamento por causa do ramo novo.
+    const p = montarProjeto("fixtures/projeto-ok");
+    const t = p.trabalhos.find((x) => x.trabalho_id === "exportacao-csv");
+    const s = t?.sprints[0];
+    expect(s?.titulo).not.toBe("sprint-01"); // veio do sprint.md, nao do fallback
+    expect(s?.fases).toHaveLength(3);
+    expect(s?.tasks).toHaveLength(4);
+    expect(s?.arquivo).toContain("sprint.md");
+  });
+});
+
 describe("calculo de progresso", () => {
   it("integração: o progresso da sprint fica entre 0 e 1", () => {
     const p = montarProjeto("fixtures/projeto-ok");
@@ -46,6 +90,35 @@ describe("calculo de progresso", () => {
     expect(s?.fases.find((f) => f.id === "F-01.3")?.progresso).toBe(0);
     // 2 de 4 tasks concluídas na sprint
     expect(s?.progresso).toBeCloseTo(2 / 4, 5);
+  });
+});
+
+describe("divergencia entre status e progresso (OC-2026-002 / T-01.01)", () => {
+  it("regressao: trabalho com status concluido e tasks pendentes marca divergente true", () => {
+    const p = montarProjeto("fixtures/projeto-divergente");
+    const t = p.trabalhos.find((x) => x.trabalho_id === "trabalho-x");
+    expect(t).toBeDefined();
+    expect(t?.status).toBe("concluido");
+    expect(t?.progresso).toBe(0);
+    expect(t?.divergente).toBe(true);
+  });
+
+  it("funcional: trabalho com status nao concluido e progresso 1 tambem marca divergente true", () => {
+    const p = montarProjeto("fixtures/projeto-ok");
+    const t = p.trabalhos.find((x) => x.trabalho_id === "exportacao-csv");
+    // fixture: status em_andamento, mas 2/4 tasks concluidas (progresso 0.5) — nao diverge
+    expect(t?.status).toBe("em_andamento");
+    expect(t?.progresso).toBeCloseTo(0.5, 5);
+    expect(t?.divergente).toBe(false);
+  });
+
+  it("funcional: status em_andamento com progresso 1 tambem diverge (caso oposto)", () => {
+    const p = montarProjeto("fixtures/projeto-ok");
+    const t = p.trabalhos.find((x) => x.trabalho_id === "OC-2026-0142");
+    // fixture: estagio e4 (QA), status em_andamento, mas as 2 tasks ja concluidas
+    expect(t?.status).toBe("em_andamento");
+    expect(t?.progresso).toBe(1);
+    expect(t?.divergente).toBe(true);
   });
 });
 

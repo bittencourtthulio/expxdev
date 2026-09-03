@@ -44,7 +44,7 @@ painel, com o defeito à vista.
 | `estagio` | sprintx: `f1`…`f6` · runx: `e1`…`e5` · buildx: `b1`…`b6` |
 | `status` (trabalho, sprint, fase) | `nao_iniciado` · `em_andamento` · `bloqueado` · `concluido` |
 | `status` (task) | `pendente` · `em_andamento` · `concluida` · `bloqueada` |
-| `suite` | `verde` · `vermelha` · `nao_executada` |
+| `suite` | `verde` · `vermelha` · `parcial` · `nao_executada` |
 | `veredito` | `aprovado` · `reprovado` |
 | `veredito` (buildx, kind `validacao`) | `aprovado` · `aprovado_com_pendencia` · `reprovado` |
 | `modo` (buildx) | `autonomo` · `briefing` |
@@ -54,6 +54,13 @@ painel, com o defeito à vista.
 | `severidade` | `alta` · `media` · `baixa` |
 | `modo` (causa raiz) | `causa_raiz` · `analise_impacto` |
 | `evidencia` | `teste_falho` · `log` · `codigo` · `null` |
+
+**Sobre `parcial`.** `verde` significa suíte inteira executada e sem falha.
+`parcial` significa: rodou o subconjunto de testes afetado por aquela task e ele
+passou, mas a suíte inteira ainda não rodou para ela. É o estado normal de uma
+task concluída durante a execução — a suíte inteira é cobrada uma vez, no portão
+(E4 na runx; fim de sprint na sprintx), e não uma vez por task. Para o painel,
+`concluida` com `parcial` **não é violação**; `vermelha` e `nao_executada` são.
 
 ## Cabeçalho comum
 
@@ -163,6 +170,76 @@ tasks:
 ```
 
 `teste_integracao` e `teste_funcional` são strings obrigatórias e não vazias. O painel usa a ausência delas como violação do método.
+
+### `plano` — `sprint-NN/tasks.md` (formato condensado)
+
+O mesmo plano dos três kinds acima, num arquivo só. Vale quando a sprint tem
+**uma fase**: em vez de `sprint.md` + `fases.md` + `tasks.md`, a skill grava um
+`sprint-NN/tasks.md` com `kind: plano`.
+
+Três invariantes que o painel depende, e que as skills prometem:
+
+1. **O nome do arquivo não muda.** Continua `sprint-NN/tasks.md`. Os hooks de
+   método das skills procuram esse caminho literal e todos falham abertos — um
+   nome novo os desligaria em silêncio.
+2. **Um único bloco YAML.** `sprint`, `fases` e `tasks` são chaves irmãs do mesmo
+   frontmatter. Os leitores de frontmatter param no primeiro `---` de fechamento.
+3. **`tasks` tem exatamente o formato do kind `tasks`.** Quem consome tasks lê a
+   mesma chave, com os mesmos campos, nos dois formatos.
+
+```yaml
+---
+expx_schema: 1
+expx_tool: runx
+kind: plano
+trabalho_id: OC-2026-0142
+sprint_id: sprint-01
+atualizado_em: 2026-08-29
+sprint:
+  titulo: Correcao do calculo de frete
+  status: em_andamento
+  criterio_saida: A suite roda com npm test e termina com 0 failed
+  riscos: [Tabela de faixas sem indice pode tornar a query lenta]
+  fora_de_escopo: [Refatorar o modulo de frete inteiro]
+fases:
+  - id: F-01.1
+    titulo: Corrigir a comparacao de faixa
+    status: em_andamento
+    criterio_saida: Pedido de 60kg retorna frete 87,40
+    paralelizavel: false
+    paralela_com: []
+    tasks: [T-01.01]
+tasks:
+  - id: T-01.01
+    titulo: Teste que reproduz o frete divergente
+    fase: F-01.1
+    status: concluida
+    objetivo: Fixar o comportamento errado antes de corrigir
+    arquivos:
+      cria: [src/frete/calculo.test.ts]
+      altera: []
+    teste_regressao: Pedido de 60kg hoje retorna 92,10 e o teste espera 87,40
+    teste_integracao: Roda o calculo contra a tabela de faixas real
+    teste_funcional: Dado peso 60kg, retorna 87,40
+    criterio_aceite: O teste falha antes do fix e passa depois
+    depende_de: []
+    paralelizavel: false
+    concluida_em: 2026-08-29
+    suite: parcial
+---
+```
+
+- `sprint` carrega os campos do kind `sprint` **menos** as chaves de cabeçalho
+  (`expx_schema`, `expx_tool`, `trabalho_id`, `sprint_id`, `atualizado_em`), que
+  já estão no topo. É essa repetição que o formato condensado corta.
+- `fora_de_escopo` só existe aqui: no formato de três arquivos ele vive na prosa
+  do `sprint.md`.
+- `sprint_id` fica na raiz do frontmatter, como nos outros kinds.
+
+**Os dois formatos convivem.** `sprint`, `fases` e `tasks` continuam válidos e
+são o formato de qualquer plano com mais de uma fase. Plano já gravado neles não
+é migrado, e o painel lê os dois — se encontrar `kind: plano` na pasta da sprint,
+usa; senão, procura os três arquivos.
 
 ### `bloqueios` — `BLOQUEIOS.md` / `00-BLOQUEIOS.md`
 

@@ -19,7 +19,10 @@ function calcular(e: Estado) {
   const tasks = t.flatMap((x) => x.sprints.flatMap((s) => s.tasks));
   const concluidas = tasks.filter((x) => x.status === "concluida");
   const bloqueadas = tasks.filter((x) => x.status === "bloqueada");
-  const semSuite = concluidas.filter((x) => x.suite !== "verde");
+  // `parcial` (subconjunto da task passou) fecha task por contrato; o que a
+  // metrica precisa mostrar e task concluida com suite `vermelha` ou nunca
+  // executada. Contar `parcial` aqui transformaria o numero em ruido constante.
+  const semSuite = concluidas.filter((x) => x.suite !== "verde" && x.suite !== "parcial");
   const abertos = e.bloqueios.filter((b) => b.aberto);
 
   const porFerramenta = new Map<string, number>();
@@ -259,8 +262,14 @@ export function Dashboard({
                 {recentes.map((t) => (
                   <tr key={t.trabalho_id} style={{ cursor: "pointer" }} onClick={() => aoAbrir(t.trabalho_id)}>
                     <td>
-                      <div>{t.titulo}</div>
-                      <code className="cam">{t.trabalho_id}</code>
+                      <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                        <span>{t.titulo}</span>
+                        {t.divergente ? <Etiqueta tipo="bug">divergente</Etiqueta> : null}
+                      </div>
+                      <code className="cam">
+                        {t.trabalho_id}
+                        {t.branch !== null ? <span className="dep"> · {t.branch}</span> : null}
+                      </code>
                     </td>
                     <td><Etiqueta tipo={t.expx_tool}>{t.expx_tool}</Etiqueta></td>
                     <td><code>{t.estagio}</code></td>

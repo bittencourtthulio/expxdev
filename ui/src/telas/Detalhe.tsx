@@ -24,7 +24,7 @@ function LinhaTask({ t, critico }: { t: Task; critico: boolean }): JSX.Element {
         <Etiqueta tipo={t.status === "concluida" ? "ok" : t.status === "bloqueada" ? "bug" : undefined}>
           {ROTULO_STATUS[t.status] ?? t.status}
         </Etiqueta>
-        <Etiqueta tipo={t.suite === "verde" ? "ok" : t.suite === "vermelha" ? "bug" : undefined}>
+        <Etiqueta tipo={t.suite === "verde" ? "ok" : t.suite === "vermelha" ? "bug" : t.suite === "parcial" ? "aviso" : undefined}>
           {t.suite.replace("_", " ")}
         </Etiqueta>
       </div>

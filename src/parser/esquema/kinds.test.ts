@@ -25,6 +25,9 @@ describe("esquemas dos kinds", () => {
       [`${OK}/manutencao/OC-2026-0142-frete/01-CAUSA-RAIZ.md`, "causa_raiz"],
       [`${OK}/manutencao/OC-2026-0142-frete/QA.md`, "qa"],
       [`${OK}/manutencao/OC-2026-0142-frete/sprint-01/tasks.md`, "tasks"],
+      // Formato condensado: uma sprint e uma fase num arquivo so, no MESMO
+      // caminho `sprint-NN/tasks.md`. O kind e que muda, nao o nome do arquivo.
+      ["fixtures/projeto-condensado/docs/manutencao/OC-2026-0143-condensado/sprint-01/tasks.md", "plano"],
       [`${OK}/relatorios/INDICE.md`, "relatorios_indice"],
       [`${OK}/relatorios/2026-08-29-OC-2026-0142-frete/tecnico.md`, "relatorio_tecnico"],
       [`${OK}/relatorios/2026-08-29-OC-2026-0142-frete/uso.md`, "relatorio_uso"],

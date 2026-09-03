@@ -122,6 +122,45 @@ export const Tasks = z.object({
   tasks: z.array(Task).default([]),
 });
 
+/**
+ * Bloco `sprint:` do plano condensado. Os mesmos campos do kind `sprint`, menos
+ * as chaves de cabecalho (`expx_schema`, `expx_tool`, `trabalho_id`,
+ * `sprint_id`, `atualizado_em`) — que ja estao no topo do arquivo e nao se
+ * repetem. Essa repeticao e exatamente o custo que o formato condensado corta.
+ *
+ * `fora_de_escopo` so existe aqui: no formato de tres arquivos ele vive na prosa
+ * do `sprint.md`. Escopo travado e regra do metodo e precisa continuar declarado.
+ */
+export const SprintDoPlano = z.object({
+  titulo: z.string(),
+  status: StatusTrabalho,
+  criterio_saida: nulavel(z.string()).optional(),
+  riscos: z.array(z.string()).default([]),
+  fora_de_escopo: z.array(z.string()).default([]),
+});
+export type SprintDoPlano = z.infer<typeof SprintDoPlano>;
+
+/**
+ * `plano` — o formato condensado, gravado em `sprint-NN/tasks.md`.
+ *
+ * Uma sprint e uma fase num arquivo so. O nome do arquivo NAO muda: os hooks de
+ * metodo das skills procuram `sprint-NN/tasks.md` por caminho literal, e todos
+ * falham abertos — um nome novo os desligaria em silencio.
+ *
+ * `sprint`, `fases` e `tasks` seguem validos e sao o formato de qualquer plano
+ * com mais de uma sprint ou mais de uma fase. Plano ja escrito neles nao e
+ * migrado: as duas formas convivem, e o painel le as duas.
+ */
+export const Plano = z.object({
+  ...comum,
+  kind: z.literal("plano"),
+  sprint_id: z.string(),
+  atualizado_em: DataIso,
+  sprint: SprintDoPlano,
+  fases: z.array(Fase).default([]),
+  tasks: z.array(Task).default([]),
+});
+
 export const Bloqueio = z.object({
   id: z.string(),
   task: nulavel(z.string()),
@@ -348,6 +387,7 @@ const POR_KIND = {
   sprint: Sprint,
   fases: Fases,
   tasks: Tasks,
+  plano: Plano,
   bloqueios: Bloqueios,
   decisoes: Decisoes,
   ocorrencia: Ocorrencia,

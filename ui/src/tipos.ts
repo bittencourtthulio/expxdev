@@ -1,6 +1,6 @@
 /** Espelho dos tipos que a API serve. A UI não recalcula nada: só renderiza. */
 
-export type Suite = "verde" | "vermelha" | "nao_executada";
+export type Suite = "verde" | "vermelha" | "parcial" | "nao_executada";
 export type StatusTask = "pendente" | "em_andamento" | "concluida" | "bloqueada";
 export type StatusTrabalho = "nao_iniciado" | "em_andamento" | "bloqueado" | "concluido";
 
@@ -71,6 +71,10 @@ export type Trabalho = {
   sprints: Sprint[];
   progresso: number;
   bloqueios: Bloqueio[];
+  /** `status` e `progresso` discordam entre si — ver TrabalhoMontado.divergente no servidor (OC-2026-002). */
+  divergente: boolean;
+  /** A branch onde este trabalho foi encontrado; `null` para o checkout ativo (OC-2026-002). */
+  branch: string | null;
 };
 
 export type Violacao = {

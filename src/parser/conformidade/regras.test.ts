@@ -88,6 +88,17 @@ describe("violacoes de coerencia da task", () => {
     expect(v[0]?.linha).toBeGreaterThan(0);
   });
 
+  it("funcional: task concluída com `suite: parcial` NÃO é violação", () => {
+    // `parcial` e o estado esperado de uma task fechada sob a regra nova: o E3
+    // roda o subconjunto afetado, e a suite inteira e cobrada uma vez no portao.
+    // Trata-la como violacao encheria o painel de falso positivo e faria o
+    // alerta perder o sentido — que e o que mata um portao na pratica.
+    const v = violacoes("fixtures/projeto-condensado").filter(
+      (x) => x.tipo === TipoViolacao.ConcluidaSemVerde,
+    );
+    expect(v).toEqual([]);
+  });
+
   it("funcional: paralelizável com depende_de vazio não gera violação", () => {
     const ok = violacoes("fixtures/projeto-ok").filter((x) => x.tipo === TipoViolacao.ParalelaComDependencia);
     expect(ok).toEqual([]);

@@ -28,7 +28,7 @@ describe("enums do contrato", () => {
       [StatusTrabalho, ["nao_iniciado", "em_andamento", "bloqueado", "concluido"]],
       [StatusTask, ["pendente", "em_andamento", "concluida", "bloqueada"]],
       [StatusDecisao, ["fechada", "pendente"]],
-      [Suite, ["verde", "vermelha", "nao_executada"]],
+      [Suite, ["verde", "vermelha", "parcial", "nao_executada"]],
       [Veredito, ["aprovado", "reprovado"]],
       [Severidade, ["alta", "media", "baixa"]],
       [ModoCausaRaiz, ["causa_raiz", "analise_impacto"]],

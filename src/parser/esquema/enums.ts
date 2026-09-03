@@ -82,7 +82,14 @@ export type StatusTask = z.infer<typeof StatusTask>;
 export const StatusDecisao = z.enum(["fechada", "pendente"]);
 export type StatusDecisao = z.infer<typeof StatusDecisao>;
 
-export const Suite = z.enum(["verde", "vermelha", "nao_executada"]);
+/**
+ * `parcial` = rodou o subconjunto de testes afetado pela task e passou, mas a
+ * suite inteira ainda nao rodou para ela. E o estado normal de uma task fechada
+ * no E3 da runx / F6 da sprintx: a suite completa e cobrada uma vez, no portao
+ * (E4 na runx, fim de sprint na sprintx). `verde` continua significando suite
+ * inteira executada e sem falha.
+ */
+export const Suite = z.enum(["verde", "vermelha", "parcial", "nao_executada"]);
 export type Suite = z.infer<typeof Suite>;
 
 export const Veredito = z.enum(["aprovado", "reprovado"]);

@@ -319,6 +319,7 @@ input.busca:focus { outline: 1px solid var(--vscode-focusBorder); border-color: 
 .etiqueta.runx    { background: color-mix(in srgb, var(--vscode-charts-orange) 22%, transparent); color: var(--vscode-charts-orange); }
 .etiqueta.bug     { background: color-mix(in srgb, var(--vscode-charts-red) 20%, transparent); color: var(--vscode-charts-red); }
 .etiqueta.ok      { background: color-mix(in srgb, var(--vscode-charts-green) 20%, transparent); color: var(--vscode-charts-green); }
+.etiqueta.aviso   { background: color-mix(in srgb, var(--vscode-charts-yellow) 20%, transparent); color: var(--vscode-charts-yellow); }
 .etiqueta.paralela{ background: color-mix(in srgb, var(--vscode-charts-purple) 22%, transparent); color: var(--vscode-charts-purple); }
 .etiqueta.critico { background: var(--vscode-charts-red); color: #fff; }
 

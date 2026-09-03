@@ -83,8 +83,16 @@ function regrasDeTask(t: TrabalhoMontado, saida: Violacao[]): void {
       }
     }
 
-    // 2. task concluída com suíte diferente de verde
-    if (task.status === "concluida" && task.suite !== "verde") {
+    // 2. task concluída sem suíte passando.
+    //
+    // `verde` (suite inteira) e `parcial` (subconjunto afetado pela task) sao os
+    // dois estados de "o que rodou passou", e ambos fecham task. O que continua
+    // sendo violacao e `vermelha` (falhou) e `nao_executada` (ninguem rodou).
+    //
+    // A suite inteira nao deixou de ser exigida: ela mudou de lugar. E cobrada
+    // uma vez no portao — E4 na runx, fim de sprint na sprintx — em vez de uma
+    // vez por task.
+    if (task.status === "concluida" && task.suite !== "verde" && task.suite !== "parcial") {
       saida.push({
         ...base,
         tipo: TipoViolacao.ConcluidaSemVerde,

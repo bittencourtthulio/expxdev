@@ -42,6 +42,14 @@ export type TrabalhoMontado = Omit<Trabalho, "sprints"> & {
   sprints_declaradas: string[];
   progresso: number;
   bloqueios: BloqueioSituado[];
+  /**
+   * true quando `status` do ORQUESTRADOR e o `progresso` calculado das tasks
+   * discordam: `status: concluido` com progresso < 1, ou `status` não
+   * concluído com progresso === 1 (OC-2026-002). `status` e `tasks[].status`
+   * são gravados em momentos distintos do fluxo da skill — este campo não
+   * corrige nenhum dos dois, só torna a discordância visível.
+   */
+  divergente: boolean;
 };
 
 export type BloqueioSituado = Bloqueio & {
@@ -110,6 +118,19 @@ function progressoDe(tasks: TaskSituada[]): number {
   return tasks.filter((t) => t.status === "concluida").length / tasks.length;
 }
 
+/**
+ * `status` e `progresso` vêm de fontes distintas do frontmatter (o primeiro do
+ * ORQUESTRADOR, o segundo calculado a partir de `tasks[].status`) e a skill
+ * pode gravar um sem terminar de gravar o outro (OC-2026-002). Diverge nos
+ * dois sentidos: concluído sem progresso pleno, ou progresso pleno sem status
+ * concluído.
+ */
+function divergenteDe(status: StatusTrabalho, progresso: number): boolean {
+  const concluido = status === "concluido";
+  const completo = progresso === 1;
+  return concluido !== completo;
+}
+
 function montarSprints(trabalho: Trabalho, mapa: Map<string, Aceito[]>): SprintMontada[] {
   const sprints: SprintMontada[] = [];
 
@@ -121,9 +142,22 @@ function montarSprints(trabalho: Trabalho, mapa: Map<string, Aceito[]>): SprintM
 
   for (const pasta of pastas) {
     const arquivos = mapa.get(pasta) ?? [];
-    const aSprint = arquivos.find((a) => a.kind === "sprint");
-    const aFases = arquivos.find((a) => a.kind === "fases");
-    const aTasks = arquivos.find((a) => a.kind === "tasks");
+    // Duas formas do mesmo plano, e o painel le as duas (contrato v1):
+    //  - condensado: `kind: plano` num arquivo so (`sprint-NN/tasks.md`), com
+    //    `sprint`, `fases` e `tasks` no mesmo frontmatter;
+    //  - tres arquivos: `sprint.md` + `fases.md` + `tasks.md`, um kind cada.
+    // O condensado tem precedencia quando existe; sem ele, nada muda em relacao
+    // ao que este codigo sempre fez.
+    const aPlano = arquivos.find((a) => a.kind === "plano");
+    const aSprint = aPlano ?? arquivos.find((a) => a.kind === "sprint");
+    const aFases = aPlano ?? arquivos.find((a) => a.kind === "fases");
+    const aTasks = aPlano ?? arquivos.find((a) => a.kind === "tasks");
+
+    // No condensado os campos da sprint moram sob a chave `sprint:`; nos tres
+    // arquivos, na raiz do `sprint.md`.
+    const dadosSprint = (aPlano
+      ? ((aPlano.dados["sprint"] as Record<string, unknown> | undefined) ?? {})
+      : (aSprint?.dados ?? {})) as Record<string, unknown>;
 
     const tasksBrutas = (aTasks?.dados["tasks"] as Task[] | undefined) ?? [];
     const tasks: TaskSituada[] = tasksBrutas.map((t, i) => ({
@@ -148,16 +182,20 @@ function montarSprints(trabalho: Trabalho, mapa: Map<string, Aceito[]>): SprintM
     });
 
     sprints.push({
+      // `sprint_id` vive na raiz do frontmatter nos dois formatos.
       sprint_id: (aSprint?.dados["sprint_id"] as string | undefined) ?? basename(pasta),
-      titulo: (aSprint?.dados["titulo"] as string | undefined) ?? basename(pasta),
-      status: (aSprint?.dados["status"] as StatusTrabalho | undefined) ?? "nao_iniciado",
-      criterio_saida: (aSprint?.dados["criterio_saida"] as string | null | undefined) ?? null,
-      riscos: (aSprint?.dados["riscos"] as string[] | undefined) ?? [],
+      titulo: (dadosSprint["titulo"] as string | undefined) ?? basename(pasta),
+      status: (dadosSprint["status"] as StatusTrabalho | undefined) ?? "nao_iniciado",
+      criterio_saida: (dadosSprint["criterio_saida"] as string | null | undefined) ?? null,
+      riscos: (dadosSprint["riscos"] as string[] | undefined) ?? [],
       fases,
       tasks,
       progresso: progressoDe(tasks),
       arquivo: aSprint?.arquivo ?? null,
-      linha: aSprint?.linhas.get("criterio_saida") ?? aSprint?.linhas.get("kind") ?? null,
+      linha:
+        aSprint?.linhas.get(aPlano ? "sprint.criterio_saida" : "criterio_saida") ??
+        aSprint?.linhas.get("kind") ??
+        null,
     });
   }
 
@@ -224,12 +262,14 @@ export function montarProjeto(raiz: string, agora: Date = new Date()): Projeto {
   const montados: TrabalhoMontado[] = trabalhos.map((t) => {
     const sprints = montarSprints(t, mapa);
     const todas = sprints.flatMap((s) => s.tasks);
+    const progresso = progressoDe(todas);
     return {
       ...t,
       sprints,
       sprints_declaradas: t.sprints,
-      progresso: progressoDe(todas),
+      progresso,
       bloqueios: montarBloqueios(t, mapa),
+      divergente: divergenteDe(t.status, progresso),
     };
   });
 
