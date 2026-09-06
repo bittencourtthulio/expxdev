@@ -151,8 +151,12 @@ function LinhaTrabalho({ t, aoAbrir }: { t: Trabalho; aoAbrir: (id: string) => v
           {t.tipo_trabalho === "feature" ? <Icone.Feature tamanho={13} /> : <Icone.Ocorrencia tamanho={13} />}
           <span>{t.titulo}</span>
           {abertos > 0 ? <Etiqueta tipo="bug">{abertos} bloqueio(s)</Etiqueta> : null}
+          {t.divergente ? <Etiqueta tipo="bug">divergente</Etiqueta> : null}
         </div>
-        <code className="cam">{t.trabalho_id}</code>
+        <code className="cam">
+          {t.trabalho_id}
+          {t.branch !== null ? <span className="dep"> · {t.branch}</span> : null}
+        </code>
       </td>
       <td><Etiqueta tipo={t.expx_tool}>{t.expx_tool}</Etiqueta></td>
       <td>

@@ -1,4 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
+import { rmSync } from "node:fs";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import type { Estado } from "../tipos.js";
 import { Dashboard } from "./Dashboard.js";
@@ -11,6 +12,8 @@ import { Memoria } from "./Memoria.js";
 import { estadoFixture, estadoRuimFixture, estadoMemoriaFixture } from "./fixture.js";
 import { PERIODO_PADRAO } from "../periodo.js";
 import { csvDaMemoria } from "./Memoria.js";
+import { lerEstado } from "../../../src/servidor/estado.js";
+import { criarRepoMultiBranch } from "../../../src/teste/repo-multi-branch.js";
 
 const propsPeriodo = { periodo: PERIODO_PADRAO, aoMudarPeriodo: () => undefined };
 
@@ -85,6 +88,38 @@ describe("lista de trabalhos", () => {
     fireEvent.click(container.querySelector("tbody tr") as Element);
     expect(vistos).toHaveLength(1);
   });
+
+  it("integração: trabalho divergente mostra a etiqueta; trabalho consistente não (OC-2026-002 / T-01.03)", () => {
+    const { container } = render(<Trabalhos estado={ok} {...props} />);
+    const linhas = [...container.querySelectorAll("tbody tr")];
+    // fixture: OC-2026-0142 tem status em_andamento com progresso 1 (T-01.01/T-01.02 concluidas) — diverge
+    const divergente = linhas.find((l) => l.textContent?.includes("frete"));
+    expect(divergente?.textContent).toContain("divergente");
+    // fixture: exportacao-csv tem status em_andamento com progresso 0.5 — nao diverge
+    const consistente = linhas.find((l) => l.textContent?.includes("Exportacao de relatorios"));
+    expect(consistente?.textContent).not.toContain("divergente");
+  });
+
+  it(
+    "integração: trabalhos de branches diferentes mostram a branch de origem (OC-2026-002 / T-01.06)",
+    // criarRepoMultiBranch roda ~10 processos git síncronos; sob concorrência
+    // com o resto da suíte isso passou de 20s (achado MÉDIA do QA).
+    { timeout: 30000 },
+    () => {
+      const dir = criarRepoMultiBranch();
+      try {
+        const estado = lerEstado({ raiz: dir, diasBloqueio: 7 }) as unknown as Estado;
+        const { container } = render(<Trabalhos estado={estado} {...props} />);
+        const texto = container.querySelector("tbody")?.textContent ?? "";
+        expect(texto).toContain("feature-x");
+        expect(texto).toContain("feature/x");
+        expect(texto).toContain("feature-y");
+        expect(texto).toContain("feature/y");
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    },
+  );
 });
 
 describe("detalhe do trabalho", () => {

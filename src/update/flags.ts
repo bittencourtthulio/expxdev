@@ -127,7 +127,13 @@ export async function executarUpdate(op: OpcoesUpdate): Promise<ResultadoUpdate>
     if (i.erro !== undefined) bloqueadas.push({ nome: i.nome, motivo: i.erro });
   }
   for (const i of candidatas) {
-    mensagens.push(`${i.nome}: ${i.atual} → ${i.nova}${i.mudancas.length > 0 ? ` (${String(i.mudancas.length)} mudanca(s))` : ""}`);
+    // Sem tag, `atual`/`nova` são o mesmo nome de branch: o que mudou é o
+    // commit, e é ele que precisa aparecer, senão a mensagem lê "main → main".
+    const versoes =
+      i.commitAtual !== undefined && i.commitNovo !== undefined
+        ? `${i.atual} (${i.commitAtual.slice(0, 9)}) → ${i.commitNovo.slice(0, 9)}`
+        : `${i.atual} → ${i.nova}`;
+    mensagens.push(`${i.nome}: ${versoes}${i.mudancas.length > 0 ? ` (${String(i.mudancas.length)} mudanca(s))` : ""}`);
   }
 
   const podeAplicar = (op.sim ?? false) || (op.interativo ?? false);

@@ -24,9 +24,16 @@ export function desenharLista(v: Visao, colunas: number, cor: boolean): string[]
     const progresso = tasks.length > 0 ? ` · ${String(feitas)}/${String(tasks.length)}` : "";
     const bloqueios = t.bloqueios.filter((b) => b.aberto).length;
     const marcaBloqueio = bloqueios > 0 ? ` · ${String(bloqueios)} bloq` : "";
+    const marcaDivergente = t.divergente ? " · DIVERGENTE" : "";
 
-    const papel = t.status === "bloqueado" ? "erro" : t.status === "em_andamento" ? "atencao" : "apagado";
-    const texto = `  ${t.trabalho_id} · ${t.expx_tool} · ${t.status}${progresso}${marcaBloqueio} · ${t.titulo}`;
+    const papel = t.divergente
+      ? "erro"
+      : t.status === "bloqueado"
+        ? "erro"
+        : t.status === "em_andamento"
+          ? "atencao"
+          : "apagado";
+    const texto = `  ${t.trabalho_id} · ${t.expx_tool} · ${t.status}${progresso}${marcaBloqueio}${marcaDivergente} · ${t.titulo}`;
     linhas.push(pintar(cortar(texto, colunas), papel));
   }
 

@@ -142,4 +142,63 @@ describe("loop do watch", () => {
     expect(texto).toContain("exportacao-csv");
     expect(texto).toContain("T-01.01");
   });
+
+  it("funcional: `usarInk` devolve o store, e reage aos mesmos gatilhos que o motor antigo", async () => {
+    dir = copiar("com-estado");
+    const f = saidaFalsa();
+
+    sessao = await executarWatch({
+      raiz: dir,
+      opcoes: { trabalho: undefined, todos: false, ajuda: false, colunas: 80 },
+      escrever: f.escrever,
+      cor: false,
+      debounceMs: 40,
+      pulsoMs: 0,
+      usarInk: true,
+    });
+
+    // Motor Ink: nada escrito pela função `escrever` injetável — `renderInkApp`
+    // (chamado por `principal.ts`, não por este loop) escreve em
+    // `process.stdout` diretamente.
+    expect(f.linhas.length).toBe(0);
+    expect(sessao.store).toBeDefined();
+    const visaoInicial = sessao.store?.obter();
+    expect(visaoInicial?.frota.length).toBeGreaterThan(0);
+
+    // O gatilho de estado ainda atualiza o store, exatamente como atualizaria
+    // a variável `visao` do motor antigo.
+    let notificado = 0;
+    sessao.store?.inscrever(() => {
+      notificado++;
+    });
+    const estadoPath = join(dir, ".expx", "estado.json");
+    writeFileSync(
+      estadoPath,
+      readFileSync(estadoPath, "utf8").replace('"fase": "f6"', '"fase": "f5"'),
+    );
+    await espera(300);
+
+    expect(notificado).toBeGreaterThan(0);
+    expect(sessao.store?.obter().estado?.fase).toBe("f5");
+  });
+
+  it("funcional: `--todos` usa sempre o motor antigo, mesmo com `usarInk`", async () => {
+    dir = copiar("varios-trabalhos");
+    const f = saidaFalsa();
+
+    sessao = await executarWatch({
+      raiz: dir,
+      opcoes: { trabalho: undefined, todos: true, ajuda: false, colunas: 80 },
+      escrever: f.escrever,
+      cor: false,
+      debounceMs: 40,
+      pulsoMs: 0,
+      usarInk: true,
+    });
+
+    // `--todos` é formato tabular de propósito: sem ganho em virar painel,
+    // então continua sempre no motor antigo, mesmo com Ink disponível.
+    expect(sessao.store).toBeUndefined();
+    expect(f.linhas.length).toBeGreaterThan(0);
+  });
 });

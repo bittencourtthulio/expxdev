@@ -1,10 +1,12 @@
 import type { Visao } from "../visao/projetar.js";
 import type { TaskAtiva, TrabalhoNaFrota } from "../visao/frota.js";
-import { agrupar, type GrupoAtividade } from "../visao/atividade.js";
+import { agrupar } from "../visao/atividade.js";
 import { barra, barraIndeterminada, decorrido, papelDaBarra, percentual } from "./barra.js";
 import type { EstadoExpx } from "../fontes/estado-schema.js";
 import type { Papel, Pintor } from "./cor.js";
 import { cortar, largura, preencher } from "./largura.js";
+import { nomeEstagio, situacao } from "../logica/situacao.js";
+import { rotuloEvento, sinalDe } from "../logica/atividade.js";
 
 /**
  * O painel: a frota de trabalhos, cada um com sua barra e sua task corrente.
@@ -28,75 +30,27 @@ const COL_DETALHE = 26;
 /** Larguras mínimas para os enfeites: abaixo disso, só texto. */
 const CABE_BARRA = 52;
 
-const MARCA_ESTAGIO: Record<string, string> = {
-  f1: "ingestao",
-  f2: "descoberta",
-  f3: "plano",
-  f4: "orquestracao",
-  f5: "auditoria",
-  f6: "execucao",
-  e1: "investigacao",
-  e2: "plano",
-  e3: "correcao",
-  e4: "qa",
-  e5: "relatorio",
-  b1: "concepcao",
-  b2: "stack",
-  b3: "mapa",
-  b4: "features",
-  b5: "recursao",
-  b6: "validacao",
-};
-
-/**
- * Uma palavra dizendo em que pé está o trabalho — o que a pessoa lê primeiro.
- *
- * "bloqueado" e "parado" são coisas diferentes de propósito: bloqueado é
- * declarado no plano e exige decisão humana; parado é o rastro em silêncio, e
- * costuma ser execução travada.
- */
-function situacao(t: TrabalhoNaFrota, agora: Date): { texto: string; papel: Papel } {
-  if (t.bloqueiosAbertos > 0) {
-    const n = t.bloqueiosAbertos;
-    return { texto: n === 1 ? "1 bloqueio" : `${String(n)} bloqueios`, papel: "erro" };
-  }
-  if (t.ativas.some((a) => a.bloqueada)) return { texto: "task bloqueada", papel: "erro" };
-  if (t.total > 0 && t.concluidas >= t.total) return { texto: "concluido", papel: "sucesso" };
-
-  if (t.ativas.length > 0) {
-    // Duas ou mais tasks em andamento é paralelismo REAL acontecendo agora,
-    // e é o que a tela precisa gritar.
-    const n = t.ativas.length;
-    if (n > 1) return { texto: `${String(n)} em paralelo`, papel: "destaque" };
-    return { texto: "executando", papel: "atencao" };
-  }
-
-  if (t.ultimoEventoTs !== null) {
-    const ms = agora.getTime() - new Date(t.ultimoEventoTs).getTime();
-    // Dez minutos sem evento numa execução autônoma não é pausa, é sintoma.
-    if (ms > 10 * 60_000) return { texto: `parado ha ${decorrido(ms)}`, papel: "atencao" };
-  }
-  return { texto: "aguardando", papel: "apagado" };
-}
-
 /** A linha-título de um trabalho: id, ferramenta e situação. */
 function linhaTitulo(t: TrabalhoNaFrota, colunas: number, pintar: Pintor, agora: Date): string {
   const s = situacao(t, agora);
   const marca = t.corrente ? "▸ " : "  ";
-  const cabeca = `${marca}${t.trabalho.trabalho_id} · ${t.trabalho.expx_tool}`;
+  // OC-2026-002: status do ORQUESTRADOR e progresso das tasks discordam.
+  const divergente = t.trabalho.divergente ? " ⚠ DIVERGENTE" : "";
+  const cabeca = `${marca}${t.trabalho.trabalho_id} · ${t.trabalho.expx_tool}${divergente}`;
 
-  const estagio = MARCA_ESTAGIO[t.estagio] ?? t.estagio;
+  const estagio = nomeEstagio(t.estagio);
   const cauda = `${t.estagio} ${estagio} · ${s.texto}`;
 
   // O título alinha à esquerda e a situação à direita: a coluna da direita
   // vira uma faixa que se lê de cima a baixo sem precisar ler o resto.
   const sobra = colunas - largura(cabeca) - largura(cauda) - 2;
+  const papelCabeca: Papel = t.trabalho.divergente ? "erro" : t.corrente ? "destaque" : "neutro";
   if (sobra < 1) {
-    return pintar(cortar(`${cabeca} · ${s.texto}`, colunas), t.corrente ? "destaque" : "neutro");
+    return pintar(cortar(`${cabeca} · ${s.texto}`, colunas), papelCabeca);
   }
 
   return (
-    pintar(cabeca, t.corrente ? "destaque" : "neutro") +
+    pintar(cabeca, papelCabeca) +
     " ".repeat(sobra + 2) +
     pintar(cauda, s.papel)
   );
@@ -233,34 +187,6 @@ export function blocoTrabalho(
   return linhas;
 }
 
-/** Rótulo curto e legível de um evento — sem o vocabulário de máquina. */
-const ROTULO_EVENTO: Record<string, string> = {
-  fase_iniciada: "fase iniciada",
-  fase_concluida: "fase concluida",
-  task_iniciada: "task iniciada",
-  task_concluida: "task concluida",
-  task_bloqueada: "task bloqueada",
-  suite_executada: "suite",
-  arquivo_alterado: "arquivos",
-  regra_violada: "regra violada",
-  acao_bloqueada: "acao bloqueada",
-  agente_iniciado: "agente iniciado",
-  agente_concluido: "agente concluido",
-  veredito_emitido: "veredito",
-  commit_criado: "commit",
-  pr_aberto: "pr aberto",
-};
-
-/** O sinal de um grupo: o que a pessoa lê antes de ler a linha. */
-function sinalDe(g: GrupoAtividade): { marca: string; papel: Papel } {
-  if (g.houveFalha) return { marca: "!", papel: "erro" };
-  if (g.evento === "task_concluida" || g.evento === "fase_concluida") {
-    return { marca: "✓", papel: "sucesso" };
-  }
-  if (g.evento === "suite_executada") return { marca: "✓", papel: "sucesso" };
-  return { marca: "·", papel: "apagado" };
-}
-
 /**
  * A atividade: eventos agrupados, não o rastro cru.
  *
@@ -276,7 +202,7 @@ export function desenharAtividade(v: Visao, colunas: number, pintar: Pintor): st
 
   for (const g of grupos) {
     const s = sinalDe(g);
-    const rotulo = ROTULO_EVENTO[g.evento] ?? g.evento;
+    const rotulo = rotuloEvento(g.evento);
     // "×12" diz que repetiu; "×12, 8 sem resultado" diz que repetiu APANHANDO,
     // que é o sintoma de execução em laço — e era o que a tela antiga escondia
     // atrás de doze linhas idênticas.

@@ -5,43 +5,12 @@
     "claude"
   ],
   "skills": {
-    "runx": {
-      "repositorio": "https://github.com/bittencourtthulio/runx",
-      "referencia": "main",
-      "travado": false,
-      "commit": "253e666f807608e6083a28d821a4a3bba60506c2",
-      "resolvido_em": "2026-08-30",
-      "arquivos": {
-        "DECISOES-DA-SKILL.md": "389acbb5cdb3b44e2028ec88807318f7bf17fad3c7761cb157e77960ffc90bc5",
-        "SKILL.md": "a70bb336d5de2f39939d42e2ab96452d43d0e11ee008f46641b25127276c32f2",
-        "assets/TEMPLATE-INDICE.md": "79b8ab37f564d85cdf7c9f60d7a90df108805061cbcacb4179ef0dbaff583fd5",
-        "assets/TEMPLATE-ORQUESTRADOR.md": "2e96ec81aa7327be98a8e2cb7da8f90a268caa135f648dc8276a48510d0ca469",
-        "assets/TEMPLATE-analise-impacto.md": "5aff6f2d1892d87653702451d92a6d280177c0d64178bbf36b3ea6961c387d31",
-        "assets/TEMPLATE-base-area.md": "654f60b241aa3473e508948aecad0b94d982aa79fc072d38d1ebedb4a033d723",
-        "assets/TEMPLATE-causa-raiz.md": "8942741121c29f28b3b193ee828d52e92f289dacf9b37cd17129f004703fe2f2",
-        "assets/TEMPLATE-fases.md": "aea31aee16881bfc2bc0332bc40130dc2d6fa6a6f1c824d0dc099b6d9f33f340",
-        "assets/TEMPLATE-ocorrencia.md": "2b25b127cdbc8f40c4b8f094b0609072e1e77940b5f5466f701b80986e560f6d",
-        "assets/TEMPLATE-qa.md": "c28a37ed7bffd44b522fb3be96a762eeef2b2f4c31819f3a8a3fdaf1083aa65e",
-        "assets/TEMPLATE-relatorio-tecnico.md": "3a0ad8512752723e0d559a77cfb4ae4a45e3d5e9bb63fb27e3ff79be20de3442",
-        "assets/TEMPLATE-relatorio-uso.md": "7a221cec296106ac2e07a9beb7aaa6b1a9b706044f0ef1b3955598f69ed198f1",
-        "assets/TEMPLATE-sprint.md": "6ceb04579c082375d5988bf68aafac8ea29415b07eb20225c1d1194056a02723",
-        "assets/TEMPLATE-tasks.md": "9eb5765b76e49efcf98371c6f70079d7ef44a79bd1b33baaef9a8cd6cd5e4475",
-        "references/00-schema.md": "52c2d14a72a7c4d25a5f57abf234d2628eed995ece73e11e13f861444bd1c7f8",
-        "references/01-investigacao.md": "f42a57861c32d0fa5e8a6607b9a68c071ec07e498011b99fd1aca6b934bfb8ce",
-        "references/02-plano.md": "0f842fb1d37e40d4987e0c5b60c6ce35c2742c3e692bb9cee38eadec90430335",
-        "references/03-fix.md": "1bac7c37e26654b0dd9f15639851067b11101538e3607b465537c748c762c41e",
-        "references/04-qa.md": "f8f9456de8897219988d085b52b496f046ff755c44110a4cef6cc8705e64c533",
-        "references/05-relatorio.md": "95ab5cfa80f94aee09b2bb9e23313027f77b8323d30967e3b950fccd2502c1b2",
-        "references/06-estado.md": "c2f4ebcd83be48754b40c52f023d836b26c838139f352f7a51f54c89ebb90405",
-        "references/07-diagrama.md": "ecee2c7fb17c80298d2779a6c02fe2895ba775d6537fea0a792a82797cb66a73"
-      }
-    },
     "prodx": {
       "repositorio": "https://github.com/bittencourtthulio/prodx",
       "referencia": "main",
       "travado": false,
       "commit": "ae16c09547ba6776230850be301a781c70ac88b0",
-      "resolvido_em": "2026-08-30",
+      "resolvido_em": "2026-09-06",
       "arquivos": {
         "DECISOES-DA-SKILL.md": "78dc8389b31770c4635ca0454f3ba9c8232aeb6b536d4a39f450b84c829c62aa",
         "SKILL.md": "433f09c80469e7732ec5579b49353b7d36e0729d5df248cb215333d83a895413",

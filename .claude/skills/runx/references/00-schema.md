@@ -45,11 +45,16 @@ Valem para todo arquivo que leva frontmatter:
 | `estagio` | `e1` `e2` `e3` `e4` `e5` |
 | `status` (trabalho, sprint, fase) | `nao_iniciado` \| `em_andamento` \| `bloqueado` \| `concluido` |
 | `status` (task) | `pendente` \| `em_andamento` \| `concluida` \| `bloqueada` |
-| `suite` | `verde` \| `vermelha` \| `nao_executada` |
+| `suite` | `verde` \| `vermelha` \| `parcial` \| `nao_executada` |
 | `veredito` | `aprovado` \| `reprovado` |
 | `severidade` | `alta` \| `media` \| `baixa` |
 | `modo` | `causa_raiz` \| `analise_impacto` |
 | `evidencia` | `teste_falho` \| `log` \| `codigo` \| `null` |
+
+O valor `parcial` de `suite` significa: rodou o subconjunto de testes afetado por aquela
+task e ele passou, mas a suíte inteira ainda não foi executada para ela. É o estado normal
+de uma task concluída no E3 — a suíte inteira é exigida uma vez, no E4, antes do veredito.
+`verde` continua significando suíte inteira executada e sem falha.
 
 Atenção a duas distinções que o painel trata como coisas diferentes:
 
@@ -320,6 +325,76 @@ atualizado_em: 2026-08-29
 - `veredito` espelha a linha `VEREDITO:` da prosa: `aprovado` \| `reprovado`. Existe
   achado de `severidade: alta` → `veredito: reprovado`, sem exceção.
 - Sem achados, `achados: []`.
+
+### `sprint-NN/tasks.md` no formato condensado → `kind: plano`
+
+**Exclusivo da runx.** A `sprintx` não produz este kind, e por isso ele pode evoluir sem
+afetar a skill irmã — ao contrário de `sprint`, `fases` e `tasks`, que são compartilhados.
+
+Quando o plano tem **uma sprint e uma fase**, o E2 grava um arquivo único em vez de três.
+O arquivo continua se chamando `sprint-NN/tasks.md`: é o caminho que os hooks de método
+procuram, e mudá-lo os desligaria em silêncio (todos falham abertos).
+
+O bloco YAML é **um só**. Os leitores de frontmatter param no primeiro `---` de fechamento;
+um segundo bloco no mesmo arquivo seria invisível para eles.
+
+```yaml
+---
+expx_schema: 1
+expx_tool: runx
+kind: plano
+trabalho_id: OC-2026-0142
+sprint_id: sprint-01
+atualizado_em: 2026-08-29
+sprint:
+  titulo: Correcao do calculo de frete
+  status: em_andamento
+  criterio_saida: A suite roda com npm test e termina com 0 failed
+  riscos: [Tabela de faixas sem indice pode tornar a query lenta]
+  fora_de_escopo: [Refatorar o modulo de frete inteiro]
+fases:
+  - id: F-01.1
+    titulo: Corrigir a comparacao de faixa
+    status: em_andamento
+    criterio_saida: Pedido de 60kg retorna frete 87,40
+    paralelizavel: false
+    paralela_com: []
+    tasks: [T-01.01, T-01.02]
+tasks:
+  - id: T-01.01
+    titulo: Teste que reproduz o frete divergente
+    fase: F-01.1
+    status: concluida
+    objetivo: Fixar o comportamento errado antes de corrigir
+    arquivos:
+      cria: [src/frete/calculo.test.ts]
+      altera: []
+    teste_regressao: Pedido de 60kg hoje retorna 92,10 e o teste espera 87,40
+    teste_integracao: Roda o calculo contra a tabela de faixas real e compara o total
+    teste_funcional: Dado peso 60kg, retorna 87,40
+    criterio_aceite: O teste falha antes do fix e passa depois
+    depende_de: []
+    paralelizavel: false
+    concluida_em: 2026-08-29
+    suite: parcial
+---
+```
+
+Regras duras deste kind:
+
+- **`tasks` é a última das três chaves de conteúdo e tem exatamente o mesmo formato do
+  `kind: tasks`** — mesmos campos, mesmos enums, incluindo `teste_regressao` na primeira
+  task da primeira fase. Um leitor que só quer as tasks lê `tasks:` e ignora o resto.
+- `sprint` e `fases` carregam os mesmos campos dos kinds `sprint` e `fases`, menos as
+  chaves de cabeçalho (`expx_schema`, `expx_tool`, `trabalho_id`, `sprint_id`,
+  `atualizado_em`), que já estão no topo e não se repetem — é exatamente essa repetição
+  que o formato condensado elimina.
+- `sprint.fora_de_escopo` é uma lista de strings de uma linha (`[]` quando vazia). Ela
+  existe porque o escopo travado é a regra 8 e precisa continuar declarado.
+- **Quando usar:** uma sprint e uma fase. Com mais de uma sprint, ou mais de uma fase, o
+  E2 grava os três arquivos separados (`sprint.md`, `fases.md`, `tasks.md`) como sempre.
+- O formato de três arquivos **continua válido e não é descontinuado**. Planos já escritos
+  nele permanecem como estão: a regra 12 proíbe apagar ou mover o que já existe.
 
 ### `base/00-INDICE.md` → `kind: base_indice`
 

@@ -1,4 +1,5 @@
 import type { Visao } from "../visao/projetar.js";
+import { desde } from "../logica/rodape.js";
 import { desenharArvore } from "./arvore.js";
 import { barra, decorrido, papelDaBarra, percentual } from "./barra.js";
 import { desenharBloqueios } from "./bloqueios.js";
@@ -30,19 +31,6 @@ export type OpcoesDesenho = {
   /** `--arvore`: mostra a árvore completa do trabalho corrente. */
   arvore?: boolean;
 };
-
-const MINUTO = 60_000;
-const HORA = 60 * MINUTO;
-const DIA = 24 * HORA;
-
-/** "há 3 min", "há 2 h", "há 4 d" — curto, porque é rodapé. */
-function desde(quando: Date, agora: Date): string {
-  const ms = Math.max(0, agora.getTime() - quando.getTime());
-  if (ms < MINUTO) return "há instantes";
-  if (ms < HORA) return `há ${String(Math.floor(ms / MINUTO))} min`;
-  if (ms < DIA) return `há ${String(Math.floor(ms / HORA))} h`;
-  return `há ${String(Math.floor(ms / DIA))} d`;
-}
 
 /**
  * A régua do projeto: uma linha dizendo onde o conjunto todo está.

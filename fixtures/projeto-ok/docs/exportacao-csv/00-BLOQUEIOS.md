@@ -7,7 +7,7 @@ atualizado_em: 2026-08-28
 bloqueios:
   - id: B-01
     task: T-01.03
-    aberto_em: 2026-08-26
+    aberto_em: 2026-09-05
     resolvido_em: null
     descricao: Falta definicao do separador decimal para locale pt-BR
   - id: B-02

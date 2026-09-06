@@ -6,7 +6,20 @@ Você está no E1. Este estágio tem duas metades, nesta ordem: **E1.a base de c
 
 A investigação lê muito — código, chamadores, migrações, testes existentes. Em contexto próprio, essa leitura não consome o contexto que depois vai implementar.
 
-**Se o agente `investigador` estiver disponível, delegue a ele as duas metades deste estágio.** Passe: o caminho da pasta da ocorrência, o `00-OCORRENCIA.md` já preenchido (Passo 0 é sempre seu, não dele) e o tipo classificado. Ele devolve o conteúdo dos arquivos da `base/`, do `00-INDICE.md`, do `00-LACUNAS.md` e do `01-CAUSA-RAIZ.md` — prontos, mas **não gravados**: ele não tem ferramenta de escrita. Quem grava é você, com o frontmatter de `references/00-schema.md`.
+**Delegue quando houver o que carregar.** O agente tem custo de partida: ele relê do zero o que a sessão principal já tem em contexto. Numa ocorrência de um ou dois arquivos, esse custo é maior que a leitura que ele evita.
+
+O corte é mecânico, e sai de um dado que o próprio E1 já produz — **quantos arquivos candidatos o grep pelos termos do relato devolveu** (a busca descrita em "Por onde começar a busca", logo abaixo):
+
+| Arquivos candidatos | O que fazer |
+|---|---|
+| **3 ou mais** | delegue ao agente `investigador`, quando ele existir |
+| 1 ou 2 | **leia direto**, você mesmo, na sessão principal — o método é idêntico |
+
+Faça a busca primeiro, conte, e só então decida. Decidir antes de buscar é palpite, e é justamente o que este corte existe para evitar. Na dúvida entre os dois lados — arquivos grandes, cadeia de chamadores que já se mostrou longa —, delegue: o custo de delegar demais é uma leitura repetida, e o de delegar de menos é o contexto da implementação gasto antes de implementar.
+
+Este corte vale **só para o `investigador`**. Os outros dois agentes não têm corte por tamanho: o `qa` é a única verificação independente do método, e o `revisor-testes` responde uma pergunta só e é barato mesmo em ocorrência mínima.
+
+**Ao delegar, passe:** o caminho da pasta da ocorrência, o `00-OCORRENCIA.md` já preenchido (Passo 0 é sempre seu, não dele), o tipo classificado e os arquivos candidatos que o grep devolveu. Ele devolve o conteúdo dos arquivos da `base/`, do `00-INDICE.md`, do `00-LACUNAS.md` e do `01-CAUSA-RAIZ.md` — prontos, mas **não gravados**: ele não tem ferramenta de escrita. Quem grava é você, com o frontmatter de `references/00-schema.md`.
 
 Ao receber o retorno, confira antes de gravar:
 

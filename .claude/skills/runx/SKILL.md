@@ -68,6 +68,8 @@ A estrutura é sempre a mesma; o tamanho é proporcional à ocorrência.
 
 Proibido inflar o plano para parecer robusto. Proibido enxugar campos para parecer ágil. A skill nunca omite um campo do contrato alegando que a ocorrência é pequena.
 
+**O que é proporcional é o andaime, não o contrato.** Quando o plano tem uma sprint e uma fase — a maioria das ocorrências —, ele é gravado em **formato condensado**: um arquivo só, `sprint-01/tasks.md` com `kind: plano`, em vez de três. Todos os campos continuam lá; o que desaparece é o cabeçalho repetido três vezes. Com mais de uma sprint ou mais de uma fase, o plano volta aos três arquivos separados. A escolha é mecânica e está no `references/02-plano.md`; o formato de três arquivos continua válido e nunca é reescrito retroativamente.
+
 ## Máquina de estados
 
 Os cinco estágios são estritamente sequenciais e a skill nunca pula estágio:
@@ -129,6 +131,8 @@ docs/manutencao/
       00-LACUNAS.md
       <uma área impactada>.md
     sprint-01/
+      tasks.md            formato condensado: 1 sprint e 1 fase, kind: plano
+    sprint-01/            formato de tres arquivos: mais de uma sprint ou fase
       sprint.md
       fases.md
       tasks.md
@@ -173,7 +177,7 @@ Ambos são sempre ancorados na raiz do repositório Git mais próxima do diretó
 6. Toda transição tem critério de aceite verificável, e nada avança sem ele atendido.
 7. O paralelismo é declarado no plano, nunca decidido em execução.
 8. Escopo travado: o que não está em `01-CAUSA-RAIZ.md` e em `tasks.md` não é tocado — nada de refactor de brinde, nada de "já que estou aqui"; melhoria avulsa percebida vira sugestão de nova ocorrência no relatório técnico e não é implementada.
-9. A suíte inteira roda antes de qualquer task ser dada como concluída.
+9. Nenhuma task é dada como concluída sem teste verde: no E3, o subconjunto afetado por ela (`suite: parcial`); a suíte inteira roda uma vez no E4, e o veredito não sai sem ela verde.
 10. Quem implementa não aprova: E4 é papel distinto de E3, e E4 não corrige nada.
 11. A ocorrência não fecha sem os dois relatórios gravados e o `INDICE.md` atualizado.
 12. A skill nunca apaga nem move nada em `docs/manutencao/`.
@@ -210,7 +214,7 @@ Hook de método **nasce em modo aviso**: registra no rastro e deixa passar. Hook
 | `segredo-no-commit` | `PreToolUse` escrita | **bloqueio** | Barra credencial indo para arquivo versionado |
 | `causa-antes-do-plano` | `PreToolUse` em `sprint-*/` | aviso | Barra plano sem `01-CAUSA-RAIZ.md`, ou com `comprovada: false` em `bug` (regras 1 e 2) |
 | `regressao-antes-do-fix` | `PreToolUse` escrita | aviso | Avisa ao tocar código de produção antes do `teste_regressao` existir (regra 5) |
-| `task-so-fecha-verde` | `PreToolUse` em `tasks.md` | aviso | Barra `status: concluida` sem `suite: verde` e sem os dois testes (regras 4 e 9) |
+| `task-so-fecha-verde` | `PreToolUse` em `tasks.md` | aviso | Barra `status: concluida` sem `suite: verde` ou `parcial`, e sem os dois testes (regras 4 e 9) |
 | `escopo-da-ocorrencia` | `PreToolUse` escrita | aviso | Avisa ao escrever fora de `arquivos_impactados` e do `arquivos` das tasks (regra 8) |
 | `sem-jargao-no-uso` | `PostToolUse` em `uso.md` | aviso | Aponta caminho de arquivo, nome de função, tabela, stack trace e termo técnico no relatório do cliente |
 
@@ -244,7 +248,7 @@ O rastro é ignorado pelo versionador por padrão: é local da máquina de quem 
 | **todos** | `references/06-estado.md` — contrato do `.expx/estado.json` lido pela barra de status; leia no estágio que for gravá-lo | — |
 | **todos** | `references/07-diagrama.md` — regras dos diagramas Mermaid derivados (grafo de tasks e cadeia da causa); leia no estágio que for gerá-los ou atualizá-los (E1.b, E2, E3) | — |
 | E1 INVESTIGAÇÃO | `references/01-investigacao.md` | `assets/TEMPLATE-ocorrencia.md`, `assets/TEMPLATE-base-area.md`, `assets/TEMPLATE-causa-raiz.md`, `assets/TEMPLATE-analise-impacto.md` |
-| E2 PLANO | `references/02-plano.md` | `assets/TEMPLATE-sprint.md`, `assets/TEMPLATE-fases.md`, `assets/TEMPLATE-tasks.md`, `assets/TEMPLATE-ORQUESTRADOR.md` |
+| E2 PLANO | `references/02-plano.md` | `assets/TEMPLATE-plano-condensado.md` (1 sprint e 1 fase); `assets/TEMPLATE-sprint.md`, `assets/TEMPLATE-fases.md`, `assets/TEMPLATE-tasks.md` (demais casos); `assets/TEMPLATE-ORQUESTRADOR.md` |
 | E3 FIX | `references/03-fix.md` | — |
 | E4 QA | `references/04-qa.md` | `assets/TEMPLATE-qa.md` |
 | E5 RELATÓRIO | `references/05-relatorio.md` | `assets/TEMPLATE-relatorio-tecnico.md`, `assets/TEMPLATE-relatorio-uso.md`, `assets/TEMPLATE-INDICE.md` |

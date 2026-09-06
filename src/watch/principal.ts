@@ -2,6 +2,7 @@ import { descobrirRaiz } from "./fontes/raiz.js";
 import { ajudaWatch, interpretarOpcoes } from "./opcoes.js";
 import { criarRestaurador } from "./terminal/restaurar.js";
 import { corAtiva, ambienteAtual } from "./desenho/cor.js";
+import { renderInkApp } from "./ink/raiz.js";
 import { executarWatch } from "./watch.js";
 
 /**
@@ -51,20 +52,36 @@ export async function principalWatch(
     },
   });
 
+  // TTY real decide o motor — nunca uma flag de usuário (ver `watch.ts`).
+  // `--todos` é sempre o motor antigo mesmo com TTY: `executarWatch` já
+  // aplica essa exceção, então basta pedir Ink quando há terminal.
+  const usarInk = amb.tty;
+
   const sessao = await executarWatch({
     raiz,
     opcoes: r.opcoes,
     escrever: saida.escrever,
     cor,
+    usarInk,
   });
 
   // Projeto sem `.expx/`: a mensagem já foi escrita e não há o que observar.
   if (sessao.encerrou) return sessao.codigo;
 
-  // Só escondemos o cursor depois de saber que o watch vai mesmo rodar, e a
-  // restauração cobre os quatro caminhos de saída (decisão D-21).
+  // A restauração cobre os quatro caminhos de saída (decisão D-21), nos dois
+  // motores. O controle de CURSOR diverge: o Ink já esconde e restaura o
+  // cursor sozinho ao montar/desmontar (via `cli-cursor`), então só o motor
+  // antigo pede isso ao restaurador — pedir os dois duplicaria o escape.
   restaurador.registrar();
-  if (amb.tty) restaurador.esconderCursor();
+
+  if (sessao.store !== undefined) {
+    renderInkApp(sessao.store, {
+      ...(sessao.colunas !== undefined ? { colunas: sessao.colunas } : {}),
+      ...(sessao.arvore !== undefined ? { arvore: sessao.arvore } : {}),
+    });
+  } else if (amb.tty) {
+    restaurador.esconderCursor();
+  }
 
   // O chokidar segura o event loop: o processo fica vivo até o sinal chegar.
   return 0;

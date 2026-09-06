@@ -10,3 +10,6 @@ promptcli2.md
 
 # backups gerados por hook
 .claude/settings.json.backup-*
+
+__pycache__/
+*.pyc

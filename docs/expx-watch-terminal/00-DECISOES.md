@@ -3,7 +3,7 @@ expx_schema: 1
 expx_tool: sprintx
 kind: decisoes
 trabalho_id: expx-watch-terminal
-atualizado_em: 2026-08-30
+atualizado_em: 2026-08-31
 decisoes:
   - id: D-01
     decisao: subcomando watch do CLI existente, no array SUBCOMANDOS e na tabela EXECUTORES
@@ -131,6 +131,18 @@ decisoes:
     motivo: nunca deixa o terminal quebrado e definicao de pronto do usuario
     status: fechada
     bloqueante: false
+  - id: D-22
+    decisao: reverte D-04 -- adiciona ink como dependencia de producao (fixado em ^5.2.1, unica major compativel com react 18) so para o motor de tela com TTY interativo real
+    alternativa_descartada: manter zero dependencia de terminal, so ANSI escrito a mao
+    motivo: pedido explicito do usuario por visual de painel/navegacao equivalente ao opencode; seis codigos SGR manuais nao alcancam layout de paineis, cor rica nem interatividade de teclado
+    status: fechada
+    bloqueante: false
+  - id: D-23
+    decisao: dois motores de tela permanentes, escolhidos por stdout.isTTY -- Ink com terminal interativo real, o motor ANSI/D-20 (sem buffer alternativo) para tudo o mais -- CI, pipe, saida redirecionada e sempre para --todos
+    alternativa_descartada: substituir o motor ANSI inteiro por Ink, inclusive no modo nao-TTY
+    motivo: Ink nao e feito para saida nao-interativa (sem TTY nao ha o que redesenhar por cursor); o motor ANSI ja e o testado para esse caso (fixtures de 60 colunas, saida redirecionada) e --todos e formato tabular de proposito, sem ganho em virar painel
+    status: fechada
+    bloqueante: false
 ---
 
 # Decisões — expx-watch-terminal
@@ -163,6 +175,8 @@ D-18 | As dez fixtures da especificação entram na sprint de fundação | criar
 D-19 | Sem trabalho aberto: mostra os trabalhos recentes e segue observando | sair com mensagem | a especificação pede explicitamente "fica aguardando um novo"
 D-20 | Redesenho reposiciona o cursor e reescreve linhas; sem buffer alternativo, sem limpar tela | buffer alternativo do terminal | buffer alternativo apaga o que estava na tela ao sair, e a especificação exige não piscar
 D-21 | Restauração do terminal em `SIGINT`, `SIGTERM`, exceção não capturada e `process.on("exit")` | só `SIGINT`/`SIGTERM`, como `principal.ts` | "nunca deixa o terminal quebrado" é definição de pronto do usuário
+D-22 | Reverte D-04: adiciona `ink` como dependência de produção (`^5.2.1`, única major compatível com React 18) só para o motor de tela com TTY interativo real | manter zero dependência de terminal, só ANSI à mão | pedido explícito do usuário por visual de painel/navegação equivalente ao opencode; seis códigos SGR manuais não alcançam layout de painéis, cor rica nem interatividade de teclado
+D-23 | Dois motores de tela permanentes, escolhidos por `stdout.isTTY`: Ink com terminal interativo real, o motor ANSI/D-20 (sem buffer alternativo) para tudo o mais — CI, pipe, saída redirecionada, e sempre para `--todos` | substituir o motor ANSI inteiro por Ink, inclusive no modo não-TTY | Ink não é feito para saída não-interativa; o motor ANSI já é o testado para esse caso (fixtures de 60 colunas, saída redirecionada); `--todos` é formato tabular de propósito, sem ganho em virar painel
 ```
 
 ## Pendências
@@ -174,7 +188,7 @@ Nenhuma pendência. O usuário autorizou a skill a decidir todas as lacunas da F
 | Eixo | Onde foi decidido |
 |---|---|
 | 1. Escopo de negócio | A especificação da abertura já fixa o escopo e o fora de escopo da v1; D-16 e D-19 fecham os casos de borda de listagem |
-| 2. Arquitetura | D-01, D-02, D-04, D-06, D-11, D-17 |
+| 2. Arquitetura | D-01, D-02, D-04 (revertida por D-22), D-06, D-11, D-17, D-22, D-23 |
 | 3. Contrato de dados | D-05, D-09, D-12, D-13, D-14 — nada persiste: o watch só lê (D-03) |
 | 4. Estado e observabilidade | D-07, D-13; o watch é ele próprio a ferramenta de observabilidade, e não emite evento (D-03) |
 | 5. Resiliência e política de erro | D-05, D-06, D-12, D-19, D-21; as cinco tolerâncias a falha da especificação são critério de aceite, não decisão em aberto |

@@ -1,33 +1,15 @@
-import type { StatusTask, StatusTrabalho } from "../../parser/esquema/enums.js";
 import type { Visao } from "../visao/projetar.js";
-import type { Papel, Pintor } from "./cor.js";
+import { MARCA_GRUPO, MARCA_TASK } from "../logica/arvore.js";
+import type { Pintor } from "./cor.js";
 import { cortar } from "./largura.js";
 
 /**
  * A árvore: sprints, fases e tasks, indentadas.
  *
- * Os dois vocabulários de status NÃO são intercambiáveis: task usa o feminino
- * (`concluida`, `bloqueada`) e trabalho/sprint/fase usam o masculino
- * (`concluido`, `bloqueado`). Uma função de marcador que aceitasse `string`
- * casaria os dois por engano ou deixaria um sem cor — por isso são duas
- * (base/schema-v1-e-kinds.md, risco 4).
- *
- * Marcadores são caractere simples, sem emoji, como manda a especificação.
+ * Os marcadores (`MARCA_TASK`/`MARCA_GRUPO`) moram em `logica/arvore.ts`,
+ * compartilhados com o motor Ink. Marcadores são caractere simples, sem
+ * emoji, como manda a especificação.
  */
-
-const MARCA_TASK: Record<StatusTask, { marca: string; papel: Papel }> = {
-  concluida: { marca: "[x]", papel: "sucesso" },
-  em_andamento: { marca: "[>]", papel: "atencao" },
-  bloqueada: { marca: "[!]", papel: "erro" },
-  pendente: { marca: "[ ]", papel: "apagado" },
-};
-
-const MARCA_GRUPO: Record<StatusTrabalho, { marca: string; papel: Papel }> = {
-  concluido: { marca: "[x]", papel: "sucesso" },
-  em_andamento: { marca: "[>]", papel: "atencao" },
-  bloqueado: { marca: "[!]", papel: "erro" },
-  nao_iniciado: { marca: "[ ]", papel: "apagado" },
-};
 
 export function desenharArvore(v: Visao, colunas: number, pintar: Pintor): string[] {
   if (v.trabalho === null) return [];

@@ -1,7 +1,9 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { rmSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { criarRepoSkill } from "../teste/repo-fixture.js";
-import { maiorTagSemver, resolverAlvo } from "./versao.js";
+import { commitRemotoDaBranch, maiorTagSemver, resolverAlvo } from "./versao.js";
 
 const criados: string[] = [];
 afterEach(() => {
@@ -33,5 +35,34 @@ describe("resolução de versão alvo", () => {
   it("funcional: repositório inacessível devolve falha sem lançar", async () => {
     const r = await resolverAlvo("/caminho/que/nao/existe/repo.git");
     expect(r.ok).toBe(false);
+  });
+
+  it("integração: sem tag, a resolução também traz o commit do HEAD remoto da branch", async () => {
+    const semTag = criarRepoSkill({ nome: "stackx", tags: [] });
+    criados.push(semTag);
+
+    const commitEsperado = execFileSync("git", ["rev-parse", "HEAD"], { cwd: semTag }).toString().trim();
+    const a = await resolverAlvo(semTag);
+    expect(a.travado).toBe(false);
+    expect(a.referencia).toBe("main");
+    expect(a.commit).toBe(commitEsperado);
+
+    // Um commit novo na main muda o SHA resolvido, mesmo com o nome "main" intacto —
+    // é essa diferença que permite ao `update` notar novidade sem depender de tag.
+    writeFileSync(join(semTag, "novidade.md"), "# novidade\n");
+    execFileSync("git", ["add", "-A"], { cwd: semTag });
+    execFileSync("git", ["commit", "-q", "-m", "novidade sem tag"], {
+      cwd: semTag,
+      env: { ...process.env, GIT_AUTHOR_NAME: "e", GIT_AUTHOR_EMAIL: "e@e.invalid", GIT_COMMITTER_NAME: "e", GIT_COMMITTER_EMAIL: "e@e.invalid" },
+    });
+    const b = await resolverAlvo(semTag);
+    expect(b.commit).not.toBe(commitEsperado);
+  });
+
+  it("funcional: commitRemotoDaBranch devolve undefined para branch inexistente", async () => {
+    const repo = criarRepoSkill({ nome: "sprintx", tags: [] });
+    criados.push(repo);
+    const r = await commitRemotoDaBranch(repo, "branch-que-nao-existe");
+    expect(r).toBeUndefined();
   });
 });

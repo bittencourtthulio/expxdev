@@ -78,4 +78,10 @@ describe("lista de trabalhos", () => {
     const texto = desenharLista(v, 80, false).join("\n");
     expect(texto).toContain("bloq");
   });
+
+  it("funcional: a lista marca DIVERGENTE quando status e progresso discordam (OC-2026-002 / T-01.03)", () => {
+    const v = projetarVisao(raiz("com-divergencia"));
+    const texto = desenharLista(v, 80, false).join("\n");
+    expect(texto).toContain("DIVERGENTE");
+  });
 });

@@ -1,5 +1,8 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { buscarNoCatalogo } from "../nucleo/catalogo.js";
 import { lerLock } from "../nucleo/lock.js";
 import { resolverAlvo } from "../nucleo/versao.js";
@@ -22,6 +25,9 @@ export type ItemComparacao = {
   travado: boolean;
   /** CHANGELOG quando existir; senão, títulos dos commits entre as referências. */
   mudancas: string[];
+  /** Presentes só quando `!travado`: o commit é quem decidiu `emDia`, não o nome da branch. */
+  commitAtual?: string;
+  commitNovo?: string;
   erro?: string;
 };
 
@@ -44,18 +50,28 @@ function origemDe(nome: string, lockRepo: string, origens?: Record<string, strin
 /**
  * Os títulos dos commits entre duas referências.
  *
- * Lê do repositório remoto por clone raso do intervalo. Falha aqui nunca
- * derruba o update: sem o resumo, o usuário ainda pode decidir pela versão.
+ * `repositorio` é uma URL remota (`https://...`) na maioria das instalações
+ * reais — nunca um caminho de disco —, então não dá para usá-lo como `cwd` do
+ * `git log` diretamente. Por isso o clone (completo, sem `--depth`: o
+ * intervalo pode abranger mais de um commit de distância da ponta) para um
+ * diretório temporário, de onde o `log` roda e que é sempre descartado depois.
+ *
+ * Falha aqui nunca derruba o update: sem o resumo, o usuário ainda pode
+ * decidir pela versão.
  */
 async function mudancasEntre(repositorio: string, de: string, para: string): Promise<string[]> {
+  const destino = mkdtempSync(join(tmpdir(), "expx-mudancas-"));
   try {
+    await exec("git", ["clone", "--quiet", repositorio, destino]);
     const { stdout } = await exec("git", [
       "-c", "core.pager=cat",
       "log", "--format=%s", `${de}..${para}`,
-    ], { cwd: repositorio });
+    ], { cwd: destino });
     return stdout.split("\n").map((l) => l.trim()).filter((l) => l !== "");
   } catch {
     return [];
+  } finally {
+    rmSync(destino, { recursive: true, force: true });
   }
 }
 
@@ -89,14 +105,30 @@ export async function compararComRemoto(op: OpcoesComparar): Promise<Comparacao>
       });
       continue;
     }
-    const emDia = alvo.referencia === travada.referencia;
+    // Travado por tag, "em dia" é a tag ser igual. Sem tag, o nome da branch
+    // (`main`) nunca muda — é o commit por trás dela que diz se há novidade.
+    // Sem SHA resolvido (rede falhou na parte de commit só) ou instalado em
+    // modo local (commit gravado como "<sha>-local", nunca comparável a um SHA
+    // remoto — ver `copiarLocal`), cai para o nome: pior caso é herdar o
+    // comportamento antigo, nunca travar o update.
+    const porCommit = !alvo.travado && alvo.commit !== undefined && !travada.commit.endsWith("-local");
+    const emDia = porCommit ? alvo.commit === travada.commit : alvo.referencia === travada.referencia;
     itens.push({
       nome,
+      // `atual`/`nova` continuam sendo a referência INSTALÁVEL (nome de branch
+      // ou tag) — é o que o `update` repassa ao `init` como `--to`. O commit
+      // que decidiu o `emDia` vai em campo à parte, só para exibição.
       atual: travada.referencia,
       nova: alvo.referencia,
       emDia,
       travado: alvo.travado,
-      mudancas: emDia ? [] : await mudancasEntre(repositorio, travada.referencia, alvo.referencia),
+      ...(porCommit ? { commitAtual: travada.commit, commitNovo: alvo.commit } : {}),
+      // "de" continua sendo a referência (tag ou, sem tag, o próprio commit
+      // travado): o commit do lock pode vir de um clone raso e não ter
+      // histórico suficiente para o `git log` alcançar a tag antiga a partir dele.
+      mudancas: emDia
+        ? []
+        : await mudancasEntre(repositorio, porCommit ? travada.commit : travada.referencia, alvo.commit ?? alvo.referencia),
     });
   }
 

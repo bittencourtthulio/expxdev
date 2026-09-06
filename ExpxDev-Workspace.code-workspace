@@ -26,6 +26,9 @@
 		},
 		{
 			"path": "../BuildX"
+		},
+		{
+			"path": "../DesignX"
 		}
 	],
 	"settings": {}

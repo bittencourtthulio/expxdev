@@ -23,7 +23,7 @@ Ao mexer no `status` de uma task em `tasks.md`, reescreva no frontmatter:
 
 - `status` da task — `pendente` → `em_andamento` → `concluida` (ou `bloqueada`);
 - `concluida_em` — a data (`date +%Y-%m-%d`) ao concluir; `null` enquanto não estiver `concluida`;
-- `suite` — `nao_executada` → `verde` ou `vermelha`, conforme a última execução da suíte para aquela task;
+- `suite` — `nao_executada` → `parcial`, `verde` ou `vermelha`, conforme a última execução para aquela task: `parcial` quando rodou o subconjunto afetado, `verde` quando rodou a suíte inteira, `vermelha` quando houve falha;
 - `atualizado_em` do arquivo, a cada gravação.
 
 Ao registrar um bloqueio, acrescente o item à lista `bloqueios:` de `BLOQUEIOS.md` (`kind: bloqueios`) além da linha `B-NN` na prosa, com `resolvido_em: null`.
@@ -44,7 +44,11 @@ Para CADA task, exatamente nesta ordem, sem inverter nenhum passo:
 2. **Escreva o teste. Rode. Ele TEM que falhar.** Nenhuma linha de implementação antes de ver o vermelho. Na primeira task da primeira fase, este é o `teste_regressao`: o teste que reproduz o problema.
 3. **Implemente o mínimo para o teste passar.** Mínimo é literal: só o que faz o vermelho virar verde. Nada de refactor de brinde, nada de "já que estou aqui" — escopo travado é a regra 8 do SKILL.md.
 4. **Escreva os dois testes da task** — `teste_integracao` e `teste_funcional` — exatamente como a task os descreve, e faça-os passar.
-5. **Rode a suíte inteira, não só os testes novos.** O comando é o do ORQUESTRADOR. Verde na suíte inteira, não em um subconjunto.
+5. **Rode o subconjunto afetado pela task.** Os testes que ela criou ou alterou, mais os que cobrem os arquivos em `arquivos.cria` e `arquivos.altera` — não a suíte inteira. Com o subconjunto verde, a task grava `suite: parcial`.
+
+   A suíte inteira roda **uma vez, no E4**, antes do veredito (regra 9). Rodá-la ao fim de cada task custa uma execução completa por task e não descobre nada que a execução do E4 não descubra — só descobre mais cedo, ao preço de repetir tudo N vezes. Se o subconjunto ficar difícil de delimitar, rode a suíte inteira e grave `suite: verde`: o valor mais forte nunca é violação.
+
+   Um ponto que não muda: **task com teste vermelho não fecha**, seja o subconjunto ou a suíte inteira. `parcial` significa "o que era desta task passou", nunca "passou mais ou menos".
 6. Antes de aceitar o verde, responda: **este teste falharia com uma implementação errada?** Se a resposta é não, o teste não discrimina — reescreva-o e volte ao passo 2.
 
    **Se o agente `revisor-testes` estiver disponível, é ele quem responde essa pergunta** — você acabou de escrever o teste e é o pior juiz da própria armadilha. Passe a pasta da ocorrência e a task. Ele lê, roda o que precisar e devolve a tabela de achados mais a linha `TESTES: DISCRIMINAM` / `TESTES: NÃO DISCRIMINAM`. Ele não corrige: não tem ferramenta de escrita. Achado ALTA dele = teste reescrito por você e volta ao passo 2.
@@ -58,7 +62,7 @@ Para CADA task, exatamente nesta ordem, sem inverter nenhum passo:
      --fase e3 --task <T-NN.MM> --resultado <discriminam|nao_discriminam> --detalhe "N achados"
    ```
 7. Verifique **de fato** o `criterio_aceite` da task — não presuma que ele decorre do teste verde.
-8. Só então marque `status: concluida` em `tasks.md` — **no frontmatter e na prosa** — acrescentando na linha da task: data (obtenha com `date +%Y-%m-%d` do sistema, nunca de memória) e resultado da suíte. No YAML, isso significa `status: concluida`, `concluida_em` com a data e `suite: verde`, mais `atualizado_em` reescrito. Em seguida grave em `.expx/estado.json` (`references/06-estado.md`) o novo `tasks_concluidas` e o `task` da próxima task a ser aberta — `null` quando não houver próxima.
+8. Só então marque `status: concluida` em `tasks.md` — **no frontmatter e na prosa** — acrescentando na linha da task: data (obtenha com `date +%Y-%m-%d` do sistema, nunca de memória) e resultado da suíte. No YAML, isso significa `status: concluida`, `concluida_em` com a data e `suite: parcial` (ou `verde`, se você rodou a suíte inteira), mais `atualizado_em` reescrito. Em seguida grave em `.expx/estado.json` (`references/06-estado.md`) o novo `tasks_concluidas` e o `task` da próxima task a ser aberta — `null` quando não houver próxima.
 
 Critério de aceite não atendido, ou qualquer teste não passando: a task **NÃO** é concluída. **Não existe "concluído com ressalva".**
 
@@ -118,7 +122,7 @@ Este relatório é para o usuário na conversa; ele **não** substitui os relat�
 
 - [ ] Toda task está `concluida` ou `bloqueada` (nenhuma `pendente`/`em_andamento` executável restante).
 - [ ] `tasks.md` atualizado com data e resultado da suíte em cada task concluída.
-- [ ] A suíte inteira roda verde.
+- [ ] Toda task concluída tem `suite: parcial` ou `suite: verde` — nenhuma com `vermelha` ou `nao_executada`. A suíte inteira é exigida no E4, não aqui.
 - [ ] Nenhum arquivo fora da lista de impactados do `01-CAUSA-RAIZ.md` e de `tasks.md` foi alterado.
 - [ ] Relatório de encerramento entregue com as 4 seções.
 - [ ] Frontmatter e prosa consistentes em todo arquivo tocado: `tasks.md`, `fases.md`, `sprint.md`, `BLOQUEIOS.md` e o `estagio` do `ORQUESTRADOR.md`.

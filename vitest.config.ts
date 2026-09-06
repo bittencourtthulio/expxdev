@@ -9,7 +9,18 @@ export default defineConfig({
         test: {
           name: "servidor",
           include: ["src/**/*.test.ts"],
-          exclude: ["src/cli/**", "src/teste/**", "src/nucleo/**", "src/plugin/**", "src/harness/**", "src/update/**", "src/doctor/**"],
+          exclude: ["src/cli/**", "src/teste/**", "src/nucleo/**", "src/plugin/**", "src/harness/**", "src/update/**", "src/doctor/**", "src/watch/ink/**"],
+          environment: "node",
+          testTimeout: 20000,
+        },
+      },
+      {
+        // Componentes Ink do watch: renderizam para string via ink-testing-library,
+        // sem DOM — só precisam do plugin React para transformar o JSX.
+        plugins: [react()],
+        test: {
+          name: "watch-ink",
+          include: ["src/watch/ink/**/*.test.tsx"],
           environment: "node",
           testTimeout: 20000,
         },

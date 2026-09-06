@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { desenhar } from "./desenho/desenhar.js";
 import { desenharLista } from "./desenho/lista.js";
+import { criarStoreVisao, type StoreVisao } from "./ink/estadoExterno.js";
 import { lerEstadoExpx } from "./fontes/estado.js";
 import { observarFontes, type ObservadorFontes } from "./fontes/observar.js";
 import { lerRastro } from "./fontes/rastro.js";
@@ -10,12 +11,20 @@ import { criarTela, type LimitesTela, type Tela } from "./terminal/tela.js";
 import { projetarVisao, type Visao } from "./visao/projetar.js";
 
 /**
- * O loop do watch: lê, desenha, observa, redesenha.
+ * O loop do watch: lê, observa, alimenta o motor de tela certo.
  *
  * A promessa que este arquivo existe para cumprir: "a árvore completa vem dos
  * arquivos do plano, relida apenas quando eles mudam — não a cada redesenho".
  * Por isso a visão é guardada e só o gatilho de plano a reconstrói; o gatilho
- * de estado atualiza o barato e redesenha com a árvore que já estava em mãos.
+ * de estado atualiza o barato e segue com a árvore que já estava em mãos.
+ *
+ * Dois motores de tela, escolhidos por TTY (decisão do projeto, não flag de
+ * usuário): com terminal interativo de verdade, o painel Ink (`ink/`) —
+ * painéis, cor rica, navegação. Sem TTY (CI, pipe, saída redirecionada) ou
+ * com `--todos`, o motor ANSI escrito à mão (`desenho/` + `terminal/tela.ts`),
+ * que já é o testado para esses casos (fixtures de 60 colunas, `cor: false`).
+ * Ink não é feito para saída não-interativa, e `--todos` é formato tabular
+ * de propósito — nenhum dos dois ganha nada virando painel.
  */
 
 export type SessaoWatch = {
@@ -24,6 +33,15 @@ export type SessaoWatch = {
   codigo: number;
   /** O watch encerrou por conta própria (projeto sem Expx)? */
   encerrou: boolean;
+  /**
+   * Presente só quando `usarInk` foi pedido e concedido (não é `--todos`).
+   * `principal.ts` usa isto para montar o painel Ink de verdade — este
+   * módulo não chama `render()` do Ink: quem decide COMO mostrar a saída é
+   * a camada de comando, não o loop de observação.
+   */
+  store?: StoreVisao;
+  arvore?: boolean;
+  colunas?: number;
 };
 
 export type OpcoesExecucao = {
@@ -36,6 +54,15 @@ export type OpcoesExecucao = {
   pulsoMs?: number;
   /** Gancho de teste: chamado toda vez que o PLANO é relido do disco. */
   aoLerPlano?: () => void;
+  /**
+   * TTY real: liga o motor Ink. `--todos` sempre usa o motor antigo, mesmo
+   * com isto ligado — é formato tabular, sem ganho em virar painel.
+   *
+   * Decidido pelo chamador (`principal.ts`, por `amb.tty`), não aqui: este
+   * módulo não lê `process.stdout.isTTY` sozinho, pelo mesmo motivo que
+   * `cor` já chega pronta — testável sem TTY de verdade.
+   */
+  usarInk?: boolean;
 };
 
 /** Largura de trabalho: a do terminal, o pedido explícito, ou 80. */
@@ -80,8 +107,24 @@ export async function executarWatch(op: OpcoesExecucao): Promise<SessaoWatch> {
   }
 
   const subiuEm = new Date();
-  const colunas = larguraDe(op);
 
+  // `--todos` sempre motor antigo, mesmo com Ink disponível (comentário do
+  // topo do arquivo): é formato tabular, sem ganho em virar painel.
+  const modoInk = (op.usarInk ?? false) && !op.opcoes.todos;
+
+  function lerTudo(): Visao {
+    op.aoLerPlano?.();
+    return projetarVisao(op.raiz, {
+      ...(op.opcoes.trabalho !== undefined ? { trabalhoPedido: op.opcoes.trabalho } : {}),
+      subiuEm,
+    });
+  }
+
+  // A visão fica guardada de propósito: é ela que carrega a árvore, cara de
+  // montar. O gatilho de estado NÃO a reconstrói.
+  let visao: Visao = lerTudo();
+
+  // --- Motor antigo: ANSI escrito à mão, redesenho incremental de linhas. ---
   // A tela recebe os limites do terminal como FUNÇÃO, não como número: quem
   // redimensiona a janela no meio da execução muda os dois, e uma tela presa
   // à largura da subida passa a desenhar linhas que não cabem — que é
@@ -92,19 +135,7 @@ export async function executarWatch(op: OpcoesExecucao): Promise<SessaoWatch> {
   });
   const tela: Tela = criarTela(op.escrever, limites);
 
-  // A visão fica guardada de propósito: é ela que carrega a árvore, cara de
-  // montar. O gatilho de estado NÃO a reconstrói.
-  let visao: Visao = lerTudo();
-
-  function lerTudo(): Visao {
-    op.aoLerPlano?.();
-    return projetarVisao(op.raiz, {
-      ...(op.opcoes.trabalho !== undefined ? { trabalhoPedido: op.opcoes.trabalho } : {}),
-      subiuEm,
-    });
-  }
-
-  function redesenhar(): void {
+  function redesenharAntigo(): void {
     const c = op.opcoes.colunas ?? larguraDe(op);
     const linhas = op.opcoes.todos
       ? desenharLista(visao, c, op.cor)
@@ -117,19 +148,39 @@ export async function executarWatch(op: OpcoesExecucao): Promise<SessaoWatch> {
     tela.desenhar(linhas);
   }
 
+  // --- Motor Ink: painéis, cor rica, navegação. Só com TTY real. ---
+  // O store é criado sempre (custo desprezível) para não bifurcar o tipo de
+  // `visao`/`store` por todo o arquivo; só é CONSUMIDO (via `renderInkApp`)
+  // quando `modoInk` é verdadeiro, em `principal.ts`.
+  const store: StoreVisao = criarStoreVisao(visao);
+
+  function redesenhar(): void {
+    if (modoInk) {
+      store.definir(visao);
+    } else {
+      redesenharAntigo();
+    }
+  }
+
   redesenhar();
 
   // O pulso do relógio. `unref` para não segurar o processo sozinho: quem
   // mantém o watch vivo é o observador de arquivos, e um timer que segura o
   // event loop faria o processo não morrer depois do `parar()`.
+  //
+  // Só o motor antigo precisa deste timer: o pulso do Ink é local ao
+  // componente (`usePulso`), e mora dentro do App renderizado por
+  // `renderInkApp` em `principal.ts` — este timer redesenharia à toa.
   const pulso = op.pulsoMs ?? PULSO_MS;
-  const relogio = pulso > 0 ? setInterval(redesenhar, pulso) : null;
+  const relogio = !modoInk && pulso > 0 ? setInterval(redesenharAntigo, pulso) : null;
   relogio?.unref();
 
   // Redimensionar a janela muda a largura E a altura: sem redesenhar aqui, a
   // tela fica com as linhas da largura antiga até o próximo evento de arquivo.
+  // O Ink observa resize sozinho (`useStdout`), então só o motor antigo
+  // precisa deste listener.
   const aoRedimensionar = (): void => {
-    redesenhar();
+    if (!modoInk) redesenharAntigo();
   };
   process.stdout.on("resize", aoRedimensionar);
 
@@ -176,5 +227,12 @@ export async function executarWatch(op: OpcoesExecucao): Promise<SessaoWatch> {
     },
     codigo: 0,
     encerrou: false,
+    ...(modoInk
+      ? {
+          store,
+          arvore: op.opcoes.arvore,
+          ...(op.opcoes.colunas !== undefined ? { colunas: op.opcoes.colunas } : {}),
+        }
+      : {}),
   };
 }

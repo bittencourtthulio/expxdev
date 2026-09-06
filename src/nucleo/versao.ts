@@ -21,6 +21,14 @@ export type Alvo = {
   referencia: string;
   /** `false` quando a referência é branch: a skill não está travada em versão publicada. */
   travado: boolean;
+  /**
+   * O SHA do HEAD remoto da `referencia`, quando ela é uma branch.
+   *
+   * Sem tag, "atualizado" não pode significar "o nome da branch não mudou" —
+   * `main` sempre se chama `main`. É este commit, e não a `referencia`, que
+   * decide se uma skill não travada está em dia (ver `compararComRemoto`).
+   */
+  commit?: string;
   erro?: string;
 };
 
@@ -66,6 +74,13 @@ export async function listarTags(repositorio: string): Promise<string[]> {
     .filter((t) => t !== "");
 }
 
+/** O SHA do HEAD remoto de uma branch, ou `undefined` se ela não existir no remoto. */
+export async function commitRemotoDaBranch(repositorio: string, branch: string): Promise<string | undefined> {
+  const { stdout } = await exec("git", ["ls-remote", repositorio, `refs/heads/${branch}`]);
+  const linha = stdout.split("\n").find((l) => l.trim() !== "");
+  return linha?.split("\t")[0]?.trim();
+}
+
 /**
  * A referência que deve ser instalada.
  *
@@ -80,7 +95,11 @@ export async function resolverAlvo(repositorio: string, forcar?: string): Promis
     const tags = await listarTags(repositorio);
     const maior = maiorTagSemver(tags);
     if (maior !== undefined) return { ok: true, referencia: maior, travado: true };
-    return { ok: true, referencia: BRANCH_PADRAO, travado: false };
+    // Sem tag, o nome da branch nunca muda — só o commit por trás dela diz se
+    // há novidade. Falha ao buscar o SHA não derruba a resolução: a instalação
+    // ainda funciona por nome de branch, só a comparação por commit fica sem dado.
+    const commit = await commitRemotoDaBranch(repositorio, BRANCH_PADRAO).catch(() => undefined);
+    return { ok: true, referencia: BRANCH_PADRAO, travado: false, ...(commit !== undefined ? { commit } : {}) };
   } catch (e: unknown) {
     return { ok: false, referencia: "", travado: false, erro: String(e) };
   }
