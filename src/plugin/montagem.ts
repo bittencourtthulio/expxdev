@@ -125,9 +125,29 @@ export function montarPlugin(
   // O núcleo viaja com o plugin. Ausente (checkout parcial, empacotamento sem
   // a pasta), a montagem segue: as skills têm a própria cópia em disco e o
   // projeto continua funcionando — falha aberta, como todo hook.
+  //
+  // `nucleo/commands/` é excluído desta cópia e tratado à parte logo abaixo:
+  // ele não é núcleo de HOOK (o que `nucleo/` documenta e os testes
+  // verificam), é comando fixo do plugin — precisa cair em `commands/` na
+  // raiz do plugin, não em `nucleo/commands/`, ou o Claude Code nunca o
+  // descobre.
   const nucleo = raizDoNucleo();
   if (existsSync(nucleo)) {
-    cpSync(nucleo, join(destino, "nucleo"), { recursive: true });
+    cpSync(nucleo, join(destino, "nucleo"), {
+      recursive: true,
+      filter: (origem) => basename(origem) !== "commands",
+    });
+  }
+
+  // `/expx:onboarding` é comando fixo do plugin, não de uma skill: nenhum
+  // repositório de skill o traz em `comandos`, porque ele não pertence a
+  // nenhuma camada — só orquestra as que já existem. Viaja sempre, do mesmo
+  // jeito que o resto do núcleo; o próprio comando avisa e para quando
+  // nenhuma camada de mapeamento está instalada, em vez de a montagem
+  // decidir isso por antecipação.
+  const comandosFixos = join(nucleo, "commands");
+  if (existsSync(comandosFixos)) {
+    cpSync(comandosFixos, join(destino, "commands"), { recursive: true });
   }
 
   writeFileSync(

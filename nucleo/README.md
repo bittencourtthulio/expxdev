@@ -1,12 +1,15 @@
 # Núcleo compartilhado
 
-O que as skills do método precisam ter **igual**, escrito uma vez só.
+O que as skills do método precisam ter **igual**, escrito uma vez só — mais
+o que o **plugin como um todo** precisa ter, independente de quais skills
+foram selecionadas.
 
 ## O que tem aqui
 
 | Arquivo | O que é |
 |---|---|
 | `hooks/expx-rastro.sh` | O rastro de eventos, os modos de hook e o `trabalho_id` |
+| `commands/onboarding.md` | `/expx:onboarding` — orquestra o mapeamento inicial (stackx, designx, legadox, memox, prodx) das camadas instaladas. Não é núcleo de hook: `montarPlugin` o copia à parte, direto para `commands/` na raiz do plugin — não para dentro de `nucleo/` — porque é assim que o Claude Code descobre um comando. |
 
 ## Como chega até um projeto
 

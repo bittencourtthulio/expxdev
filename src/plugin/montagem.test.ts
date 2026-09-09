@@ -42,6 +42,31 @@ describe("nucleo compartilhado", () => {
   });
 });
 
+describe("comando fixo do plugin", () => {
+  // `/expx:onboarding` não pertence a nenhuma skill selecionada — ele
+  // orquestra as que existem. Sem este teste, uma mudança na cópia do
+  // núcleo poderia parar de levar `commands/onboarding.md`, e o comando
+  // sumiria do plugin sem que nenhum teste de skill acusasse nada.
+  it("integração: o comando de onboarding viaja com o plugin, mesmo sem nenhuma skill", () => {
+    p = projetoTemporario();
+    const destino = join(p.raiz, "plugin");
+    montarPlugin(destino, [], "1.0.0");
+
+    expect(existsSync(join(destino, "commands", "onboarding.md"))).toBe(true);
+  });
+
+  it("integração: nucleo/commands/ não duplica dentro do núcleo copiado", () => {
+    p = projetoTemporario();
+    const destino = join(p.raiz, "plugin");
+    montarPlugin(destino, [montavel("sprintx")], "1.0.0");
+
+    expect(existsSync(join(destino, "commands", "onboarding.md"))).toBe(true);
+    expect(existsSync(join(destino, "nucleo", "commands"))).toBe(false);
+    // o resto do núcleo (hooks) continua chegando normalmente
+    expect(existsSync(join(destino, "nucleo", "hooks", "expx-rastro.sh"))).toBe(true);
+  });
+});
+
 describe("montagem do plugin", () => {
   it("integração: monta com duas de três skills e a terceira não aparece", () => {
     p = projetoTemporario();
