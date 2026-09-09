@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Método Expx — apresentação para o time</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>📘</text></svg>">
+
+  <style>
+    :root {
+      --bg: #16181A;
+      --bg-soft: #1C1F21;
+      --surface: #232729;
+      --surface-2: #2B3033;
+      --text: #F2F5F3;
+      --text-soft: #A8B0AC;
+      --line: rgba(255,255,255,0.10);
+
+      --accent: #22C55E;
+      --accent-2: #4ADE80;
+      --accent-3: #86EFAC;
+
+      --warning: #F6C177;
+      --danger: #FF7B9C;
+
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.25);
+      --shadow-glow: 0 0 0 1px rgba(34,197,94,0.16), 0 0 32px rgba(34,197,94,0.12);
+
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 24px;
+      --radius-xl: 28px;
+
+      --fs-display: clamp(52px, 6.6vw, 92px);
+      --fs-h1: clamp(40px, 5vw, 72px);
+      --fs-h2: clamp(26px, 3.3vw, 46px);
+      --fs-h3: clamp(20px, 2.2vw, 30px);
+      --fs-body-lg: clamp(18px, 1.5vw, 23px);
+      --fs-body: 17px;
+      --fs-small: 14px;
+      --fs-mono: 13px;
+
+      --container-pad-y: 52px;
+      --container-pad-x: 64px;
+      --content-max: 1280px;
+
+      --anim-duration: 0.7s;
+      --anim-ease: ease;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(34,197,94,0.08), transparent 32%),
+        radial-gradient(circle at 82% 28%, rgba(74,222,128,0.06), transparent 30%),
+        linear-gradient(180deg, #16181A 0%, #121415 100%);
+      color: var(--text);
+      font-family: "Chakra Petch", sans-serif;
+      overflow-x: hidden;
+    }
+
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    .presentation { position: relative; }
+
+    .slide {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: grid;
+      place-items: stretch;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
+      opacity: 0.25;
+      z-index: 0;
+    }
+
+    .slide-inner {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      width: min(100%, calc(var(--content-max) + (var(--container-pad-x) * 2)));
+      margin: 0 auto;
+      padding: var(--container-pad-y) var(--container-pad-x);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 26px;
+    }
+
+    .slide-counter {
+      position: absolute;
+      top: 26px;
+      right: 32px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: var(--fs-mono);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      z-index: 3;
+    }
+
+    .brand-mark {
+      position: absolute;
+      top: 26px;
+      left: 32px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: var(--fs-mono);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-mark::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.14);
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow { font-size: var(--fs-mono); color: var(--accent); margin-bottom: 8px; }
+
+    .subtitle {
+      max-width: 760px;
+      font-size: var(--fs-body-lg);
+      line-height: 1.45;
+      color: var(--text-soft);
+      margin: 0;
+    }
+
+    h1, h2, h3, p, blockquote, ul, ol { margin: 0; }
+
+    h1 { font-size: var(--fs-display); line-height: 0.96; letter-spacing: -0.03em; max-width: 15ch; }
+    h2 { font-size: var(--fs-h2); line-height: 1.06; letter-spacing: -0.025em; max-width: 20ch; }
+    h3 { font-size: var(--fs-h3); line-height: 1.15; letter-spacing: -0.02em; }
+    p, li { font-size: var(--fs-body); line-height: 1.48; color: var(--text-soft); }
+
+    .accent-text { color: var(--accent); text-shadow: 0 0 24px rgba(34,197,94,0.18); }
+    .accent-2-text { color: var(--accent-2); }
+
+    .section-heading { display: flex; flex-direction: column; gap: 10px; max-width: 840px; }
+    .section-heading.compact { gap: 6px; }
+
+    .hero { display: flex; flex-direction: column; gap: 16px; max-width: 980px; }
+
+    .hero-badge {
+      align-self: flex-start;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(34,197,94,0.25);
+      background: rgba(34,197,94,0.08);
+      box-shadow: var(--shadow-glow);
+      color: var(--text);
+      font-size: var(--fs-mono);
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .card-grid, .feature-grid, .stats-grid { display: grid; gap: 20px; }
+    .cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card, .feature-card, .stat-card, .comparison-col, .faq-item {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(8px);
+    }
+
+    .card, .feature-card, .faq-item {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-label, .feature-tag, .stat-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: var(--fs-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
+
+    .comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .comparison-col { padding: 26px; display: flex; flex-direction: column; gap: 16px; min-height: 320px; }
+    .comparison-col.accent { border-color: rgba(34,197,94,0.3); box-shadow: var(--shadow-glow); }
+    .comparison-col.muted { opacity: 0.9; }
+    .comparison-col ul, .faq-list, .steps-list { padding: 0; margin: 0; list-style: none; }
+    .comparison-col li + li, .faq-item + .faq-item { margin-top: 10px; }
+    .comparison-col li { padding-left: 18px; position: relative; }
+    .comparison-col li::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 9px;
+      width: 6px; height: 6px;
+      border-radius: 999px;
+      background: var(--text-soft);
+    }
+    .comparison-col.accent li::before { background: var(--accent); }
+
+    .statement { max-width: 15ch; font-size: clamp(34px, 4.6vw, 66px); line-height: 1.08; letter-spacing: -0.03em; color: var(--text); }
+    .quote-meta { color: var(--text-soft); margin-top: 10px; }
+
+    .tree { display: flex; flex-direction: column; gap: 22px; max-width: 900px; }
+    .tree-node {
+      padding: 15px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      box-shadow: var(--shadow-soft);
+      width: fit-content;
+    }
+    .tree-node.root { border-color: rgba(34,197,94,0.3); box-shadow: var(--shadow-glow); }
+    .tree-children { display: flex; gap: 16px; flex-wrap: wrap; padding-left: 22px; }
+    .tree-branch { display: flex; flex-direction: column; gap: 8px; }
+    .tree-note { color: var(--text-soft); font-size: var(--fs-mono); }
+
+    .diagram { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+    .diagram-node {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+    .diagram-node:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 50%; right: -14px;
+      width: 28px; height: 1px;
+      background: linear-gradient(90deg, rgba(34,197,94,0.3), rgba(74,222,128,0.3));
+    }
+    .diagram-node .mono { font-size: 11px; color: var(--accent); }
+
+    .stat-block { display: flex; flex-direction: column; gap: 12px; justify-content: center; min-height: 56vh; }
+    .stat-value { font-size: clamp(68px, 10vw, 168px); line-height: 0.9; letter-spacing: -0.05em; color: var(--text); text-shadow: 0 0 28px rgba(34,197,94,0.08); }
+    .stats-grid .stat-card { padding: 26px 22px; min-height: 200px; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; }
+    .hero-stat .stat-block { text-align: center; }
+    .stats-slide .stat-note { color: var(--text-soft); font-size: var(--fs-body); margin-top: 10px; }
+
+    .step { display: grid; grid-template-columns: 68px 1fr; gap: 16px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .step-num { color: var(--accent); font-size: clamp(17px, 1.9vw, 22px); padding-top: 4px; }
+    .step-copy { display: flex; flex-direction: column; gap: 6px; max-width: 760px; }
+
+    .screenshot-frame {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      background: rgba(255,255,255,0.03);
+    }
+    .screenshot-frame img { width: 100%; height: auto; object-fit: cover; }
+    .screenshot-caption { margin-top: 14px; color: var(--text-soft); font-size: var(--fs-mono); }
+
+    .closing-content, .divider-content { display: flex; flex-direction: column; gap: 14px; max-width: 920px; }
+
+    .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 50px; padding: 0 20px; border-radius: 999px;
+      border: 1px solid transparent; font-size: 16px; font-weight: 600;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-3)); color: #081012; box-shadow: var(--shadow-glow); }
+    .btn-secondary { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.12); color: var(--text); }
+
+    .timeline { display: grid; gap: 16px; max-width: 920px; }
+    .timeline-item { display: grid; grid-template-columns: 24px 1fr; gap: 16px; align-items: start; }
+    .timeline-dot { width: 13px; height: 13px; border-radius: 999px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 0 0 6px rgba(34,197,94,0.08); margin-top: 7px; }
+    .timeline-copy { padding-bottom: 16px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 5px; }
+
+    .faq-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+    /* Slide de código/terminal */
+    .code-frame {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #101213;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+    .code-frame-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+    }
+    .code-dot { width: 10px; height: 10px; border-radius: 999px; background: rgba(255,255,255,0.14); }
+    .code-frame pre {
+      margin: 0;
+      padding: 22px 24px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: clamp(13px, 1.2vw, 16px);
+      line-height: 1.6;
+      color: var(--text-soft);
+      overflow-x: auto;
+    }
+    .code-frame .tok-cmd { color: var(--accent-2); }
+    .code-frame .tok-flag { color: var(--accent-3); }
+    .code-frame .tok-comment { color: #5C6663; }
+
+    /* Faixa de garantia — três blocos horizontais */
+    .guard-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .guard-card {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .guard-card .guard-num { font-family: "JetBrains Mono", monospace; color: var(--accent); font-size: var(--fs-mono); }
+
+    /* Layer stack — pilha vertical de camadas */
+    .layer-stack { display: flex; flex-direction: column; gap: 10px; max-width: 980px; }
+    .layer-row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      align-items: center;
+      gap: 18px;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    }
+    .layer-row.core {
+      border-color: rgba(34,197,94,0.32);
+      box-shadow: var(--shadow-glow);
+    }
+    .layer-name { font-family: "JetBrains Mono", monospace; font-size: var(--fs-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    .layer-desc { font-size: 15px; color: var(--text-soft); }
+    .layer-desc strong { color: var(--text); font-weight: 600; }
+
+    .animate {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity var(--anim-duration) var(--anim-ease), transform var(--anim-duration) var(--anim-ease);
+      will-change: opacity, transform;
+    }
+    .animate.in { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 80ms; }
+    .delay-2 { transition-delay: 160ms; }
+    .delay-3 { transition-delay: 240ms; }
+    .delay-4 { transition-delay: 320ms; }
+    .delay-5 { transition-delay: 400ms; }
+
+    .dot-nav {
+      position: fixed; top: 50%; right: 18px; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 10px; z-index: 100;
+    }
+    .dot-nav button {
+      width: 12px; height: 12px; border-radius: 999px; border: none; padding: 0;
+      background: rgba(255,255,255,0.22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dot-nav button.active { background: var(--accent); box-shadow: 0 0 0 6px rgba(34,197,94,0.12); transform: scale(1.12); }
+    .dot-nav button:hover { transform: scale(1.08); }
+
+    @media (max-width: 1100px) {
+      :root { --container-pad-y: 40px; --container-pad-x: 32px; }
+      .cols-3, .cols-4, .diagram, .faq-list, .comparison-grid, .guard-row { grid-template-columns: 1fr; }
+      .diagram-node:not(:last-child)::after {
+        top: auto; right: auto; bottom: -10px; left: 50%;
+        width: 1px; height: 20px; transform: translateX(-50%);
+      }
+      .layer-row { grid-template-columns: 1fr; gap: 6px; }
+    }
+
+    @media (max-width: 720px) {
+      :root { --container-pad-y: 26px; --container-pad-x: 18px; --fs-body: 16px; --fs-small: 13px; }
+      .slide-counter { top: 14px; right: 18px; }
+      .brand-mark { top: 14px; left: 18px; }
+      .dot-nav { right: 8px; }
+      .step { grid-template-columns: 50px 1fr; }
+      .btn { width: 100%; }
+      .cta-row { flex-direction: column; }
+      .code-frame pre { padding: 16px; }
+    }
+
+    @media print {
+      html { scroll-snap-type: none; }
+      .slide { min-height: 100vh; page-break-after: always; }
+      .dot-nav { display: none; }
+      .animate { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="dot-nav" aria-label="Navegação de slides"></nav>
+
+  <main class="presentation">
+
+    <!-- 01 · Título -->
+    <section class="slide title-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">01 / 21</div>
+
+        <div class="hero">
+          <div class="hero-badge animate delay-1">PARA O TIME DE ENGENHARIA</div>
+          <div class="eyebrow mono animate delay-2">COMO VAMOS TRABALHAR COM IA</div>
+          <h1 class="animate delay-3">
+            Planejamento é o produto. <span class="accent-text">Código é a saída.</span>
+          </h1>
+          <p class="subtitle animate delay-4">
+            Por que estamos adotando o método Expx e o expxdev como a forma padrão de construir
+            e manter este sistema com agentes de IA.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · Citação / tensão de abertura -->
+    <section class="slide quote-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">02 / 21</div>
+
+        <blockquote class="statement animate delay-1">
+          Pedir a um agente para construir uma feature funciona —
+          <span class="accent-text">até a segunda hora.</span>
+        </blockquote>
+
+        <div class="quote-meta mono animate delay-2">O PROBLEMA QUE JÁ VIMOS ACONTECER</div>
+      </div>
+    </section>
+
+    <!-- 03 · Problema / Solução -->
+    <section class="slide problem-solution-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">03 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">POR QUE ISSO ACONTECE</div>
+          <h2 class="animate delay-2">O plano vago vira decisão do agente</h2>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-col muted animate delay-1">
+            <h3>O que sobra pro agente decidir</h3>
+            <ul>
+              <li>Escolher um padrão que não é o do projeto</li>
+              <li>Escrever o teste na pasta que o runner não olha</li>
+              <li>Refatorar três arquivos que ninguém pediu</li>
+            </ul>
+          </div>
+
+          <div class="comparison-col accent animate delay-2">
+            <h3>O que o método elimina antes</h3>
+            <ul>
+              <li>Ambiguidade resolvida na fase de planejamento</li>
+              <li>Convenção do repositório, descoberta e escrita</li>
+              <li>Escopo travado no que a investigação provou</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Declaração / tese -->
+    <section class="slide quote-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">04 / 21</div>
+
+        <blockquote class="statement animate delay-1">
+          Uma pergunta feita <span class="accent-text">durante</span> a execução é sempre
+          uma falha da fase de <span class="accent-text">planejamento.</span>
+        </blockquote>
+
+        <div class="quote-meta mono animate delay-2">PRIMEIRA APOSTA DO MÉTODO</div>
+      </div>
+    </section>
+
+    <!-- 05 · As quatro apostas — grid -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">05 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">FUNDAMENTOS</div>
+          <h2 class="animate delay-2">As quatro apostas de onde tudo decorre</h2>
+        </div>
+
+        <div class="card-grid cols-4">
+          <article class="card animate delay-1">
+            <div class="card-label mono">01</div>
+            <h3>Esforço no plano</h3>
+            <p>Ambiguidade eliminada antes, ou a execução autônoma é uma aposta, não um processo.</p>
+          </article>
+          <article class="card animate delay-2">
+            <div class="card-label mono">02</div>
+            <h3>Critério verificável</h3>
+            <p>Portão de aceite binário, sem adjetivo. TDD não é sugestão.</p>
+          </article>
+          <article class="card animate delay-3">
+            <div class="card-label mono">03</div>
+            <h3>Escopo travado</h3>
+            <p>Só o que a investigação provou. Melhoria avulsa vira dívida registrada, não brinde.</p>
+          </article>
+          <article class="card animate delay-4">
+            <div class="card-label mono">04</div>
+            <h3>Quem faz não aprova</h3>
+            <p>QA e auditoria são agentes à parte, com acesso só de leitura — tecnicamente, não por promessa.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Divisor de seção -->
+    <section class="slide divider-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">06 / 21</div>
+
+        <div class="divider-content">
+          <div class="eyebrow mono animate delay-1">SEÇÃO 02</div>
+          <h2 class="animate delay-2">O ecossistema: oito skills, um contrato</h2>
+          <p class="subtitle animate delay-3">O que cada peça faz e como elas se encontram sem se conhecer.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · Diagrama: ponta a ponta -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">07 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">FLUXO</div>
+          <h2 class="animate delay-2">O método de ponta a ponta</h2>
+        </div>
+
+        <div class="diagram">
+          <div class="diagram-node animate delay-1">
+            <div class="mono">01</div>
+            <h3>prodx</h3>
+            <p>Diz se vale a pena fazer.</p>
+          </div>
+          <div class="diagram-node animate delay-2">
+            <div class="mono">02</div>
+            <h3>stackx</h3>
+            <p>Diz como este projeto escreve código.</p>
+          </div>
+          <div class="diagram-node animate delay-3">
+            <div class="mono">03</div>
+            <h3>sprintx / runx</h3>
+            <p>Planejam e fazem o trabalho.</p>
+          </div>
+          <div class="diagram-node animate delay-4">
+            <div class="mono">04</div>
+            <h3>mergex</h3>
+            <p>Entrega: branch, commit, PR, QA.</p>
+          </div>
+        </div>
+        <p class="subtitle animate delay-5">legadox mede o quanto ter medo. buildx conduz a cadeia inteira quando o projeto é novo.</p>
+      </div>
+    </section>
+
+    <!-- 08 · Feature cards: as 3 skills base -->
+    <section class="slide feature-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">08 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">CATÁLOGO · BASE</div>
+          <h2 class="animate delay-2">As três que fazem o trabalho</h2>
+        </div>
+
+        <div class="feature-grid cols-3">
+          <article class="feature-card animate delay-1">
+            <div class="feature-tag mono">BASE</div>
+            <h3>sprintx</h3>
+            <p>Planeja e executa feature nova em seis fases.</p>
+          </article>
+          <article class="feature-card animate delay-2">
+            <div class="feature-tag mono">BASE</div>
+            <h3>runx</h3>
+            <p>Corrige ocorrência em produção em cinco estágios.</p>
+          </article>
+          <article class="feature-card animate delay-3">
+            <div class="feature-tag mono">BASE</div>
+            <h3>mergex</h3>
+            <p>Branch, commit por task, PR e pacote de QA.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 · Feature cards: as camadas + orquestração -->
+    <section class="slide feature-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">09 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">CATÁLOGO · CAMADA E ORQUESTRA</div>
+          <h2 class="animate delay-2">As que mudam o comportamento das três</h2>
+        </div>
+
+        <div class="feature-grid cols-4">
+          <article class="feature-card animate delay-1">
+            <div class="feature-tag mono">CAMADA</div>
+            <h3>legadox</h3>
+            <p>Endurece o trabalho proporcional ao raio de impacto.</p>
+          </article>
+          <article class="feature-card animate delay-1">
+            <div class="feature-tag mono">CAMADA</div>
+            <h3>stackx</h3>
+            <p>Descobre o dialeto técnico real do repositório.</p>
+          </article>
+          <article class="feature-card animate delay-2">
+            <div class="feature-tag mono">CAMADA</div>
+            <h3>memox</h3>
+            <p>Indexa artefatos fechados e o que já se sabe de um arquivo.</p>
+          </article>
+          <article class="feature-card animate delay-2">
+            <div class="feature-tag mono">CAMADA</div>
+            <h3>prodx</h3>
+            <p>Recebe o pedido cru e emite veredito com evidência.</p>
+          </article>
+        </div>
+        <p class="subtitle animate delay-3">buildx orquestra as três acima — não é camada, é a única exceção do método: ela não modifica, invoca.</p>
+      </div>
+    </section>
+
+    <!-- 10 · Hub: como elas se conectam -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">10 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">ARQUITETURA</div>
+          <h2 class="animate delay-2">Contratos escritos, não código compartilhado</h2>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-col muted animate delay-1">
+            <h3>Como elas se encontram</h3>
+            <ul>
+              <li>Não se conhecem por código — só por contrato</li>
+              <li>Dá para instalar três e não as outras cinco</li>
+              <li>Dá para atualizar uma sem tocar nas demais</li>
+            </ul>
+          </div>
+          <div class="comparison-col accent animate delay-2">
+            <h3>A exceção é a buildx</h3>
+            <ul>
+              <li>Não modifica ninguém — invoca</li>
+              <li>Exige prodx, sprintx e mergex instaladas</li>
+              <li>Sem elas, o CLI diz exatamente o que falta</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 · Comparação: sprintx x runx -->
+    <section class="slide comparison-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">11 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">BUILD E RUN</div>
+          <h2 class="animate delay-2">Mesmo método, gatilho diferente</h2>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-col muted animate delay-1">
+            <h3>sprintx · Build</h3>
+            <ul>
+              <li>Gatilho: feature nova, planejada do zero</li>
+              <li>Entrada: uma ideia, um requisito</li>
+              <li>Seis fases, F1 a F6</li>
+              <li>Saída: a feature entregue</li>
+            </ul>
+          </div>
+          <div class="comparison-col accent animate delay-2">
+            <h3>runx · Run</h3>
+            <ul>
+              <li>Gatilho: ocorrência num sistema em produção</li>
+              <li>Entrada: chamado, ticket ou relato de cliente</li>
+              <li>Cinco estágios, E1 a E5</li>
+              <li>Saída: ocorrência encerrada, com dois relatórios</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 · Declaração: rigor compartilhado -->
+    <section class="slide quote-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">12 / 21</div>
+
+        <blockquote class="statement animate delay-1">
+          Muda o gatilho. <span class="accent-text">Muda o tamanho.</span> Nunca muda o rigor.
+        </blockquote>
+
+        <div class="quote-meta mono animate delay-2">
+          BASE DE CONHECIMENTO · TDD OBRIGATÓRIO · CRITÉRIO VERIFICÁVEL · ORQUESTRADOR
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 · Layer stack: como as camadas compõem -->
+    <section class="slide structure-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">13 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">COMPOSIÇÃO</div>
+          <h2 class="animate delay-2">As camadas mudam sprintx e runx por dentro</h2>
+        </div>
+
+        <div class="layer-stack animate delay-3">
+          <div class="layer-row core">
+            <div class="layer-name">PRODX</div>
+            <div class="layer-desc">A única que roda <strong>antes</strong>: decide se o trabalho deveria existir.</div>
+          </div>
+          <div class="layer-row">
+            <div class="layer-name">STACKX</div>
+            <div class="layer-desc">Plano define caminho de teste, camada e padrão de erro <strong>por task</strong>.</div>
+          </div>
+          <div class="layer-row">
+            <div class="layer-name">LEGADOX</div>
+            <div class="layer-desc">Rigor proporcional ao raio: caracterização, orçamento de diff, plano de reversão.</div>
+          </div>
+          <div class="layer-row">
+            <div class="layer-name">MEMOX</div>
+            <div class="layer-desc">Indexa o que já foi tentado, decidido ou reprovado antes de planejar de novo.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 · Divisor de seção -->
+    <section class="slide divider-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">14 / 21</div>
+
+        <div class="divider-content">
+          <div class="eyebrow mono animate delay-1">SEÇÃO 03</div>
+          <h2 class="animate delay-2">Como o método se protege sozinho</h2>
+          <p class="subtitle animate delay-3">Regra escrita é instrução — e instrução se esquece na task 14.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 · Guarantee row: três camadas de garantia -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">15 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">GARANTIAS</div>
+          <h2 class="animate delay-2">Três camadas, cada uma cobre o que a anterior não garante</h2>
+        </div>
+
+        <div class="guard-row">
+          <div class="guard-card animate delay-1">
+            <div class="guard-num mono">HOOKS</div>
+            <h3>Aviso → bloqueio</h3>
+            <p>Todo hook de método nasce em aviso. Só promove a bloqueio depois de semanas sem falso positivo.</p>
+          </div>
+          <div class="guard-card animate delay-2">
+            <div class="guard-num mono">AGENTES</div>
+            <h3>Só leitura</h3>
+            <p>QA e auditoria têm acesso de leitura declarado — "aponta, não corrige" é tecnicamente forçado.</p>
+          </div>
+          <div class="guard-card animate delay-3">
+            <div class="guard-num mono">SEGURANÇA</div>
+            <h3>Falha fechada</h3>
+            <p>Hook de segredo nasce em bloqueio. Falso positivo ali é raro; segredo commitado não tem volta.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 · Steps: agentes read-only -->
+    <section class="slide steps-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">16 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">AGENTES</div>
+          <h2 class="animate delay-2">Quem verifica não pode corrigir</h2>
+        </div>
+
+        <ol class="steps-list">
+          <li class="step animate delay-1">
+            <div class="step-num mono">01</div>
+            <div class="step-copy">
+              <h3>auditor-plano</h3>
+              <p>Fura o plano antes de virar código — leitura apenas.</p>
+            </div>
+          </li>
+          <li class="step animate delay-2">
+            <div class="step-num mono">02</div>
+            <div class="step-copy">
+              <h3>revisor-testes</h3>
+              <p>Esse teste passaria com a implementação errada?</p>
+            </div>
+          </li>
+          <li class="step animate delay-3">
+            <div class="step-num mono">03</div>
+            <div class="step-copy">
+              <h3>qa</h3>
+              <p>Valida contra os critérios ao fim do runx — não corrige.</p>
+            </div>
+          </li>
+          <li class="step animate delay-4">
+            <div class="step-num mono">04</div>
+            <div class="step-copy">
+              <h3>analista-de-conflito</h3>
+              <p>Explica o que cada lado pretendia num merge — nunca resolve.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 16 · Divisor de seção -->
+    <section class="slide divider-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">17 / 21</div>
+
+        <div class="divider-content">
+          <div class="eyebrow mono animate delay-1">SEÇÃO 04</div>
+          <h2 class="animate delay-2">O CLI: o que instala e o que observa</h2>
+          <p class="subtitle animate delay-3">expxdev — sete subcomandos, três binários, um plugin local.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 · Código: terminal init -->
+    <section class="slide screenshot-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">18 / 21</div>
+
+        <div class="section-heading compact">
+          <div class="eyebrow mono animate delay-1">INSTALAÇÃO</div>
+          <h2 class="animate delay-2">Uma linha declarativa, a mesma no terminal e no CI</h2>
+        </div>
+
+        <div class="code-frame animate delay-3">
+          <div class="code-frame-head">
+            <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+          </div>
+          <pre><span class="tok-comment"># seleciona skills e harness, sem terminal interativo</span>
+<span class="tok-cmd">npx</span> expxdev init <span class="tok-flag">--skills</span> sprintx,runx,mergex <span class="tok-flag">--harness</span> claude,opencode <span class="tok-flag">--yes</span>
+
+<span class="tok-comment"># sem --skills e sem TTY: só mostra o que faria, não escreve nada</span>
+<span class="tok-cmd">npx</span> expxdev init</pre>
+        </div>
+        <p class="screenshot-caption mono animate delay-4">git clone --depth 1 — usa a credencial já configurada, sem token extra.</p>
+      </div>
+    </section>
+
+    <!-- 18 · Grid: sete subcomandos -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">19 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">REFERÊNCIA</div>
+          <h2 class="animate delay-2">Sete subcomandos — panel e watch não escrevem no projeto</h2>
+        </div>
+
+        <div class="card-grid cols-3">
+          <article class="card animate delay-1">
+            <div class="card-label mono">INIT</div>
+            <h3>expx init</h3>
+            <p>Instala as skills escolhidas neste projeto.</p>
+          </article>
+          <article class="card animate delay-1">
+            <div class="card-label mono">ADD / REMOVE</div>
+            <h3>expx add · remove</h3>
+            <p>Ajusta a seleção e remonta o plugin do zero.</p>
+          </article>
+          <article class="card animate delay-1">
+            <div class="card-label mono">UPDATE</div>
+            <h3>expx update</h3>
+            <p>Atualiza as skills instaladas, com --check antes de aplicar.</p>
+          </article>
+          <article class="card animate delay-2">
+            <div class="card-label mono">DOCTOR</div>
+            <h3>expx doctor</h3>
+            <p>Diagnostica uma instalação quebrada, 16 verificações.</p>
+          </article>
+          <article class="card animate delay-2">
+            <div class="card-label mono">SÓ LEITURA</div>
+            <h3>expx panel</h3>
+            <p>Painel local em 127.0.0.1 — qualquer escrita recebe 405.</p>
+          </article>
+          <article class="card animate delay-2">
+            <div class="card-label mono">SÓ LEITURA</div>
+            <h3>expx watch</h3>
+            <p>Acompanha um trabalho ao vivo, no terminal, sem sair do lugar.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19 · Estatísticas: números reais do próprio expxdev -->
+    <section class="slide stats-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">20 / 21</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">O QUE JÁ EXISTE</div>
+          <h2 class="animate delay-2">O expxdev não é conceito — é o CLI já em uso</h2>
+        </div>
+
+        <div class="stats-grid cols-4">
+          <div class="stat-card animate delay-1">
+            <div class="stat-value">7</div>
+            <div class="stat-label mono">SKILLS NO CATÁLOGO</div>
+          </div>
+          <div class="stat-card animate delay-2">
+            <div class="stat-value">7</div>
+            <div class="stat-label mono">SUBCOMANDOS DO CLI</div>
+          </div>
+          <div class="stat-card animate delay-3">
+            <div class="stat-value">441</div>
+            <div class="stat-label mono">TESTES, SEM REDE</div>
+          </div>
+          <div class="stat-card animate delay-4">
+            <div class="stat-value">16</div>
+            <div class="stat-label mono">VERIFICAÇÕES DO DOCTOR</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20 · CTA / Encerramento -->
+    <section class="slide closing-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">21 / 21</div>
+
+        <div class="closing-content">
+          <div class="eyebrow mono animate delay-1">PRÓXIMO PASSO</div>
+          <h2 class="animate delay-2">Rodem o init num projeto real esta semana</h2>
+          <p class="subtitle animate delay-3">
+            Comecem por sprintx, runx e mergex. Adicionem stackx e prodx quando o ritmo pedir mais rigor.
+          </p>
+
+          <div class="cta-row animate delay-4">
+            <a href="index.html" class="btn btn-primary">Ver a documentação completa</a>
+            <a href="index.html#instalacao" class="btn btn-secondary">Anatomia do init</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dotsContainer = document.querySelector('.dot-nav');
+
+    function scrollToSlide(index) {
+      const clamped = Math.max(0, Math.min(index, slides.length - 1));
+      slides[clamped].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function buildDots() {
+      slides.forEach((slide, index) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('aria-label', `Ir para o slide ${index + 1}`);
+        btn.addEventListener('click', () => scrollToSlide(index));
+        dotsContainer.appendChild(btn);
+      });
+    }
+
+    function setActiveDot(index) {
+      const dots = dotsContainer.querySelectorAll('button');
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    }
+
+    const slideObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = slides.indexOf(entry.target);
+          setActiveDot(index);
+        }
+      });
+    }, { threshold: 0.6 });
+
+    const animationObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          animationObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    function initObservers() {
+      slides.forEach(slide => slideObserver.observe(slide));
+      document.querySelectorAll('.animate').forEach(el => animationObserver.observe(el));
+    }
+
+    function getCurrentSlideIndex() {
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      slides.forEach((slide, index) => {
+        const rect = slide.getBoundingClientRect();
+        const distance = Math.abs(rect.top);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+      return closestIndex;
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const currentIndex = getCurrentSlideIndex();
+      if (event.key === 'ArrowDown' || event.key === 'ArrowRight' || event.key === 'PageDown') {
+        event.preventDefault();
+        scrollToSlide(currentIndex + 1);
+      }
+      if (event.key === 'ArrowUp' || event.key === 'ArrowLeft' || event.key === 'PageUp') {
+        event.preventDefault();
+        scrollToSlide(currentIndex - 1);
+      }
+      if (event.key === 'Home') {
+        event.preventDefault();
+        scrollToSlide(0);
+      }
+      if (event.key === 'End') {
+        event.preventDefault();
+        scrollToSlide(slides.length - 1);
+      }
+    });
+
+    buildDots();
+    initObservers();
+    setActiveDot(0);
+  </script>
+</body>
+</html>
