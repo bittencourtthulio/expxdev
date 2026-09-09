@@ -238,3 +238,37 @@ proporção de avaliação completa passar de 50%, os candidatos a apertar
 são o **G4** (o "cheira a algo que já existe" é o mais subjetivo dos oito)
 e o **G8** (o limite de "alguns dias" é frouxo por natureza). A skill
 reporta essa proporção pelo `/prodx`.
+
+---
+
+## D15 — Onde perguntar densidade e forma de construção
+
+**Ambiguidade:** o pedido original de incluir "densidade do projeto"
+(MVP/Padrão/Completo/Profundo) e "forma de construção" (Entrevista/
+Autônomo) como as duas primeiras perguntas de todo trabalho não distingue
+se isso é decisão do prodx (que só diz **se** vale construir) ou do sprintx
+(que decide **como** construir e planeja de fato).
+
+**Decisão:** as duas perguntas entram **nos dois lugares**, com papéis
+diferentes:
+
+- No **prodx** (P2, `01-pedido.md`), só quando a classificação pode
+  terminar em `fazer`: a resposta é registrada como **intenção de
+  produto**, ao lado da solução/problema/motivação — sinal de quanto o
+  cliente topa investir, não uma trava técnica. Viaja para o `BRIEFING.md`.
+- No **sprintx** (F2), essa intenção é **confirmada ou ajustada**, porque
+  só ali existe contexto de código e arquitetura suficiente para saber se
+  "MVP" é de fato viável ou se "autônomo" é seguro para aquele módulo.
+
+**Por quê:** o prodx nunca decide técnica (regra 1) nem planeja
+implementação (seção "O que o prodx NÃO faz"). Perguntar densidade e modo
+só no P2 e tratá-los como travados seria a skill decidindo algo que não é
+dela. Perguntar só no sprintx perderia o sinal de produto — o cliente que
+pediu sabe, melhor que ninguém no time técnico, se topa pagar por uma
+solução profunda ou só quer o mínimo. Registrar a intenção cedo e
+confirmá-la tarde aproveita os dois.
+
+**O que revisa:** se, na prática, o sprintx sempre descartar a sugestão do
+prodx (ou vice-versa, sempre aceitar sem confrontar com o código), um dos
+dois lados está redundante e a pergunta deveria migrar inteira para o
+outro.

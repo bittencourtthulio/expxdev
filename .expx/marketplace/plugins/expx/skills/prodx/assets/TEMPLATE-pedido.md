@@ -10,6 +10,10 @@ canal: <por onde chegou>
 classificacao: <correcao | duvida | melhoria | novo | fora_de_escopo>
 gatilhos_disparados: [<G1..G8>]
 aguardando_resposta: <true | false>
+densidade_sugerida: <mvp | padrao | completo | profundo | nao_aplicavel>
+densidade_confirmada: <true | false>
+modo_construcao_sugerido: <entrevista | autonomo | nao_aplicavel>
+modo_construcao_confirmado: <true | false>
 ---
 
 # <PD-ID> — <título>
@@ -54,7 +58,19 @@ que explica isso.>
 <Provisória até o P3: um `novo` vira `duvida` com frequência quando a
 verificação de existência acha a tela.>
 
-## 7. Verificação de comportamento intencional
+## 7. Densidade e forma de construção sugeridas
+
+<Só preencha quando a classificação puder terminar em `fazer`. Registre como
+INTENÇÃO — quem confirma de fato é o sprintx, na abertura do planejamento,
+com mais contexto técnico.>
+
+**Densidade sugerida:** <mvp | padrao | completo | profundo>
+**Confirmada por quem pediu?** <sim | nao — hipótese a partir do porte do pedido>
+
+**Forma de construção sugerida:** <entrevista | autonomo>
+**Confirmada por quem pediu?** <sim | nao — hipótese>
+
+## 8. Verificação de comportamento intencional
 
 <Obrigatório quando a classificação for `correcao` e o pedido descrever
 cálculo, prazo, permissão, bloqueio ou validação. Regra 7.>
@@ -63,7 +79,7 @@ cálculo, prazo, permissão, bloqueio ou validação. Regra 7.>
 **Achei:** <evidência de que é deliberado, ou "nada — procurei e não achei">
 **Conclusão:** <e bug | e comportamento intencional, reclassificar>
 
-## 8. Perguntas em aberto
+## 9. Perguntas em aberto
 
 <Máximo cinco. Informação que falta vira pergunta, nunca suposição
 (regra 8). Se houver pergunta essencial, o P3 não começa.>

@@ -74,6 +74,8 @@ Roteiro completo: `references/00-triagem.md`.
 | P4 | Avaliação | `03-avaliacao.md` | quando não for EXISTE |
 | P5 | Veredito e briefing | `VEREDITO.md`, `BRIEFING.md` | avaliação completa |
 
+No P2, quando a classificação pode terminar em `fazer`, a skill pergunta **densidade** (`mvp` | `padrao` | `completo` | `profundo`) e **forma de construção** (`entrevista` | `autonomo`). Isso é **intenção de produto**, não decisão técnica: viaja no `01-pedido.md` e no `BRIEFING.md` como sugestão, e quem confirma de fato é o sprintx, na abertura do planejamento, já com contexto de código.
+
 ## Os quatro vereditos
 
 Três dos quatro **não geram trabalho**:
@@ -161,7 +163,7 @@ O kind `veredito` carrega: `veredito`, `via`, `gatilhos_disparados`, `aprovado_p
 | Skill | Relação |
 |-------|---------|
 | **runx** | Caminho mais comum, porque hoje o pedido chega pelo suporte. O `BRIEFING.md` vira o `00-OCORRENCIA.md`, já com o tipo classificado e o comportamento intencional verificado. Pedido aprovado na triagem entrega um briefing de uma linha, não um documento. |
-| **sprintx** | Recebe o `BRIEFING.md` como entrada da F1. O plano referencia o `PD-ID` de origem. |
+| **sprintx** | Recebe o `BRIEFING.md` como entrada da F1. O plano referencia o `PD-ID` de origem. A densidade e a forma de construção sugeridas no P2 viajam no `BRIEFING.md`; o sprintx as confirma ou ajusta na F2, com contexto técnico que o prodx não tem. |
 | **memox** | Indexa o `INDICE.md` e os vereditos, e é ele que faz a verificação de existência do P3 melhorar com o tempo. |
 | **legadox** | Quando existir `PERFIL.md`, o P1 puxa dele as zonas de risco. Tocar zona de risco é gatilho de avaliação completa (G6). |
 | **relatórios de uso do runx** | Melhor descrição existente do que o sistema faz na linguagem do cliente. O P1 e o P3 os consomem. |

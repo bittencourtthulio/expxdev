@@ -51,7 +51,23 @@ Exemplo canônico:
 
 A classificação é provisória até o P3: um `novo` vira `duvida` com frequência quando a verificação de existência acha a tela.
 
-### 5. Verifique comportamento intencional — obrigatório para `correcao`
+### 5. Pergunte densidade e forma de construção — só se o veredito puder ser `fazer`
+
+Estas duas perguntas abrem toda avaliação completa que pode terminar em trabalho. Pule-as quando a classificação já aponta claramente para `duvida` ou `fora_de_escopo` — não vale perguntar isso a quem talvez nem vá construir nada.
+
+| Pergunta | Opções | O que registra |
+|----------|--------|-----------------|
+| **Densidade** | `mvp` \| `padrao` \| `completo` \| `profundo` | Quanto investimento o cliente/negócio topa colocar nisto — não é estimativa de esforço (isso é do sprintx), é intenção de escopo. |
+| **Forma de construção** | `entrevista` \| `autonomo` | Se quem vai planejar deve entrevistar o solicitante em cada decisão, ou pesquisar e assumir hipóteses sozinho, registrando o raciocínio. |
+
+Pergunte as duas junto do bloco de perguntas em aberto (passo 7), na linguagem de quem pediu:
+
+> "Isso é para resolver rápido e simples (MVP), no padrão normal do sistema, de forma completa, ou você quer que a gente vá fundo nisso (profundo)?"
+> "Prefere que a gente vá conversando com você em cada decisão, ou pode pesquisar e decidir sozinho, te mostrando depois o que foi decidido?"
+
+Registre a resposta como **intenção**, não como decisão técnica travada: quem confirma de fato — com mais contexto de código e arquitetura — é o sprintx, na abertura do planejamento (F1/F2). Se quem pediu não souber responder, registre a hipótese mais provável a partir do porte do pedido e do gatilho que disparou (G8 sozinho tende a `padrao`; G1+G2 juntos tendem a `completo`), marcada como hipótese, não como resposta confirmada.
+
+### 6. Verifique comportamento intencional — obrigatório para `correcao`
 
 Regra 7. Se o pedido chegou rotulado como bug e descreve **cálculo, prazo, permissão, bloqueio ou validação**, verifique antes de mandar para o runx:
 
@@ -63,7 +79,7 @@ Achou evidência de que é deliberado → **não é bug**. Reclassifique como `m
 
 Não achou evidência → registre que procurou, onde, e que não achou. Isso é diferente de "não verifiquei".
 
-### 6. Quando faltar informação essencial, pare
+### 7. Quando faltar informação essencial, pare
 
 Regra 8: informação que falta vira pergunta, **nunca suposição**.
 
@@ -81,8 +97,9 @@ Informação é essencial quando sem ela o veredito muda. "Qual o navegador" rar
 4. Motivação
 5. A pergunta estruturante e a resposta
 6. Classificação, com justificativa em uma linha
-7. Verificação de comportamento intencional (quando `correcao`)
-8. Perguntas em aberto — para quem, e o que muda a depender da resposta
+7. Densidade e forma de construção sugeridas (quando aplicável)
+8. Verificação de comportamento intencional (quando `correcao`)
+9. Perguntas em aberto — para quem, e o que muda a depender da resposta
 
 ## Modo didático
 
@@ -99,6 +116,7 @@ Exemplo de saída didática no chat:
 - `01-pedido.md` existe, com o original preservado literalmente.
 - Solução e problema estão separados, e a pergunta estruturante foi respondida.
 - Classificação registrada com justificativa.
+- Se a classificação puder terminar em `fazer`: densidade e forma de construção registradas — como resposta confirmada ou como hipótese explícita.
 - Se `correcao`: a verificação de comportamento intencional está documentada, com onde se procurou.
 - Se há perguntas em aberto essenciais: o pedido está marcado como **aguardando resposta** e o P3 não começou.
 

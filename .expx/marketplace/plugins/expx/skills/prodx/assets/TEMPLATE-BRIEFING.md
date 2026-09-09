@@ -5,6 +5,8 @@ pd_id: <PD-AAAA-NNNN>
 data: <AAAA-MM-DD>
 destino: <sprintx | runx>
 classificacao: <correcao | melhoria | novo>
+densidade_sugerida: <mvp | padrao | completo | profundo | nao_aplicavel>
+modo_construcao_sugerido: <entrevista | autonomo | nao_aplicavel>
 veredito_origem: <caminho do VEREDITO.md>
 aprovado_por: <nome de quem assinou o veredito>
 aprovado_em: <AAAA-MM-DD>
@@ -35,6 +37,15 @@ original.>
 técnico.>
 
 - <critério>
+
+## Densidade e forma de construção sugeridas
+
+<Vindo do 01-pedido.md. É INTENÇÃO de produto, não decisão técnica travada —
+o sprintx confirma ou ajusta isso na abertura do planejamento, já com
+contexto de código e arquitetura.>
+
+**Densidade sugerida:** <mvp | padrao | completo | profundo> — <confirmada pelo cliente | hipótese>
+**Forma de construção sugerida:** <entrevista | autonomo> — <confirmada pelo cliente | hipótese>
 
 ## Contexto para quem vai investigar
 
