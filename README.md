@@ -46,6 +46,17 @@ com namespace no Claude Code (`/expx:sprintx-sprints`) e sem namespace no OpenCo
 > Quem clona o projeto recebe exatamente as mesmas skills que o time está usando, sem rede e
 > sem rodar nada. Quem atualiza decide quando, vendo antes o que muda.
 
+Logo depois do `init`, dentro do Claude Code:
+
+```
+/expx:onboarding
+```
+
+Sem isso, cada camada instalada roda em modo degradado na primeira vez que alguém a usa —
+`sprintx` planeja pela estrutura de pastas em vez de convenção real, `runx` investiga sem
+contexto de produto. O `onboarding` fecha essa lacuna antes que ela apareça no meio de um
+plano: veja [A primeira coisa a rodar](#a-primeira-coisa-a-rodar-depois-do-init).
+
 ---
 
 ## Índice
@@ -60,6 +71,7 @@ com namespace no Claude Code (`/expx:sprintx-sprints`) e sem namespace no OpenCo
 | **[O que fica no seu projeto](#o-que-fica-no-seu-projeto)** | cada pasta, quem escreve e quem lê |
 | **[Subcomandos](#subcomandos)** · **[Lock e atualização](#versão-lock-e-atualização)** · **[Doctor](#o-que-o-doctor-verifica)** · **[Painel](#o-painel)** | a referência do CLI |
 | **[Anatomia do `init`](#anatomia-do-init-passo-a-passo)** | o que roda, em que ordem, e por quê |
+| **[`/expx:onboarding`](#a-primeira-coisa-a-rodar-depois-do-init)** | o comando que mapeia as camadas instaladas antes do primeiro plano |
 | **[A memória do projeto](#a-memória-do-projeto)** | o que já se sabe sobre este arquivo, antes de mexer nele |
 | **[Segurança](#segurança-e-limites)** · **[Desenvolvimento](#desenvolvimento)** | limites e arquitetura interna |
 
@@ -375,6 +387,52 @@ materializado se você escolheu o OpenCode.
 > caminho absoluto na configuração do usuário, ele não viaja no commit: cada pessoa roda
 > `expx init` na própria máquina. Sem o binário `claude` no PATH, o `.expx/` é montado
 > normalmente e o CLI imprime os dois comandos para você rodar à mão.
+
+---
+
+## A primeira coisa a rodar depois do `init`
+
+```
+/expx:onboarding
+```
+
+`stackx`, `designx`, `legadox`, `memox` e `prodx` sabem cada uma mapear a própria camada —
+`stackx` descobre o dialeto técnico do repositório, `designx` cartografa o design system,
+`legadox` perfila um projeto legado, `memox` indexa os artefatos já fechados, `prodx` monta o
+contexto de produto. O que faltava era quem decidisse, na primeira vez que alguém abre um
+projeto com várias camadas instaladas, **o que já foi mapeado, o que falta, e em que ordem
+rodar o resto** — em vez da pessoa descobrir isso comando por comando.
+
+É um comando fixo do plugin, não de uma skill: não pertence a nenhuma camada, porque só
+orquestra as que já existem. Ele nunca reimplementa o critério de detecção de nenhuma delas —
+só lê o artefato que cada uma produz e chama o comando de verdade.
+
+### O que ele faz, em ordem
+
+1. **Descobre o que está instalado**, entre as cinco camadas que produzem mapeamento inicial —
+   `runx`, `sprintx`, `mergex` e `buildx` nunca entram nesta lista, porque elas só *consomem* o
+   que essas cinco geram.
+2. **Verifica o que já foi mapeado**, pela presença do artefato de cada camada
+   (`docs/stack/CONVENCOES.md`, `docs/design-system/DESIGN-SYSTEM.md`, `docs/legado/PERFIL.md`,
+   `.expx/memoria/indice.json`, `docs/produto/PRODUTO.md`). Camada já mapeada nunca é
+   sobrescrita — redetecção é trabalho de cada camada (`/stackx-atualizar` e equivalentes), não
+   deste comando.
+3. **Monta a fila só com o que é pendente**, na ordem de dependência: `prodx` → `stackx` →
+   `designx` → `legadox` → `memox`. `designx` só entra com sinal de UI no projeto; `stackx` só
+   com sinal de código de verdade; `legadox` **pergunta uma vez**, porque legado é decisão de
+   quem conhece o projeto — nenhuma evidência de código prova isso sozinha.
+4. **Executa uma camada de cada vez**, nunca em paralelo: uma pode se apoiar no que a anterior
+   deixou (`designx` referencia `stackx`, por exemplo). Uma camada que falhar é registrada e não
+   derruba as outras.
+5. **Fecha com uma tabela-resumo** — instalada, estado antes, ação tomada, artefato gerado — e
+   uma linha dizendo o que mudou: as camadas mapeadas passam a valer de verdade para `sprintx`,
+   `runx` e `mergex` na próxima vez que alguém trabalhar no projeto.
+
+> **Onde ele vive.** `nucleo/commands/onboarding.md` neste repositório — copiado sempre para
+> `commands/` na raiz de todo plugin montado, junto com as skills selecionadas, do mesmo jeito
+> que o resto do `nucleo/` viaja por cópia. Por isso `/expx:onboarding` está disponível mesmo
+> que você não tenha escolhido nenhuma camada de mapeamento: nesse caso ele só avisa, em uma
+> linha, que não há nada para orquestrar.
 
 ---
 

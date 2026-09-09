@@ -74,6 +74,7 @@
     <ul class="nav__lista">
       <li><a class="nav__link" href="#comandos" data-secao="comandos">Subcomandos</a></li>
       <li><a class="nav__link" href="#init" data-secao="init">Anatomia do init</a></li>
+      <li><a class="nav__link" href="#onboarding" data-secao="onboarding">/expx:onboarding</a></li>
       <li><a class="nav__link" href="#lock" data-secao="lock">Lock e update</a></li>
       <li><a class="nav__link" href="#doctor" data-secao="doctor">Doctor</a></li>
       <li><a class="nav__link" href="#painel" data-secao="painel">O painel</a></li>
@@ -272,6 +273,12 @@
   <p>A instalação é travada por lock, e o lock é para ser versionado. Quem clona o projeto recebe exatamente
   as mesmas skills que o time está usando, sem rede e sem rodar nada. O <code>doctor</code> trata como
   <strong>erro</strong> um <code>.gitignore</code> que ignore o <code>.expx/</code>.</p>
+
+  <div class="nota nota--ok">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 8.4 6.4 12 13 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><p><strong>Próximo passo, dentro do Claude Code:</strong> <code>/expx:onboarding</code>. Ele mapeia
+    as camadas instaladas antes do primeiro plano — ver <a href="#onboarding">/expx:onboarding</a>.</p></div>
+  </div>
 </section>
 
 <!-- ============================ ECOSSISTEMA ============================ -->
@@ -1456,6 +1463,88 @@ invalida: se todo usuário tiver exatamente o mesmo acesso aos
   Copiar também para <code>.opencode/skills/</code> criaria dois <code>name</code> iguais nas pastas que o
   OpenCode varre, e a duplicata é resolvida por último-a-escrever-vence com apenas um aviso no log —
   silenciosamente. É exatamente essa colisão que o <code>doctor</code> detecta.</p>
+</section>
+
+<!-- ============================ ONBOARDING ============================ -->
+<section class="secao" id="onboarding">
+  <p class="eyebrow">Referência do CLI</p>
+  <h1>/expx:onboarding</h1>
+  <p class="lede">A primeira coisa a rodar depois do <code>init</code>. Sem ela, cada camada instalada roda
+  em modo degradado na primeira vez que alguém a usa — e essa lacuna só aparece no meio de um plano, quando
+  já custou tempo.</p>
+
+  <div class="nota nota--info">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1" stroke-linecap="round"/></svg>
+    <div><p><code>stackx</code>, <code>designx</code>, <code>legadox</code>, <code>memox</code> e
+    <code>prodx</code> já sabem cada uma mapear a própria camada. O que faltava era quem decidisse, na
+    primeira vez que alguém abre um projeto com várias instaladas, <strong>o que já foi mapeado, o que
+    falta, e em que ordem rodar o resto</strong> — em vez da pessoa descobrir isso comando por comando.</p></div>
+  </div>
+
+  <div class="codigo" data-copiar>
+    <div class="codigo__topo"><span class="codigo__rotulo">Claude Code</span><button class="codigo__copiar">Copiar</button></div>
+    <pre><code><span class="tok-cmd">/expx:onboarding</span></code></pre>
+  </div>
+
+  <h2 id="onboarding-comando-fixo">Comando fixo do plugin, não de uma skill</h2>
+  <p>Nenhuma camada é dona do onboarding — ele só orquestra as que já existem. Por isso ele mora em
+  <code>nucleo/commands/onboarding.md</code> deste repositório, e viaja sempre para
+  <code>commands/</code> na raiz de todo plugin montado, junto com as skills selecionadas — do mesmo jeito
+  que o resto do <code>nucleo/</code> viaja por cópia. Está disponível mesmo que você não tenha escolhido
+  nenhuma camada de mapeamento: nesse caso ele avisa, em uma linha, que não há nada para orquestrar.</p>
+  <p>Ele nunca reimplementa o critério de detecção de nenhuma camada — só lê o artefato que cada uma produz
+  e chama o comando de verdade.</p>
+
+  <h2 id="onboarding-fluxo">O que ele faz, em ordem</h2>
+  <ol class="passos">
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Descobre o que está instalado</p>
+      <p>Entre as cinco camadas que produzem mapeamento inicial. <code>runx</code>, <code>sprintx</code>,
+      <code>mergex</code> e <code>buildx</code> nunca entram nesta lista — elas só <em>consomem</em> o que
+      essas cinco geram.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Verifica o que já foi mapeado</p>
+      <p>Pela presença do artefato de cada camada. Camada já mapeada nunca é sobrescrita — redetecção é
+      trabalho de cada uma (<code>/stackx-atualizar</code> e equivalentes), não deste comando.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Monta a fila só com o que é pendente</p>
+      <p>Na ordem de dependência: <code>prodx</code> → <code>stackx</code> → <code>designx</code> →
+      <code>legadox</code> → <code>memox</code>. <code>designx</code> só entra com sinal de UI no projeto;
+      <code>stackx</code> só com sinal de código de verdade; <code>legadox</code> <strong>pergunta uma
+      vez</strong> — legado é decisão de quem conhece o projeto, nenhuma evidência de código prova isso
+      sozinha.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Executa uma camada de cada vez</p>
+      <p>Nunca em paralelo: uma pode se apoiar no que a anterior deixou (<code>designx</code> referencia
+      <code>stackx</code>, por exemplo). Camada que falha é registrada e não derruba as outras.</p>
+    </div></li>
+    <li class="passo"><span class="passo__num"></span><div class="passo__corpo">
+      <p class="passo__titulo">Fecha com uma tabela-resumo</p>
+      <p>Instalada, estado antes, ação tomada, artefato gerado — e uma linha final dizendo o que mudou.</p>
+    </div></li>
+  </ol>
+
+  <h2 id="onboarding-gatilhos">O gatilho de cada camada</h2>
+  <div class="tabela-caixa"><table>
+    <thead><tr><th>Camada</th><th>Gatilho</th><th>Artefato</th></tr></thead>
+    <tbody>
+      <tr><td><code>prodx</code></td><td>sempre disponível — o roteador <code>/prodx</code> decide se convoca o P1</td><td><code>docs/produto/PRODUTO.md</code></td></tr>
+      <tr><td><code>stackx</code></td><td><code>CONVENCOES.md</code> ausente + sinal de código de verdade</td><td><code>docs/stack/CONVENCOES.md</code></td></tr>
+      <tr><td><code>designx</code></td><td><code>DESIGN-SYSTEM.md</code> ausente + sinal de UI (<code>.tsx</code>/<code>.jsx</code>/<code>.css</code>)</td><td><code>docs/design-system/DESIGN-SYSTEM.md</code></td></tr>
+      <tr><td><code>legadox</code></td><td><span class="selo selo--aviso">confirmação humana</span> — pergunta uma vez, nunca por evidência de código</td><td><code>docs/legado/PERFIL.md</code></td></tr>
+      <tr><td><code>memox</code></td><td>ao menos um artefato de trabalho fechado já existente</td><td><code>.expx/memoria/indice.json</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="nota nota--aviso">
+    <svg class="nota__icone" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.2 14.6 13.4H1.4z" stroke-linejoin="round"/><path d="M8 6.6v3.1M8 11.6v.1" stroke-linecap="round"/></svg>
+    <div><p><strong>Por que legadox não é evidência automática.</strong> Legado é decisão de quem conhece
+    o projeto — não algo que sinal de código prova sozinho. Por isso é a única camada da fila que faz uma
+    pergunta direta antes de agir, em vez de decidir pela estrutura do repositório.</p></div>
+  </div>
 </section>
 
 <!-- ============================ LOCK ============================ -->
