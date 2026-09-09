@@ -24,7 +24,7 @@ de skills para <a href="https://claude.com/claude-code">Claude Code</a> e <a hre
   &nbsp;·&nbsp;
   <a href="https://bittencourtthulio.github.io/expxdev/#instalacao">Instalação</a>
   &nbsp;·&nbsp;
-  <a href="https://bittencourtthulio.github.io/expxdev/#ecossistema">As sete skills</a>
+  <a href="https://bittencourtthulio.github.io/expxdev/#ecossistema">As nove skills</a>
   &nbsp;·&nbsp;
   <a href="https://bittencourtthulio.github.io/expxdev/#comandos">Referência do CLI</a>
   &nbsp;·&nbsp;
@@ -71,7 +71,7 @@ plano: veja [A primeira coisa a rodar](#a-primeira-coisa-a-rodar-depois-do-init)
 | | |
 |---|---|
 | **[O problema que o método resolve](#o-problema-que-o-método-resolve)** | por que existe um método, e não só um prompt melhor |
-| **[O ecossistema](#o-ecossistema)** | as sete skills, o que cada uma faz e quando usar |
+| **[O ecossistema](#o-ecossistema)** | as nove skills, o que cada uma faz e quando usar |
 | **[Como as peças se encaixam](#como-as-peças-se-encaixam)** | o fluxo de ponta a ponta, com o diagrama |
 | **[As três camadas de garantia](#as-três-camadas-de-garantia)** | skill, hook e agente — da mais fraca à mais forte |
 | **[Os dois contratos](#os-dois-contratos-compartilhados)** | `expx-schema` e `expx-eventos`, o que faz tudo se encaixar |
@@ -118,7 +118,7 @@ painel que lê o que elas gravam.
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/bittencourtthulio/expxdev/main/.github/assets/ecossistema-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/bittencourtthulio/expxdev/main/.github/assets/ecossistema-light.svg">
-  <img alt="O CLI busca as sete skills, empacota como plugin e configura os dois harnesses" src="https://raw.githubusercontent.com/bittencourtthulio/expxdev/main/.github/assets/ecossistema-light.svg" width="100%">
+  <img alt="O CLI busca as nove skills, empacota como plugin e configura os dois harnesses" src="https://raw.githubusercontent.com/bittencourtthulio/expxdev/main/.github/assets/ecossistema-light.svg" width="100%">
 </picture>
 
 | Skill | O que faz | Quando usar |
@@ -130,10 +130,12 @@ painel que lê o que elas gravam.
 | **[mergex](https://github.com/bittencourtthulio/mergex)** | Versionamento, entrega e revisão: branch, um commit por task, portão de prontidão, descrição de PR, pacote de QA e abertura do pull request. | Levar o trabalho pronto até o merge |
 | **[memox](https://github.com/bittencourtthulio/MemoX)** | **Camada** de memória: indexa os artefatos já fechados — relatórios, causas raiz, decisões, QA, entregas — e responde o que já se sabe sobre um arquivo antes de alguém mexer nele. | Saber se este arquivo já quebrou antes |
 | **[prodx](https://github.com/bittencourtthulio/prodx)** | **Camada** de produto: recebe o pedido cru, tria, verifica se o que foi pedido já existe e emite um veredito com evidência para assinatura humana. Três dos quatro vereditos encerram o pedido sem gerar código. | Decidir se vale fazer, antes de planejar |
+| **[buildx](https://github.com/bittencourtthulio/buildx)** | Orquestra um **projeto inteiro**, da descrição ao sistema pronto: mapeia o escopo completo, decide a stack e conduz `prodx` → `stackx` → `sprintx` → `mergex` feature a feature, recursivamente, até o fim. | Construir um sistema do zero, não uma feature isolada |
+| **[designx](https://github.com/bittencourtthulio/designx)** | **Camada** de design: cartografa o design system do projeto e audita conformidade visual contra ele. | Garantir consistência visual quando o projeto tem UI |
 
-**Camadas** (`legadox`, `stackx`, `memox`, `prodx`) sozinhas não fazem nada — elas modificam o
-comportamento de `sprintx` e `runx`. O CLI avisa se você selecionar uma camada sem base, mas
-nunca impede.
+**Camadas** (`legadox`, `stackx`, `memox`, `prodx`, `designx`) sozinhas não fazem nada — elas
+modificam o comportamento de `sprintx` e `runx`. O CLI avisa se você selecionar uma camada sem
+base, mas nunca impede.
 
 A `prodx` é a única que roda **antes** das outras: ela decide *se* existe trabalho; as demais
 tratam de *como* fazê-lo. Sem ela, o método planeja com rigor uma feature que não deveria
@@ -250,7 +252,7 @@ o contrato `expx-eventos`, documentado abaixo.
 
 ## Os dois contratos compartilhados
 
-As sete skills não se conhecem por código: elas se encontram em dois contratos escritos. É
+As nove skills não se conhecem por código: elas se encontram em dois contratos escritos. É
 isso que permite instalar três delas e não as outras duas, atualizar uma sem tocar nas demais,
 ou escrever uma sexta amanhã.
 
@@ -693,7 +695,7 @@ src/
   servidor/   o painel: HTTP, websocket e o observador de arquivos (somente leitura)
   cli/        linha de comando: roteamento de subcomando, flags e seleção interativa
 ui/           a interface do painel (React + Vite)
-docs/contrato/  os dois contratos compartilhados pelas sete skills
+docs/contrato/  os dois contratos compartilhados pelas nove skills
 ```
 
 Este projeto foi planejado e executado com o próprio método — o plano completo, a base de
@@ -715,5 +717,9 @@ expxdev ·
 <a href="https://github.com/bittencourtthulio/runx">runx</a> ·
 <a href="https://github.com/bittencourtthulio/legadox">legadox</a> ·
 <a href="https://github.com/bittencourtthulio/stackx">stackx</a> ·
-<a href="https://github.com/bittencourtthulio/mergex">mergex</a></sub>
+<a href="https://github.com/bittencourtthulio/mergex">mergex</a> ·
+<a href="https://github.com/bittencourtthulio/MemoX">memox</a> ·
+<a href="https://github.com/bittencourtthulio/prodx">prodx</a> ·
+<a href="https://github.com/bittencourtthulio/buildx">buildx</a> ·
+<a href="https://github.com/bittencourtthulio/designx">designx</a></sub>
 </div>

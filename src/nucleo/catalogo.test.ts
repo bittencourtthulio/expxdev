@@ -5,10 +5,10 @@ import { join } from "node:path";
 import { CATALOGO, buscarNoCatalogo, ehCamada, NOMES } from "./catalogo.js";
 
 describe("catálogo das skills", () => {
-  it("integração: tem as oito skills do catalogo e nenhuma URL repetida", () => {
-    expect(CATALOGO).toHaveLength(8);
+  it("integração: tem as nove skills do catalogo e nenhuma URL repetida", () => {
+    expect(CATALOGO).toHaveLength(9);
     const urls = CATALOGO.map((s) => s.repositorio);
-    expect(new Set(urls).size).toBe(8);
+    expect(new Set(urls).size).toBe(9);
     expect(NOMES).toEqual([
       "sprintx",
       "runx",
@@ -18,6 +18,7 @@ describe("catálogo das skills", () => {
       "memox",
       "prodx",
       "buildx",
+      "designx",
     ]);
   });
 
@@ -54,6 +55,15 @@ describe("catálogo das skills", () => {
       "https://github.com/bittencourtthulio/buildx",
     );
     expect(ehCamada("buildx")).toBe(false);
+  });
+
+  it("funcional: designx aponta para o repositório do designx e é camada", () => {
+    // o designx cartografa e audita o design system: modifica o comportamento
+    // da sprintx/runx quando o projeto tem UI, não age por conta própria.
+    expect(buscarNoCatalogo("designx")?.repositorio).toBe(
+      "https://github.com/bittencourtthulio/designx",
+    );
+    expect(ehCamada("designx")).toBe(true);
   });
 });
 

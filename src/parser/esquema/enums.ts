@@ -25,8 +25,8 @@ import { z } from "zod";
  * reusar os de feature ou de ocorrência.
  *
  * Não confundir com `ferramenta`, do rastro de eventos (`Ferramenta`, abaixo),
- * que aceita as oito. Tratar os dois como o mesmo enum rejeita o rastro de
- * cinco skills.
+ * que aceita as nove. Tratar os dois como o mesmo enum rejeita o rastro de
+ * seis skills.
  */
 export const ExpxTool = z.enum(["sprintx", "runx", "buildx"]);
 export type ExpxTool = z.infer<typeof ExpxTool>;
@@ -41,6 +41,7 @@ export const Ferramenta = z.enum([
   "memox",
   "prodx",
   "buildx",
+  "designx",
 ]);
 export type Ferramenta = z.infer<typeof Ferramenta>;
 

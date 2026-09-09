@@ -2,7 +2,7 @@ import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 /**
- * As oito skills do ecossistema Expx.
+ * As nove skills do ecossistema Expx.
  *
  * Fonte única do que o CLI sabe instalar. `papel` é o texto mostrado na seleção
  * do `init`; `camada` marca as skills que, sozinhas, não fazem nada — elas
@@ -71,6 +71,12 @@ export const CATALOGO: readonly Skill[] = [
     repositorio: "https://github.com/bittencourtthulio/buildx",
     papel: "orquestra um projeto inteiro, da descricao ao sistema pronto",
     camada: false,
+  },
+  {
+    nome: "designx",
+    repositorio: "https://github.com/bittencourtthulio/designx",
+    papel: "camada de design, cartografa e audita o design system",
+    camada: true,
   },
 ] as const;
 
