@@ -29,9 +29,16 @@ de skills para <a href="https://claude.com/claude-code">Claude Code</a> e <a hre
   <a href="https://bittencourtthulio.github.io/expxdev/#comandos">Referência do CLI</a>
   &nbsp;·&nbsp;
   <a href="https://bittencourtthulio.github.io/expxdev/#schema">Contratos</a>
+  &nbsp;·&nbsp;
+  <a href="https://bittencourtthulio.github.io/expxdev/apresentacao.html"><strong>🎤 Apresentação para o time</strong></a>
 </p>
 
 </div>
+
+> **Precisa apresentar o método para o seu time?** A
+> [apresentação completa](https://bittencourtthulio.github.io/expxdev/apresentacao.html) é um deck
+> técnico navegável — pronto para um dev sênior ou CTO usar em reunião de engenharia, mostrando como o
+> time passa a trabalhar com IA usando a stack Expx de ponta a ponta.
 
 ```bash
 npx expxdev init

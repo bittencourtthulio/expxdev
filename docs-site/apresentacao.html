@@ -277,6 +277,25 @@
     }
     .diagram-node .mono { font-size: 11px; color: var(--accent); }
 
+    /* Diagramas de fluxo em SVG inline */
+    .flow-figure { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+    .flow-figure svg {
+      width: 100%;
+      height: auto;
+      max-height: 56vh;
+      color: var(--text-soft);
+    }
+    .flow-figure svg rect { color: var(--line); }
+    .flow-figure svg text { font-family: "Chakra Petch", sans-serif; }
+    .flow-figure svg text[fill="currentColor"],
+    .flow-figure svg text:not([fill]) { fill: var(--text); }
+    .flow-caption {
+      color: var(--text-soft);
+      font-size: var(--fs-mono);
+      letter-spacing: 0.02em;
+      text-transform: none;
+    }
+
     .stat-block { display: flex; flex-direction: column; gap: 12px; justify-content: center; min-height: 56vh; }
     .stat-value { font-size: clamp(68px, 10vw, 168px); line-height: 0.9; letter-spacing: -0.05em; color: var(--text); text-shadow: 0 0 28px rgba(34,197,94,0.08); }
     .stats-grid .stat-card { padding: 26px 22px; min-height: 200px; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; }
@@ -394,20 +413,6 @@
     .delay-4 { transition-delay: 320ms; }
     .delay-5 { transition-delay: 400ms; }
 
-    .dot-nav {
-      position: fixed; top: 50%; right: 18px; transform: translateY(-50%);
-      display: flex; flex-direction: column; gap: 10px; z-index: 100;
-    }
-    .dot-nav button {
-      width: 12px; height: 12px; border-radius: 999px; border: none; padding: 0;
-      background: rgba(255,255,255,0.22);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
-      cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-    }
-    .dot-nav button.active { background: var(--accent); box-shadow: 0 0 0 6px rgba(34,197,94,0.12); transform: scale(1.12); }
-    .dot-nav button:hover { transform: scale(1.08); }
-
     @media (max-width: 1100px) {
       :root { --container-pad-y: 40px; --container-pad-x: 32px; }
       .cols-3, .cols-4, .diagram, .faq-list, .comparison-grid, .guard-row { grid-template-columns: 1fr; }
@@ -422,7 +427,6 @@
       :root { --container-pad-y: 26px; --container-pad-x: 18px; --fs-body: 16px; --fs-small: 13px; }
       .slide-counter { top: 14px; right: 18px; }
       .brand-mark { top: 14px; left: 18px; }
-      .dot-nav { right: 8px; }
       .step { grid-template-columns: 50px 1fr; }
       .btn { width: 100%; }
       .cta-row { flex-direction: column; }
@@ -432,21 +436,18 @@
     @media print {
       html { scroll-snap-type: none; }
       .slide { min-height: 100vh; page-break-after: always; }
-      .dot-nav { display: none; }
       .animate { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
-  <nav class="dot-nav" aria-label="Navegação de slides"></nav>
-
   <main class="presentation">
 
     <!-- 01 · Título -->
     <section class="slide title-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">01 / 21</div>
+        <div class="slide-counter">01 / 36</div>
 
         <div class="hero">
           <div class="hero-badge animate delay-1">PARA O TIME DE ENGENHARIA</div>
@@ -466,7 +467,7 @@
     <section class="slide quote-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">02 / 21</div>
+        <div class="slide-counter">02 / 36</div>
 
         <blockquote class="statement animate delay-1">
           Pedir a um agente para construir uma feature funciona —
@@ -481,7 +482,7 @@
     <section class="slide problem-solution-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">03 / 21</div>
+        <div class="slide-counter">03 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">POR QUE ISSO ACONTECE</div>
@@ -514,7 +515,7 @@
     <section class="slide quote-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">04 / 21</div>
+        <div class="slide-counter">04 / 36</div>
 
         <blockquote class="statement animate delay-1">
           Uma pergunta feita <span class="accent-text">durante</span> a execução é sempre
@@ -529,7 +530,7 @@
     <section class="slide grid-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">05 / 21</div>
+        <div class="slide-counter">05 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">FUNDAMENTOS</div>
@@ -561,11 +562,135 @@
       </div>
     </section>
 
+    <!-- NOVO T1 · Declaração: agnóstico de ferramenta -->
+    <section class="slide quote-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">06 / 36</div>
+
+        <blockquote class="statement animate delay-1">
+          O método não é <span class="accent-text">Claude Code.</span> Não é Cursor. Não é nenhuma IA específica.
+        </blockquote>
+
+        <div class="quote-meta mono animate delay-2">A DUAS OBJEÇÕES QUE VÊM AGORA</div>
+      </div>
+    </section>
+
+    <!-- NOVO T2 · Comparação: o que garante a qualidade -->
+    <section class="slide problem-solution-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">07 / 36</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">AGNÓSTICO DE FERRAMENTA</div>
+          <h2 class="animate delay-2">O contrato vive no harness, não no modelo</h2>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-col muted animate delay-1">
+            <h3>O que muda entre ferramentas</h3>
+            <ul>
+              <li>Claude Code, OpenCode, ou outro harness compatível</li>
+              <li>Namespace do comando — com ou sem prefixo</li>
+              <li>Qual LLM roda por trás, e a que custo</li>
+            </ul>
+          </div>
+          <div class="comparison-col accent animate delay-2">
+            <h3>O que nunca muda</h3>
+            <ul>
+              <li>Fases sequenciais, TDD obrigatório, portão de aceite</li>
+              <li>Hooks que avisam ou bloqueiam, iguais nos dois harnesses</li>
+              <li>Quem implementa não aprova — regra, não sugestão</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO T3 · Declaração: a objeção do custo de token -->
+    <section class="slide quote-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">08 / 36</div>
+
+        <blockquote class="statement animate delay-1">
+          Sim, o método consome <span class="accent-text">mais token.</span> Essa é a troca certa.
+        </blockquote>
+
+        <div class="quote-meta mono animate delay-2">O QUE COMPRA MAIS PLANEJAMENTO</div>
+      </div>
+    </section>
+
+    <!-- NOVO T3b · Problema/Solução: não existe bom + bonito + barato -->
+    <section class="slide problem-solution-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">09 / 36</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">A FALÁCIA DA ECONOMIA DE TOKEN</div>
+          <h2 class="animate delay-2">Bom, bonito e barato não coexistem sem método</h2>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-col muted animate delay-1">
+            <h3>Economizar token sem método</h3>
+            <ul>
+              <li>Plano raso, ambiguidade sobra para a execução</li>
+              <li>Retrabalho, bug em produção, ocorrência de suporte</li>
+              <li>O barato de agora vira o caro de depois</li>
+            </ul>
+          </div>
+          <div class="comparison-col accent animate delay-2">
+            <h3>Token investido em planejamento</h3>
+            <ul>
+              <li>Ambiguidade eliminada antes de escrever código</li>
+              <li>Menos ciclo de correção, menos ocorrência aberta</li>
+              <li>O caro de agora evita o caro maior de depois</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO T4 · Problema/Solução: token não é o eixo -->
+    <section class="slide problem-solution-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">10 / 36</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">CUSTO × RESULTADO</div>
+          <h2 class="animate delay-2">Quem garante a saída é o método, não o modelo</h2>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-col muted animate delay-1">
+            <h3>Se fosse a IA que garantisse</h3>
+            <ul>
+              <li>Qualidade depende de trocar para o modelo mais caro</li>
+              <li>Cada harness novo reabre a mesma dúvida</li>
+              <li>Nenhum jeito barato de manter o mesmo padrão</li>
+            </ul>
+          </div>
+          <div class="comparison-col accent animate delay-2">
+            <h3>Como o método garante</h3>
+            <ul>
+              <li>Hooks, portões e agentes read-only, não o tamanho do modelo</li>
+              <li>Mesmo contrato roda com LLM mais barato — GLM, MiniMax, outros</li>
+              <li>Token a mais compra planejamento — a fonte do retrabalho caro</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 06 · Divisor de seção -->
     <section class="slide divider-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">06 / 21</div>
+        <div class="slide-counter">11 / 36</div>
 
         <div class="divider-content">
           <div class="eyebrow mono animate delay-1">SEÇÃO 02</div>
@@ -579,7 +704,7 @@
     <section class="slide diagram-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">07 / 21</div>
+        <div class="slide-counter">12 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">FLUXO</div>
@@ -616,7 +741,7 @@
     <section class="slide feature-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">08 / 21</div>
+        <div class="slide-counter">13 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">CATÁLOGO · BASE</div>
@@ -647,7 +772,7 @@
     <section class="slide feature-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">09 / 21</div>
+        <div class="slide-counter">14 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">CATÁLOGO · CAMADA E ORQUESTRA</div>
@@ -684,7 +809,7 @@
     <section class="slide diagram-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">10 / 21</div>
+        <div class="slide-counter">15 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">ARQUITETURA</div>
@@ -716,7 +841,7 @@
     <section class="slide comparison-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">11 / 21</div>
+        <div class="slide-counter">16 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">BUILD E RUN</div>
@@ -750,7 +875,7 @@
     <section class="slide quote-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">12 / 21</div>
+        <div class="slide-counter">17 / 36</div>
 
         <blockquote class="statement animate delay-1">
           Muda o gatilho. <span class="accent-text">Muda o tamanho.</span> Nunca muda o rigor.
@@ -762,11 +887,243 @@
       </div>
     </section>
 
+    <!-- NOVO A0 · Divisor de seção: rotina da empresa -->
+    <section class="slide divider-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">18 / 36</div>
+
+        <div class="divider-content">
+          <div class="eyebrow mono animate delay-1">SEÇÃO 03</div>
+          <h2 class="animate delay-2">Como isso vira rotina, na prática</h2>
+          <p class="subtitle animate delay-3">Duas entradas reais: a feature que nasce como ideia, e o bug que chega pelo suporte.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO A1 · Diagrama SVG: rotina de uma feature nova -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">19 / 36</div>
+
+        <div class="section-heading compact">
+          <div class="eyebrow mono animate delay-1">ENTRADA 01 · IDEIA OU REQUISITO</div>
+          <h2 class="animate delay-2">Da ideia ao merge: a rotina de uma feature</h2>
+        </div>
+
+        <figure class="flow-figure animate delay-3">
+          <svg viewBox="0 0 1180 300" role="img" aria-label="Fluxo: pedido entra no prodx, que emite veredito; segue para sprintx, que planeja nas fases F1 a F5, audita, e executa autonomamente na F6 sob TDD, com bloqueio registrado se houver dúvida; e chega ao mergex, que abre branch, comita por task e entrega PR para decisão humana.">
+            <defs>
+              <marker id="arrowFeat" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+              </marker>
+            </defs>
+
+            <!-- linha principal -->
+            <line x1="120" y1="150" x2="1060" y2="150" stroke="currentColor" stroke-width="1.5" opacity="0.35" marker-end="url(#arrowFeat)" />
+
+            <!-- nó 1: prodx -->
+            <rect x="20" y="110" width="180" height="80" rx="14" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="110" y="138" text-anchor="middle" font-size="12" letter-spacing="1" opacity="0.7">PRODX</text>
+            <text x="110" y="163" text-anchor="middle" font-size="14" font-weight="600">Pedido</text>
+            <text x="110" y="181" text-anchor="middle" font-size="11" opacity="0.65">veredito com evidência</text>
+
+            <!-- nó 2: sprintx F1-F5 -->
+            <rect x="290" y="110" width="220" height="80" rx="14" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="400" y="138" text-anchor="middle" font-size="12" letter-spacing="1" opacity="0.7">SPRINTX F1–F5</text>
+            <text x="400" y="163" text-anchor="middle" font-size="14" font-weight="600">Planejamento</text>
+            <text x="400" y="181" text-anchor="middle" font-size="11" opacity="0.65">base · descoberta · plano · auditoria</text>
+
+            <!-- nó 3: sprintx F6 -->
+            <rect x="600" y="110" width="220" height="80" rx="14" stroke="var(--accent)" stroke-width="1.5" fill="rgba(34,197,94,0.06)" />
+            <text x="710" y="138" text-anchor="middle" font-size="12" letter-spacing="1" fill="var(--accent)">SPRINTX F6</text>
+            <text x="710" y="163" text-anchor="middle" font-size="14" font-weight="600">Execução autônoma</text>
+            <text x="710" y="181" text-anchor="middle" font-size="11" opacity="0.65">TDD, task a task</text>
+
+            <!-- nó 4: mergex -->
+            <rect x="910" y="110" width="220" height="80" rx="14" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="1020" y="138" text-anchor="middle" font-size="12" letter-spacing="1" opacity="0.7">MERGEX</text>
+            <text x="1020" y="163" text-anchor="middle" font-size="14" font-weight="600">Branch → PR</text>
+            <text x="1020" y="181" text-anchor="middle" font-size="11" opacity="0.65">commit por task, portão, revisão</text>
+
+            <!-- rótulos das setas -->
+            <text x="245" y="140" text-anchor="middle" font-size="10.5" opacity="0.6">vale a pena</text>
+            <text x="555" y="140" text-anchor="middle" font-size="10.5" opacity="0.6">auditoria aprova</text>
+            <text x="865" y="140" text-anchor="middle" font-size="10.5" opacity="0.6">suíte verde</text>
+
+            <!-- desvio: dúvida vira bloqueio, não pausa -->
+            <path d="M 710 190 C 710 240, 710 240, 710 190" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.45" stroke-dasharray="3 3" />
+            <path d="M 640 245 C 660 220, 780 220, 780 245" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.45" stroke-dasharray="3 3" marker-end="url(#arrowFeat)" />
+            <text x="710" y="265" text-anchor="middle" font-size="10.5" opacity="0.55">dúvida → BLOQUEIOS.md, segue sem parar</text>
+
+            <!-- destino final: decisão humana -->
+            <text x="1020" y="230" text-anchor="middle" font-size="11" fill="var(--accent)" font-weight="600">→ decisão humana no E9</text>
+          </svg>
+          <figcaption class="flow-caption mono">O veredito, a auditoria e o portão são os três pontos onde o método para para checar antes de seguir.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- NOVO A2 · Diagrama SVG: mergex por dentro, os pontos humanos -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">20 / 36</div>
+
+        <div class="section-heading compact">
+          <div class="eyebrow mono animate delay-1">MERGEX POR DENTRO</div>
+          <h2 class="animate delay-2">A entrega termina em decisão humana, não em merge automático</h2>
+        </div>
+
+        <figure class="flow-figure animate delay-3">
+          <svg viewBox="0 0 1180 260" role="img" aria-label="Fluxo dentro da mergex: E0 abre a branch, E2 é o portão de prontidão que pode bloquear e encerrar, E3 classifica cada arquivo em uma faixa de atenção humana, e E9 é sempre revisão e merge manual, nunca automático.">
+            <defs>
+              <marker id="arrowMerge" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+              </marker>
+            </defs>
+
+            <line x1="120" y1="120" x2="1060" y2="120" stroke="currentColor" stroke-width="1.5" opacity="0.35" marker-end="url(#arrowMerge)" />
+
+            <rect x="20" y="80" width="190" height="80" rx="14" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="115" y="108" text-anchor="middle" font-size="12" letter-spacing="1" opacity="0.7">E0</text>
+            <text x="115" y="133" text-anchor="middle" font-size="14" font-weight="600">Branch nasce</text>
+            <text x="115" y="151" text-anchor="middle" font-size="11" opacity="0.65">com o trabalho, não no fim</text>
+
+            <rect x="300" y="80" width="190" height="80" rx="14" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="395" y="108" text-anchor="middle" font-size="12" letter-spacing="1" opacity="0.7">E2</text>
+            <text x="395" y="133" text-anchor="middle" font-size="14" font-weight="600">Portão</text>
+            <text x="395" y="151" text-anchor="middle" font-size="11" opacity="0.65">10 verificações</text>
+
+            <rect x="580" y="80" width="190" height="80" rx="14" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="675" y="108" text-anchor="middle" font-size="12" letter-spacing="1" opacity="0.7">E3</text>
+            <text x="675" y="133" text-anchor="middle" font-size="14" font-weight="600">Atenção humana</text>
+            <text x="675" y="151" text-anchor="middle" font-size="11" opacity="0.65">3 faixas, por arquivo</text>
+
+            <rect x="860" y="80" width="220" height="80" rx="14" stroke="var(--accent)" stroke-width="1.5" fill="rgba(34,197,94,0.06)" />
+            <text x="970" y="108" text-anchor="middle" font-size="12" letter-spacing="1" fill="var(--accent)">E9 · MANUAL</text>
+            <text x="970" y="133" text-anchor="middle" font-size="14" font-weight="600">Revisão e merge</text>
+            <text x="970" y="151" text-anchor="middle" font-size="11" opacity="0.65">nunca automático</text>
+
+            <!-- desvio de bloqueio -->
+            <path d="M 395 160 L 395 210" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5" stroke-dasharray="3 3" marker-end="url(#arrowMerge)" />
+            <text x="395" y="230" text-anchor="middle" font-size="11" opacity="0.6">BLOQUEADO encerra — nunca maquia</text>
+
+            <text x="255" y="105" text-anchor="middle" font-size="10.5" opacity="0.6">PRONTO</text>
+            <text x="535" y="105" text-anchor="middle" font-size="10.5" opacity="0.6">classificado</text>
+            <text x="815" y="105" text-anchor="middle" font-size="10.5" opacity="0.6">PR aberto</text>
+          </svg>
+          <figcaption class="flow-caption mono">A mergex nunca faz merge sozinha, nunca resolve conflito. Decisão é sempre de quem revisa.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- NOVO A3 · Diagrama SVG: rotina completa de um bug (E1–E5) -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">21 / 36</div>
+
+        <div class="section-heading compact">
+          <div class="eyebrow mono animate delay-1">ENTRADA 02 · CHAMADO DO SUPORTE</div>
+          <h2 class="animate delay-2">Do relato do cliente à resposta sem jargão</h2>
+        </div>
+
+        <figure class="flow-figure animate delay-3">
+          <svg viewBox="0 0 1180 280" role="img" aria-label="Fluxo runx: E1 investigação comprova a causa raiz, E2 gera um plano proporcional ao bug, E3 escreve o teste de regressão e faz o fix sob TDD, E4 é QA independente que pode reprovar de volta ao E3, e E5 fecha com dois relatórios. Se o teste de regressão passar antes do fix no E3, a ocorrência retorna ao E1.">
+            <defs>
+              <marker id="arrowBug" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+              </marker>
+            </defs>
+
+            <line x1="95" y1="110" x2="1085" y2="110" stroke="currentColor" stroke-width="1.5" opacity="0.35" marker-end="url(#arrowBug)" />
+
+            <rect x="20" y="75" width="170" height="70" rx="12" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="105" y="99" text-anchor="middle" font-size="11.5" letter-spacing="1" opacity="0.7">E1 · INVESTIGAÇÃO</text>
+            <text x="105" y="120" text-anchor="middle" font-size="13" font-weight="600">Causa raiz</text>
+
+            <rect x="235" y="75" width="170" height="70" rx="12" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="320" y="99" text-anchor="middle" font-size="11.5" letter-spacing="1" opacity="0.7">E2 · PLANO</text>
+            <text x="320" y="120" text-anchor="middle" font-size="13" font-weight="600">Proporcional ao bug</text>
+
+            <rect x="450" y="75" width="190" height="70" rx="12" stroke="var(--accent)" stroke-width="1.5" fill="rgba(34,197,94,0.06)" />
+            <text x="545" y="99" text-anchor="middle" font-size="11.5" letter-spacing="1" fill="var(--accent)">E3 · FIX SOB TDD</text>
+            <text x="545" y="120" text-anchor="middle" font-size="13" font-weight="600">Regressão nasce antes</text>
+
+            <rect x="680" y="75" width="180" height="70" rx="12" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="770" y="99" text-anchor="middle" font-size="11.5" letter-spacing="1" opacity="0.7">E4 · QA</text>
+            <text x="770" y="120" text-anchor="middle" font-size="13" font-weight="600">Independente</text>
+
+            <rect x="900" y="75" width="185" height="70" rx="12" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <text x="992" y="99" text-anchor="middle" font-size="11.5" letter-spacing="1" opacity="0.7">E5 · RELATÓRIO</text>
+            <text x="992" y="120" text-anchor="middle" font-size="13" font-weight="600">Dois públicos</text>
+
+            <!-- loop E4 reprovado -> E3 -->
+            <path d="M 770 145 C 770 190, 545 190, 545 145" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5" stroke-dasharray="3 3" marker-end="url(#arrowBug)" />
+            <text x="657" y="205" text-anchor="middle" font-size="10.5" opacity="0.6">reprovado</text>
+
+            <!-- loop E3 regressao passa antes -> E1 -->
+            <path d="M 545 145 C 545 235, 105 235, 105 145" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5" stroke-dasharray="3 3" marker-end="url(#arrowBug)" />
+            <text x="325" y="250" text-anchor="middle" font-size="10.5" opacity="0.6">regressão passa antes do fix — causa errada</text>
+          </svg>
+          <figcaption class="flow-caption mono">Só bug exige causa raiz comprovada. Quem corrigiu no E3 nunca é quem aprova no E4.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- NOVO A4 · Comparação: o que o cliente nunca vê -->
+    <section class="slide comparison-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">22 / 36</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">O RETORNO AO CLIENTE</div>
+          <h2 class="animate delay-2">O suporte devolve resposta, não diagnóstico técnico</h2>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-col muted animate delay-1">
+            <h3>Fica no relatório técnico</h3>
+            <ul>
+              <li>Causa raiz comprovada, com evidência</li>
+              <li>Arquivos, funções, stack trace</li>
+              <li>Teste de regressão que prova o fix</li>
+            </ul>
+          </div>
+          <div class="comparison-col accent animate delay-2">
+            <h3>Vai para o cliente (uso.md)</h3>
+            <ul>
+              <li>O que mudou, em linguagem do produto</li>
+              <li>Hook sem-jargao-no-uso barra vazamento técnico</li>
+              <li>Ocorrência encerrada, com fechamento visível</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO A5 · Declaração: ponte para legado -->
+    <section class="slide quote-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">23 / 36</div>
+
+        <blockquote class="statement animate delay-1">
+          Em código legado, o <span class="accent-text">comportamento atual</span> é o contrato — bugs inclusive.
+        </blockquote>
+
+        <div class="quote-meta mono animate delay-2">POR QUE O LEGADOX EXISTE</div>
+      </div>
+    </section>
+
     <!-- 12 · Layer stack: como as camadas compõem -->
     <section class="slide structure-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">13 / 21</div>
+        <div class="slide-counter">24 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">COMPOSIÇÃO</div>
@@ -794,11 +1151,106 @@
       </div>
     </section>
 
+    <!-- NOVO B1 · Divisor: guardrails de legado -->
+    <section class="slide divider-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">25 / 36</div>
+
+        <div class="divider-content">
+          <div class="eyebrow mono animate delay-1">SEÇÃO 04</div>
+          <h2 class="animate delay-2">Guardrails de projeto legado</h2>
+          <p class="subtitle animate delay-3">legadox não substitui sprintx nem runx — endurece os dois, proporcional ao risco.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO B2 · Grid: o gatilho e o raio de impacto -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">26 / 36</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">O GATILHO É UM ARQUIVO</div>
+          <h2 class="animate delay-2">O raio de impacto decide o quanto ter medo</h2>
+        </div>
+
+        <div class="card-grid cols-4">
+          <article class="card animate delay-1">
+            <div class="card-label mono">GATILHO</div>
+            <h3>PERFIL.md</h3>
+            <p>Sem ele, não existe modo legado. É a primeira coisa a gerar.</p>
+          </article>
+          <article class="card animate delay-1">
+            <div class="card-label mono">8 SINAIS</div>
+            <h3>Raio por evidência</h3>
+            <p>Chamadores, cobertura, zona de risco, churn — nunca por sensação.</p>
+          </article>
+          <article class="card animate delay-2">
+            <div class="card-label mono">SEM DADO</div>
+            <h3>Pior caso conta</h3>
+            <p>Sinal que não pode ser coletado assume o cenário mais arriscado.</p>
+          </article>
+          <article class="card animate delay-2">
+            <div class="card-label mono">FAIXA</div>
+            <h3>BAIXO · MÉDIO · ALTO</h3>
+            <p>BAIXO exige todas as condições juntas; os outros bastam uma.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO B3 · Guarantee row: o que cada faixa trava -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">27 / 36</div>
+
+        <div class="section-heading">
+          <div class="eyebrow mono animate delay-1">O QUE O RAIO ACIONA</div>
+          <h2 class="animate delay-2">Rigor cresce com o risco, nunca antes</h2>
+        </div>
+
+        <div class="guard-row">
+          <div class="guard-card animate delay-1">
+            <div class="guard-num mono">MÉDIO E ALTO</div>
+            <h3>Nada muda sem congelar antes</h3>
+            <p>Teste de caracterização passando no código atual, antes de qualquer alteração.</p>
+          </div>
+          <div class="guard-card animate delay-2">
+            <div class="guard-num mono">TODA FAIXA</div>
+            <h3>Orçamento por task</h3>
+            <p>5 arquivos / 150 linhas em BAIXO, até 2 arquivos / 40 linhas em ALTO. Nunca estourado em silêncio.</p>
+          </div>
+          <div class="guard-card animate delay-3">
+            <div class="guard-num mono">RAIO ALTO</div>
+            <h3>Aprovação humana obrigatória</h3>
+            <p>Registrada, explícita — e plano de reversão para cada task, efeito irreversível incluído.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO B4 · Declaração: melhoria colateral proibida -->
+    <section class="slide quote-slide">
+      <div class="slide-inner">
+        <div class="brand-mark">MÉTODO EXPX</div>
+        <div class="slide-counter">28 / 36</div>
+
+        <blockquote class="statement animate delay-1">
+          Nenhuma melhoria colateral. O que incomoda vai para <span class="accent-text">DIVIDA.md</span>, não para o diff.
+        </blockquote>
+
+        <div class="quote-meta mono animate delay-2">CÓDIGO MORTO IDENTIFICADO NÃO É REMOVIDO — VIRA ACHADO</div>
+      </div>
+    </section>
+
     <!-- 13 · Divisor de seção -->
     <section class="slide divider-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">14 / 21</div>
+        <div class="slide-counter">29 / 36</div>
 
         <div class="divider-content">
           <div class="eyebrow mono animate delay-1">SEÇÃO 03</div>
@@ -812,7 +1264,7 @@
     <section class="slide grid-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">15 / 21</div>
+        <div class="slide-counter">30 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">GARANTIAS</div>
@@ -843,7 +1295,7 @@
     <section class="slide steps-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">16 / 21</div>
+        <div class="slide-counter">31 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">AGENTES</div>
@@ -887,7 +1339,7 @@
     <section class="slide divider-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">17 / 21</div>
+        <div class="slide-counter">32 / 36</div>
 
         <div class="divider-content">
           <div class="eyebrow mono animate delay-1">SEÇÃO 04</div>
@@ -901,7 +1353,7 @@
     <section class="slide screenshot-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">18 / 21</div>
+        <div class="slide-counter">33 / 36</div>
 
         <div class="section-heading compact">
           <div class="eyebrow mono animate delay-1">INSTALAÇÃO</div>
@@ -926,7 +1378,7 @@
     <section class="slide grid-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">19 / 21</div>
+        <div class="slide-counter">34 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">REFERÊNCIA</div>
@@ -972,7 +1424,7 @@
     <section class="slide stats-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">20 / 21</div>
+        <div class="slide-counter">35 / 36</div>
 
         <div class="section-heading">
           <div class="eyebrow mono animate delay-1">O QUE JÁ EXISTE</div>
@@ -1004,7 +1456,7 @@
     <section class="slide closing-slide">
       <div class="slide-inner">
         <div class="brand-mark">MÉTODO EXPX</div>
-        <div class="slide-counter">21 / 21</div>
+        <div class="slide-counter">36 / 36</div>
 
         <div class="closing-content">
           <div class="eyebrow mono animate delay-1">PRÓXIMO PASSO</div>
@@ -1025,36 +1477,11 @@
 
   <script>
     const slides = Array.from(document.querySelectorAll('.slide'));
-    const dotsContainer = document.querySelector('.dot-nav');
 
     function scrollToSlide(index) {
       const clamped = Math.max(0, Math.min(index, slides.length - 1));
       slides[clamped].scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    function buildDots() {
-      slides.forEach((slide, index) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.setAttribute('aria-label', `Ir para o slide ${index + 1}`);
-        btn.addEventListener('click', () => scrollToSlide(index));
-        dotsContainer.appendChild(btn);
-      });
-    }
-
-    function setActiveDot(index) {
-      const dots = dotsContainer.querySelectorAll('button');
-      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
-    }
-
-    const slideObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const index = slides.indexOf(entry.target);
-          setActiveDot(index);
-        }
-      });
-    }, { threshold: 0.6 });
 
     const animationObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -1066,7 +1493,6 @@
     }, { threshold: 0.2 });
 
     function initObservers() {
-      slides.forEach(slide => slideObserver.observe(slide));
       document.querySelectorAll('.animate').forEach(el => animationObserver.observe(el));
     }
 
@@ -1104,9 +1530,7 @@
       }
     });
 
-    buildDots();
     initObservers();
-    setActiveDot(0);
   </script>
 </body>
 </html>
