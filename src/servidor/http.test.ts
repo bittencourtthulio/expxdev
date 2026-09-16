@@ -34,7 +34,11 @@ describe("rotas de leitura", () => {
   });
 
   it("funcional: o projeto servido traz os dois trabalhos da fixture", async () => {
-    servidor = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0 });
+    // `diasBloqueio` alto de propósito: a fixture tem bloqueio com data fixa, e
+    // com o limite padrão de 7 dias a regra `bloqueio_antigo` passa a disparar
+    // sozinha conforme o relógio anda — o teste falhava pela passagem do tempo,
+    // não por regressão. O que este teste verifica é a leitura do projeto.
+    servidor = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0, diasBloqueio: 36500 });
     const r = await fetch(`${servidor.url()}/api/projeto`);
     const corpo = (await r.json()) as { trabalhos: unknown[]; violacoes: unknown[] };
     expect(corpo.trabalhos).toHaveLength(2);

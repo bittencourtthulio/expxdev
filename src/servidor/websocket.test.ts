@@ -41,7 +41,10 @@ describe("difusao por websocket", () => {
   it("funcional: a mensagem traz o projeto inteiro, não um delta", async () => {
     dir = mkdtempSync(join(tmpdir(), "expx-ws2-"));
     cpSync("fixtures/projeto-ok", dir, { recursive: true });
-    painel = await iniciarPainel({ raiz: dir, porta: 0, debounceMs: 80 });
+    // Mesmo motivo do `http.test.ts`: o limite padrão de 7 dias faz a regra
+    // `bloqueio_antigo` disparar sozinha conforme o relógio anda sobre a data
+    // fixa da fixture. Aqui o que se verifica é a difusão do estado inteiro.
+    painel = await iniciarPainel({ raiz: dir, porta: 0, debounceMs: 80, diasBloqueio: 36500 });
 
     const ws = new WebSocket(painel.urlWebsocket());
     const recebida = await new Promise<{ tipo: string; estado: { trabalhos: unknown[]; violacoes: unknown[] } }>(
