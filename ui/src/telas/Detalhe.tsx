@@ -2,6 +2,8 @@ import type { JSX } from "react";
 import type { Estado, Task, Trabalho } from "../tipos.js";
 import { ROTULO_ESTAGIO } from "../tipos.js";
 import { Barra, Etiqueta, Vazio, PageHeader } from "../comuns.js";
+import { GrafoVivo } from "./GrafoVivo.js";
+import { motivosDoAlerta, rotuloDoMotivo } from "./alerta-grafo.js";
 
 const ROTULO_STATUS: Record<string, string> = {
   pendente: "pendente", em_andamento: "em andamento", concluida: "concluída", bloqueada: "bloqueada",
@@ -9,7 +11,8 @@ const ROTULO_STATUS: Record<string, string> = {
 
 function LinhaTask({ t, critico }: { t: Task; critico: boolean }): JSX.Element {
   return (
-    <div className="linha-task">
+    // O id é a âncora que o clique no nó do grafo procura.
+    <div className="linha-task" id={`task-${t.id}`}>
       <code>{t.id}</code>
       <div>
         <div style={{ fontWeight: 520 }}>{t.titulo}</div>
@@ -33,32 +36,91 @@ function LinhaTask({ t, critico }: { t: Task; critico: boolean }): JSX.Element {
 }
 
 /**
- * O grafo de dependências do plano, servido pelo próprio painel em
- * `/grafo.svg`.
+ * Rola até a linha da task clicada no grafo.
  *
- * Vem por `<img>` e não inline: o SVG traz a própria folha de estilo, e
- * injetá-lo no documento faria essas regras vazarem para o painel inteiro.
- * Dentro de um `<img>` ele é um documento isolado, que é exatamente o que ele é
- * quando aberto a partir do PR.
+ * Quem rola no painel NÃO é a janela: o conteúdo vive dentro de um container
+ * com `overflow-y`, e a página em si não tem barra de rolagem. Por isso o
+ * `scrollIntoView` do elemento não leva a lugar nenhum — é preciso achar o
+ * ancestral que de fato rola e mover o `scrollTop` dele.
+ *
+ * Exportada para o teste poder exercitar a busca do container sem depender de
+ * rolagem real, que o jsdom não faz.
+ */
+export function rolarAteTask(idTask: string, doc: Document = document): boolean {
+  const alvo = doc.getElementById(`task-${idTask}`);
+  if (alvo === null) return false;
+
+  let p: HTMLElement | null = alvo.parentElement;
+  while (p !== null && p !== doc.body) {
+    const estilo = doc.defaultView?.getComputedStyle(p);
+    const rola = estilo !== undefined && /(auto|scroll)/.test(estilo.overflowY);
+    if (rola && p.scrollHeight > p.clientHeight + 4) {
+      // Centraliza a linha na área visível do container.
+      //
+      // Pela diferença entre os retângulos, não por `offsetTop`: este último é
+      // relativo ao ancestral POSICIONADO, que não é necessariamente o que
+      // rola, e o cálculo saía errado (ou zerado) conforme o encaixe do layout.
+      const rAlvo = alvo.getBoundingClientRect();
+      const rCaixa = p.getBoundingClientRect();
+      const delta = rAlvo.top - rCaixa.top - p.clientHeight / 2 + rAlvo.height / 2;
+      // `scrollTop` direto, sem `behavior: "smooth"`.
+      //
+      // A animação não é confiável neste container: medido no painel real, um
+      // `scrollTo` com "smooth" deixava o `scrollTop` em 0 — o clique no grafo
+      // não levava a lugar nenhum — enquanto a atribuição direta sempre move.
+      // Um salto que sempre funciona vale mais que uma animação que às vezes
+      // não rola.
+      p.scrollTop = Math.max(0, p.scrollTop + delta);
+      return true;
+    }
+    p = p.parentElement;
+  }
+
+  // Sem container rolável, a janela é quem rola.
+  alvo.scrollIntoView({ block: "center" });
+  return true;
+}
+
+/**
+ * O grafo de dependências do plano, desenhado na tela pelo `GrafoVivo`.
  *
  * Recolhido por padrão porque o plano é a informação principal da tela; o grafo
  * responde uma pergunta específica ("o que trava o quê") e quem não a tem não
  * deveria rolar por cima dele.
+ *
+ * A exceção é o plano com defeito estrutural — ciclo, dependência inexistente
+ * ou paralelismo que a estrutura não sustenta. Aí o grafo É a resposta, e
+ * mantê-lo recolhido esconde justamente o caso em que ele vale a tela. Nesses,
+ * abre já expandido e o cabeçalho diz o que procurar.
  */
-function GrafoDoPlano({ id, temTask }: { id: string; temTask: boolean }): JSX.Element | null {
+function GrafoDoPlano({ trabalho }: { trabalho: Trabalho }): JSX.Element | null {
+  const temTask = trabalho.sprints.some((s) => s.tasks.length > 0);
   if (!temTask) return null;
 
+  const motivos = motivosDoAlerta(trabalho);
+  const alerta = motivos.length > 0;
+
   return (
-    <details className="painel-det">
+    <details
+      className="painel-det"
+      open={alerta}
+      {...(alerta ? { style: { borderColor: "var(--alerta)" } } : {})}
+    >
       <summary style={{ cursor: "pointer", fontSize: 13, fontWeight: 560 }}>
         Grafo de dependências
-        <span className="dep"> · o que pode rodar em paralelo, e o que trava o quê</span>
+        {alerta ? (
+          <span className="dep" style={{ color: "var(--alerta)" }}>
+            {" "}
+            · {motivos.map(rotuloDoMotivo).join(" · ")}
+          </span>
+        ) : (
+          <span className="dep"> · o que pode rodar em paralelo, e o que trava o quê</span>
+        )}
       </summary>
-      <div style={{ marginTop: 11, overflowX: "auto" }}>
-        <img
-          src={`/grafo.svg?trabalho=${encodeURIComponent(id)}`}
-          alt={`Grafo de dependências das tasks de ${id}`}
-          style={{ maxWidth: "100%", display: "block" }}
+      <div style={{ marginTop: 11 }}>
+        <GrafoVivo
+          trabalho={trabalho}
+          aoEscolherTask={(idTask) => rolarAteTask(idTask)}
         />
       </div>
     </details>
@@ -110,7 +172,7 @@ export function Detalhe({
         ) : null}
       </div>
 
-      <GrafoDoPlano id={t.trabalho_id} temTask={t.sprints.some((s) => s.tasks.length > 0)} />
+      <GrafoDoPlano trabalho={t} />
 
       {abertos.length > 0 ? (
         <div className="painel-det" style={{ borderColor: "var(--alerta)" }}>

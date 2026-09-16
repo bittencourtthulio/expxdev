@@ -364,9 +364,14 @@ que faz o painel mostrar violação em vez de esconder o trabalho (regra R6).
 A varredura sem argumento ignora `fixtures/` e afins — material de teste não é trabalho do
 projeto. Pedindo pelo id, qualquer trabalho é gerado.
 
-O painel serve o mesmo grafo em `/grafo.svg?trabalho=<id>`, renderizado na hora a partir do
-estado em memória — nunca do arquivo em disco, que estaria velho. Uma implementação, dois
-consumos.
+O painel também serve o SVG em `/grafo.svg?trabalho=<id>`, renderizado na hora a partir do
+estado em memória — nunca do arquivo em disco, que estaria velho.
+
+Na tela, porém, o grafo **não** é essa imagem: é desenhado em SVG no próprio DOM. Uma imagem
+tem estado de carregamento, e num bloco recolhido o navegador só começa a baixá-la quando o
+bloco abre — num plano grande isso aparecia como ícone de imagem quebrada até o download
+terminar. Desenhado na tela não existe esse intervalo, e o grafo ainda responde a mouse,
+clique e zoom, que uma imagem nunca faria. As três formas partem da mesma topologia.
 
 ### Flags do `init`
 
@@ -606,8 +611,18 @@ o mostra na seção **Memória** — o que já se sabe sobre cada arquivo antes 
 Ele **não** observa `.expx/`: é lá que o índice é gravado, e observá-lo faria a reindexação
 realimentar a recarga da tela sem dado novo nenhum.
 
-No detalhe de cada trabalho há o [grafo do plano](#o-grafo-do-plano), recolhido — o mesmo SVG
-que o `expx grafo` grava, só que renderizado na hora a partir do estado já lido.
+No detalhe de cada trabalho há o [grafo do plano](#o-grafo-do-plano), desenhado na própria
+tela. Ele é **interativo**: passar o mouse num nó apaga tudo que não é vizinho dele, clicar
+leva à linha da task no plano abaixo, `⌘`/`Ctrl` + rolagem aproxima, arrastar move, e os
+filtros mostram só o que falta ou só o caminho crítico.
+
+E é **vivo**: o painel já recebe o estado inteiro por websocket a cada gravação da skill, então
+o grafo se redesenha sozinho quando o plano muda em disco — sem recarregar a página.
+
+O bloco vem recolhido, **exceto** quando o plano tem defeito estrutural (ciclo, dependência
+inexistente ou paralelismo que a estrutura não sustenta). Nesses casos abre expandido e o
+cabeçalho diz o que procurar: é justamente quando o grafo é a resposta, e mantê-lo fechado
+esconderia o único caso em que ele vale a tela.
 
 ### Ele também aponta violações do método
 

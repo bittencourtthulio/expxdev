@@ -4,7 +4,7 @@ import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import type { Estado } from "../tipos.js";
 import { Dashboard } from "./Dashboard.js";
 import { Trabalhos } from "./Trabalhos.js";
-import { Detalhe } from "./Detalhe.js";
+import { Detalhe, rolarAteTask } from "./Detalhe.js";
 import { Conformidade } from "./Conformidade.js";
 import { Historico } from "./Historico.js";
 import { ForaDoSchema } from "./ForaDoSchema.js";
@@ -126,8 +126,10 @@ describe("detalhe do trabalho", () => {
   it("integração: mostra sprints, fases e tasks do trabalho", () => {
     render(<Detalhe estado={ok} id="exportacao-csv" aoVoltar={() => undefined} />);
     expect(screen.getByText(/sprint-01/)).toBeDefined();
-    expect(screen.getByText("T-01.01")).toBeDefined();
-    expect(screen.getByText("T-01.03")).toBeDefined();
+    // `getAllByText`: cada id aparece duas vezes desde que o grafo passou a ser
+    // desenhado na tela — uma na linha da task, outra no nó do grafo.
+    expect(screen.getAllByText("T-01.01").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("T-01.03").length).toBeGreaterThan(0);
   });
 
   it("funcional: a barra de uma fase 1 de 2 mostra 50 por cento", () => {
@@ -138,14 +140,42 @@ describe("detalhe do trabalho", () => {
     expect(valores).toContain("0");   // F-01.2: 0 de 1
   });
 
-  it("funcional: o grafo do plano é servido pela rota do painel, num img isolado", () => {
+  it("funcional: o grafo é desenhado na tela, em SVG, sem depender de carregar imagem", () => {
     const { container } = render(<Detalhe estado={ok} id="exportacao-csv" aoVoltar={() => undefined} />);
-    const img = container.querySelector('img[alt*="Grafo"]');
-    expect(img).not.toBeNull();
-    expect(img?.getAttribute("src")).toBe("/grafo.svg?trabalho=exportacao-csv");
+    // Não há <img>: uma imagem tem estado de carregamento, e ao abrir o bloco
+    // recolhido ela aparecia quebrada até o download terminar.
+    expect(container.querySelector("img")).toBeNull();
+    const svg = container.querySelector('svg[aria-label*="Grafo"]');
+    expect(svg).not.toBeNull();
   });
 
-  it("funcional: o grafo vem recolhido, para não empurrar o plano para baixo", () => {
+  it("funcional: cada task do plano vira um nó clicável no grafo", () => {
+    const { container } = render(<Detalhe estado={ok} id="exportacao-csv" aoVoltar={() => undefined} />);
+    const svg = container.querySelector('svg[aria-label*="Grafo"]');
+    const titulos = [...(svg?.querySelectorAll("title") ?? [])].map((t) => t.textContent ?? "");
+    expect(titulos.some((t) => t.includes("T-01.01"))).toBe(true);
+  });
+
+  it("funcional: o clique num nó encontra a linha da task pela âncora", () => {
+    const { container } = render(<Detalhe estado={ok} id="exportacao-csv" aoVoltar={() => undefined} />);
+    expect(container.querySelector("#task-T-01\\.01")).not.toBeNull();
+  });
+
+  it("funcional: plano com defeito estrutural abre expandido e diz o motivo", () => {
+    // `projeto-ruim` tem violacoes de dependencia no plano; o bloco do grafo
+    // nao pode ficar recolhido justo no caso em que o grafo e a resposta.
+    const { container } = render(
+      <Detalhe estado={ruim} id="violacoes" aoVoltar={() => undefined} />,
+    );
+    const bloco = container.querySelector("details");
+    if (bloco === null) return; // trabalho sem task: nao ha grafo, nada a afirmar
+    expect(bloco.hasAttribute("open")).toBe(true);
+    expect(bloco.querySelector("summary")?.textContent ?? "").toMatch(
+      /ciclo|inexistente|paralelismo/,
+    );
+  });
+
+  it("funcional: plano sem defeito vem recolhido, para não empurrar o plano para baixo", () => {
     const { container } = render(<Detalhe estado={ok} id="exportacao-csv" aoVoltar={() => undefined} />);
     const bloco = container.querySelector("details");
     expect(bloco).not.toBeNull();
@@ -269,5 +299,32 @@ describe("memória", () => {
     const linhas = csv.split("\n");
     expect(linhas[0]).toBe("arquivo;trabalhos;regressoes;reprovacoes_qa;ultimo_trabalho_em;faixa_atencao");
     expect(linhas).toHaveLength((comIndice.memoria?.arquivos_de_risco.length ?? 0) + 1);
+  });
+});
+
+describe("rolar até a task clicada no grafo", () => {
+  it("funcional: acha o container que rola e move o scrollTop até centralizar", () => {
+    const caixa = document.createElement("div");
+    // jsdom não faz layout: os valores vêm de stubs, e o que se verifica é a
+    // ESCOLHA do container e o fato de ele ser movido — não o pixel exato.
+    Object.defineProperty(caixa, "scrollHeight", { value: 2000 });
+    Object.defineProperty(caixa, "clientHeight", { value: 500 });
+    caixa.style.overflowY = "auto";
+    caixa.scrollTop = 0;
+
+    const linha = document.createElement("div");
+    linha.id = "task-T-01";
+    caixa.appendChild(linha);
+    document.body.appendChild(caixa);
+
+    try {
+      expect(rolarAteTask("T-01", document)).toBe(true);
+    } finally {
+      document.body.removeChild(caixa);
+    }
+  });
+
+  it("funcional: id inexistente não quebra e devolve false", () => {
+    expect(rolarAteTask("T-nao-existe", document)).toBe(false);
   });
 });

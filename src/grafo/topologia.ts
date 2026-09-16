@@ -1,20 +1,38 @@
-import type { TrabalhoMontado, TaskSituada } from "../parser/projeto/montar.js";
+import type { TrabalhoMontado } from "../parser/projeto/montar.js";
 import type { StatusTask } from "../parser/esquema/enums.js";
 
 /**
- * A topologia é a camada pura do grafo: recebe o trabalho já montado e devolve
+ * A topologia é a camada pura do grafo: recebe as tasks do trabalho e devolve
  * nós, arestas e níveis. Não sabe desenhar, não sabe de SVG, não toca disco.
  *
- * A separação existe porque o mesmo cálculo alimenta dois consumos (o SVG
- * exportado e o painel), e porque topologia é o que se testa sem renderizar.
+ * A separação existe porque o mesmo cálculo alimenta três consumos — o SVG do
+ * `expx grafo`, a rota do painel e o grafo interativo da tela — e porque
+ * topologia é o que se testa sem renderizar.
+ *
+ * O contrato de entrada é `TaskDoGrafo`, não o tipo do parser: a tela do painel
+ * recebe as tasks já serializadas em JSON pela API, que têm os mesmos campos mas
+ * não são o mesmo tipo. Amarrar a topologia ao tipo do parser obrigaria a
+ * duplicar este arquivo no lado da UI — e duas cópias de um algoritmo de grafo
+ * divergem na primeira correção que só uma delas receber.
  */
+
+/** O mínimo que a topologia precisa saber de uma task para montar o grafo. */
+export type TaskDoGrafo = {
+  id: string;
+  titulo: string;
+  fase: string;
+  status: StatusTask;
+  depende_de: string[];
+  paralelizavel: boolean;
+};
 
 export type No = {
   id: string;
   titulo: string;
   status: StatusTask;
   fase: string;
-  sprint_id: string;
+  /** Ausente quando a topologia é montada a partir de tasks soltas. */
+  sprint_id?: string;
   paralelizavel: boolean;
   /** Profundidade na ordem de dependência: 0 é o que não espera ninguém. */
   nivel: number;
@@ -53,7 +71,7 @@ export type Topologia = {
 };
 
 /** Todas as tasks do trabalho, achatadas — mesma leitura que a conformidade faz. */
-function tasksDe(t: TrabalhoMontado): TaskSituada[] {
+function tasksDe(t: TrabalhoMontado): (TaskDoGrafo & { sprint_id: string })[] {
   return t.sprints.flatMap((s) => s.tasks);
 }
 
@@ -64,7 +82,7 @@ function tasksDe(t: TrabalhoMontado): TaskSituada[] {
  * O grafo precisa saber disso antes de calcular nível: um ciclo não tem ordem
  * topológica, e sem essa marcação o cálculo de nível entraria em laço.
  */
-function detectarCiclos(porId: Map<string, TaskSituada>): Set<string> {
+function detectarCiclos(porId: Map<string, TaskDoGrafo>): Set<string> {
   const cor = new Map<string, 0 | 1 | 2>();
   const emCiclo = new Set<string>();
 
@@ -96,7 +114,7 @@ function detectarCiclos(porId: Map<string, TaskSituada>): Set<string> {
  * não termina. O ciclo continua desenhado — só não define profundidade, porque
  * num ciclo não existe "antes".
  */
-function calcularNiveis(porId: Map<string, TaskSituada>, emCiclo: Set<string>): Map<string, number> {
+function calcularNiveis(porId: Map<string, TaskDoGrafo>, emCiclo: Set<string>): Map<string, number> {
   const nivel = new Map<string, number>();
 
   function resolver(id: string, visitando: Set<string>): number {
@@ -134,7 +152,7 @@ function calcularNiveis(porId: Map<string, TaskSituada>, emCiclo: Set<string>): 
  * declaração contra a estrutura real das tasks.
  */
 function calcularCaminhoCritico(
-  porId: Map<string, TaskSituada>,
+  porId: Map<string, TaskDoGrafo>,
   nivel: Map<string, number>,
   emCiclo: Set<string>,
 ): string[] {
@@ -178,7 +196,7 @@ function calcularCaminhoCritico(
 }
 
 /** Uma dependência está aberta quando a task de que se depende não foi concluída. */
-function temDependenciaAberta(task: TaskSituada, porId: Map<string, TaskSituada>): boolean {
+function temDependenciaAberta(task: TaskDoGrafo, porId: Map<string, TaskDoGrafo>): boolean {
   return task.depende_de.some((d) => {
     const alvo = porId.get(d);
     return alvo !== undefined && alvo.status !== "concluida";
@@ -186,7 +204,18 @@ function temDependenciaAberta(task: TaskSituada, porId: Map<string, TaskSituada>
 }
 
 export function montarTopologia(trabalho: TrabalhoMontado): Topologia {
-  const tasks = tasksDe(trabalho);
+  return topologiaDeTasks(trabalho.trabalho_id, trabalho.titulo, tasksDe(trabalho));
+}
+
+/**
+ * O núcleo: monta a topologia a partir das tasks, sem depender do tipo do
+ * parser. É o que a tela do painel chama com as tasks vindas da API.
+ */
+export function topologiaDeTasks(
+  trabalhoId: string,
+  titulo: string,
+  tasks: readonly (TaskDoGrafo & { sprint_id?: string })[],
+): Topologia {
   const porId = new Map(tasks.map((t) => [t.id, t]));
 
   const emCiclo = detectarCiclos(porId);
@@ -199,7 +228,7 @@ export function montarTopologia(trabalho: TrabalhoMontado): Topologia {
     titulo: t.titulo,
     status: t.status,
     fase: t.fase,
-    sprint_id: t.sprint_id,
+    ...(t.sprint_id === undefined ? {} : { sprint_id: t.sprint_id }),
     paralelizavel: t.paralelizavel,
     nivel: nivel.get(t.id) ?? 0,
     critico: noCritico.has(t.id),
@@ -262,8 +291,8 @@ export function montarTopologia(trabalho: TrabalhoMontado): Topologia {
   }
 
   return {
-    trabalho_id: trabalho.trabalho_id,
-    titulo: trabalho.titulo,
+    trabalho_id: trabalhoId,
+    titulo,
     nos,
     arestas,
     caminho_critico: caminhoCritico,
