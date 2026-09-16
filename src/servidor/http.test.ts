@@ -187,3 +187,42 @@ describe("releitura só do índice", () => {
     expect(servidor.recarregarMemoria().memoria).toBeNull();
   });
 });
+
+describe("rota do grafo", () => {
+  it("integração: GET /grafo.svg devolve 200 com content-type de SVG", async () => {
+    servidor = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0 });
+    const r = await fetch(`${servidor.url()}/grafo.svg?trabalho=exportacao-csv`);
+
+    expect(r.status).toBe(200);
+    expect(r.headers.get("content-type")).toContain("image/svg+xml");
+    // O plano muda em disco enquanto o painel roda: cachear serviria um grafo
+    // velho de um plano que a skill já reescreveu.
+    expect(r.headers.get("cache-control")).toBe("no-store");
+  });
+
+  it("funcional: o SVG servido traz as tasks do trabalho pedido", async () => {
+    servidor = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0 });
+    const r = await fetch(`${servidor.url()}/grafo.svg?trabalho=exportacao-csv`);
+    const corpo = await r.text();
+
+    expect(corpo).toContain("<svg");
+    expect(corpo).toContain("tasks");
+    expect(corpo).not.toContain("<script");
+  });
+
+  it("funcional: trabalho inexistente devolve 404", async () => {
+    servidor = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0 });
+    const r = await fetch(`${servidor.url()}/grafo.svg?trabalho=nao-existe`);
+
+    expect(r.status).toBe(404);
+  });
+
+  it("funcional: o grafo respeita o somente-leitura e recusa POST", async () => {
+    servidor = await criarServidor({ raiz: "fixtures/projeto-ok", porta: 0 });
+    const r = await fetch(`${servidor.url()}/grafo.svg?trabalho=exportacao-csv`, {
+      method: "POST",
+    });
+
+    expect(r.status).toBe(405);
+  });
+});

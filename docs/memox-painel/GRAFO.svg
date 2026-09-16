@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1696 590" width="1696" height="590" role="img" aria-label="Grafo de dependências de Integracao do memox ao painel e ao CLI do Expx">
+<title>Integracao do memox ao painel e ao CLI do Expx — grafo de dependências</title>
+<style>
+  :root {
+    --fundo: #ffffff; --texto: #1a1d21; --fraco: #6b7280; --borda: #d4d8dd;
+    --caixa: #f7f8fa; --critico: #b45309; --ciclo: #b91c1c; --ok: #15803d;
+    --andamento: #1d4ed8; --aresta: #9aa1a9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fundo: #0f1115; --texto: #e6e8ea; --fraco: #9aa1a9; --borda: #2b3038;
+      --caixa: #171a20; --critico: #f59e0b; --ciclo: #f87171; --ok: #4ade80;
+      --andamento: #60a5fa; --aresta: #4b5259;
+    }
+  }
+  .fundo { fill: var(--fundo); }
+  .tit { fill: var(--texto); font: 600 15px ui-sans-serif, -apple-system, Segoe UI, sans-serif; }
+  .sub { fill: var(--fraco); font: 400 11px ui-sans-serif, -apple-system, Segoe UI, sans-serif; }
+  .no rect { fill: var(--caixa); stroke: var(--borda); stroke-width: 1.5; }
+  .no .id { fill: var(--texto); font: 600 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .no .lbl { fill: var(--fraco); font: 400 11px ui-sans-serif, -apple-system, Segoe UI, sans-serif; }
+  .st-concluida rect { stroke: var(--ok); }
+  .st-em_andamento rect { stroke: var(--andamento); }
+  .critico rect { stroke: var(--critico); stroke-width: 2.5; }
+  .ciclo rect { stroke: var(--ciclo); stroke-width: 2.5; stroke-dasharray: 5 3; }
+  .suspeita rect { stroke-dasharray: 2 2; }
+  .aresta { fill: none; stroke: var(--aresta); stroke-width: 1.5; }
+  .aresta.crit { stroke: var(--critico); stroke-width: 2.5; }
+  .aresta.quebrada { stroke: var(--ciclo); stroke-dasharray: 4 3; }
+  .leg { fill: var(--fraco); font: 400 11px ui-sans-serif, -apple-system, Segoe UI, sans-serif; }
+</style>
+<defs><marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--aresta)"/></marker><marker id="seta-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--critico)"/></marker></defs>
+<rect class="fundo" width="1696" height="590"/>
+<text class="tit" x="28" y="34">Integracao do memox ao painel e ao CLI do Expx</text>
+<text class="sub" x="28" y="54">22 tasks  ·  5 níveis  ·  caminho crítico: 5</text>
+<path class="aresta" d="M 128 136 C 128 158, 128 158, 128 180" marker-end="url(#seta)"/>
+<path class="aresta" d="M 128 234 C 128 256, 128 256, 128 278" marker-end="url(#seta)"/>
+<path class="aresta" d="M 608 136 C 608 158, 368 158, 368 180" marker-end="url(#seta)"/>
+<path class="aresta" d="M 368 234 C 368 256, 368 256, 368 278" marker-end="url(#seta)"/>
+<path class="aresta" d="M 368 332 C 368 354, 128 354, 128 376" marker-end="url(#seta)"/>
+<path class="aresta" d="M 1088 136 C 1088 158, 608 158, 608 180" marker-end="url(#seta)"/>
+<path class="aresta" d="M 608 234 C 608 256, 608 256, 608 278" marker-end="url(#seta)"/>
+<path class="aresta" d="M 608 234 C 608 256, 848 256, 848 278" marker-end="url(#seta)"/>
+<path class="aresta" d="M 608 332 C 608 354, 368 354, 368 376" marker-end="url(#seta)"/>
+<path class="aresta" d="M 848 332 C 848 354, 368 354, 368 376" marker-end="url(#seta)"/>
+<path class="aresta crit" d="M 1568 136 C 1568 158, 1088 158, 1088 180" marker-end="url(#seta-crit)"/>
+<path class="aresta crit" d="M 1088 234 C 1088 256, 1088 256, 1088 278" marker-end="url(#seta-crit)"/>
+<path class="aresta crit" d="M 1088 332 C 1088 354, 608 354, 608 376" marker-end="url(#seta-crit)"/>
+<path class="aresta crit" d="M 608 430 C 608 452, 128 452, 128 474" marker-end="url(#seta-crit)"/>
+<path class="aresta" d="M 1088 332 C 1088 354, 848 354, 848 376" marker-end="url(#seta)"/>
+<path class="aresta" d="M 1328 136 C 1328 158, 848 158, 848 180" marker-end="url(#seta)"/>
+<g class="no st-concluida">
+<rect x="28" y="82" width="200" height="54" rx="8"/>
+<text class="id" x="40" y="102">T-01.01</text>
+<text class="lbl" x="40" y="117">Fixture de projeto com in…</text>
+<text class="lbl" x="40" y="130">F-01.1</text>
+</g>
+<g class="no st-concluida">
+<rect x="268" y="82" width="200" height="54" rx="8"/>
+<text class="id" x="280" y="102">T-01.02</text>
+<text class="lbl" x="280" y="117">Fixture de indice corromp…</text>
+<text class="lbl" x="280" y="130">F-01.1</text>
+</g>
+<g class="no st-concluida">
+<rect x="28" y="180" width="200" height="54" rx="8"/>
+<text class="id" x="40" y="200">T-01.03</text>
+<text class="lbl" x="40" y="215">Schema e tipo da memoria …</text>
+<text class="lbl" x="40" y="228">F-01.2</text>
+</g>
+<g class="no st-concluida">
+<rect x="28" y="278" width="200" height="54" rx="8"/>
+<text class="id" x="40" y="298">T-01.04</text>
+<text class="lbl" x="40" y="313">Espelhar o tipo da memori…</text>
+<text class="lbl" x="40" y="326">F-01.2</text>
+</g>
+<g class="no st-concluida">
+<rect x="508" y="82" width="200" height="54" rx="8"/>
+<text class="id" x="520" y="102">T-02.01</text>
+<text class="lbl" x="520" y="117">Ler o indice do disco com…</text>
+<text class="lbl" x="520" y="130">F-02.1</text>
+</g>
+<g class="no st-concluida">
+<rect x="268" y="180" width="200" height="54" rx="8"/>
+<text class="id" x="280" y="200">T-02.02</text>
+<text class="lbl" x="280" y="215">Projetar o indice na form…</text>
+<text class="lbl" x="280" y="228">F-02.1</text>
+</g>
+<g class="no st-concluida">
+<rect x="748" y="82" width="200" height="54" rx="8"/>
+<text class="id" x="760" y="102">T-02.03</text>
+<text class="lbl" x="760" y="117">Ignorar .expx no observad…</text>
+<text class="lbl" x="760" y="130">F-02.1</text>
+</g>
+<g class="no st-concluida">
+<rect x="268" y="278" width="200" height="54" rx="8"/>
+<text class="id" x="280" y="298">T-02.04</text>
+<text class="lbl" x="280" y="313">Acrescentar a memoria ao …</text>
+<text class="lbl" x="280" y="326">F-02.2</text>
+</g>
+<g class="no st-concluida">
+<rect x="28" y="376" width="200" height="54" rx="8"/>
+<text class="id" x="40" y="396">T-02.05</text>
+<text class="lbl" x="40" y="411">Servir a memoria por rota…</text>
+<text class="lbl" x="40" y="424">F-02.2</text>
+</g>
+<g class="no st-concluida">
+<rect x="988" y="82" width="200" height="54" rx="8"/>
+<text class="id" x="1000" y="102">T-02.06</text>
+<text class="lbl" x="1000" y="117">Icone da secao Memoria</text>
+<text class="lbl" x="1000" y="130">F-02.3</text>
+</g>
+<g class="no st-concluida">
+<rect x="508" y="180" width="200" height="54" rx="8"/>
+<text class="id" x="520" y="200">T-02.07</text>
+<text class="lbl" x="520" y="215">Tela de Memoria</text>
+<text class="lbl" x="520" y="228">F-02.3</text>
+</g>
+<g class="no st-concluida">
+<rect x="508" y="278" width="200" height="54" rx="8"/>
+<text class="id" x="520" y="298">T-02.08</text>
+<text class="lbl" x="520" y="313">Estado vazio da tela de M…</text>
+<text class="lbl" x="520" y="326">F-02.3</text>
+</g>
+<g class="no st-concluida">
+<rect x="748" y="278" width="200" height="54" rx="8"/>
+<text class="id" x="760" y="298">T-02.09</text>
+<text class="lbl" x="760" y="313">Exportacao da memoria em …</text>
+<text class="lbl" x="760" y="326">F-02.3</text>
+</g>
+<g class="no st-concluida">
+<rect x="268" y="376" width="200" height="54" rx="8"/>
+<text class="id" x="280" y="396">T-02.10</text>
+<text class="lbl" x="280" y="411">Ligar a secao Memoria na …</text>
+<text class="lbl" x="280" y="424">F-02.3</text>
+</g>
+<g class="no st-concluida">
+<rect x="1228" y="82" width="200" height="54" rx="8"/>
+<text class="id" x="1240" y="102">T-03.01</text>
+<text class="lbl" x="1240" y="117">Acrescentar memox ao cata…</text>
+<text class="lbl" x="1240" y="130">F-03.1</text>
+</g>
+<g class="no st-concluida critico">
+<rect x="1468" y="82" width="200" height="54" rx="8"/>
+<text class="id" x="1480" y="102">T-03.02</text>
+<text class="lbl" x="1480" y="117">Fixture de repositorio co…</text>
+<text class="lbl" x="1480" y="130">F-03.1 · crítico</text>
+</g>
+<g class="no st-concluida critico">
+<rect x="988" y="180" width="200" height="54" rx="8"/>
+<text class="id" x="1000" y="200">T-03.03</text>
+<text class="lbl" x="1000" y="215">Detectar os hooks da skill</text>
+<text class="lbl" x="1000" y="228">F-03.1 · crítico</text>
+</g>
+<g class="no st-concluida critico">
+<rect x="988" y="278" width="200" height="54" rx="8"/>
+<text class="id" x="1000" y="298">T-03.04</text>
+<text class="lbl" x="1000" y="313">Copiar hooks e skill para…</text>
+<text class="lbl" x="1000" y="326">F-03.1 · crítico</text>
+</g>
+<g class="no st-concluida critico">
+<rect x="508" y="376" width="200" height="54" rx="8"/>
+<text class="id" x="520" y="396">T-03.05</text>
+<text class="lbl" x="520" y="411">Registrar os hooks em set…</text>
+<text class="lbl" x="520" y="424">F-03.2 · crítico</text>
+</g>
+<g class="no st-concluida critico">
+<rect x="28" y="474" width="200" height="54" rx="8"/>
+<text class="id" x="40" y="494">T-03.06</text>
+<text class="lbl" x="40" y="509">Tornar o registro de hook…</text>
+<text class="lbl" x="40" y="522">F-03.2 · crítico</text>
+</g>
+<g class="no st-concluida">
+<rect x="748" y="376" width="200" height="54" rx="8"/>
+<text class="id" x="760" y="396">T-03.07</text>
+<text class="lbl" x="760" y="411">Diagnosticar instalacao d…</text>
+<text class="lbl" x="760" y="424">F-03.3</text>
+</g>
+<g class="no st-concluida">
+<rect x="748" y="180" width="200" height="54" rx="8"/>
+<text class="id" x="760" y="200">T-03.08</text>
+<text class="lbl" x="760" y="215">Atualizar a contagem de s…</text>
+<text class="lbl" x="760" y="228">F-03.3</text>
+</g>
+<text class="leg" x="28" y="576">expx — grafo do plano · gerado em 2026-09-16</text>
+</svg>

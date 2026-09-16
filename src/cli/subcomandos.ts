@@ -8,7 +8,16 @@
  * painel.
  */
 
-export const SUBCOMANDOS = ["init", "panel", "watch", "add", "remove", "update", "doctor"] as const;
+export const SUBCOMANDOS = [
+  "init",
+  "panel",
+  "watch",
+  "grafo",
+  "add",
+  "remove",
+  "update",
+  "doctor",
+] as const;
 export type Subcomando = (typeof SUBCOMANDOS)[number];
 
 export type Roteamento =
@@ -25,6 +34,7 @@ expx — CLI do metodo Expx
   expx init                 instala as skills escolhidas neste projeto
   expx panel                sobe o painel de operacao lendo o docs/ do projeto
   expx watch                acompanha um trabalho no terminal, ao vivo
+  expx grafo [trabalho]     grava o GRAFO.svg do plano ao lado do ORQUESTRADOR
   expx add <skill...>       acrescenta skills a selecao
   expx remove <skill...>    remove skills da selecao
   expx update [skill...]    atualiza as skills instaladas

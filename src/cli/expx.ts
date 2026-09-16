@@ -6,6 +6,7 @@ import { executarInit } from "./init.js";
 import { adicionarSkills, removerSkills } from "./selecionar.js";
 import { interpretarFlagsUpdate, executarUpdate } from "../update/flags.js";
 import { diagnosticar } from "../doctor/verificadores.js";
+import { gerarGrafos } from "../grafo/gerar.js";
 import { avaliarSelecao } from "./selecao.js";
 import { executarWizard } from "./wizard.js";
 import { perguntadorDeTerminal, type Perguntador } from "./perguntar.js";
@@ -170,6 +171,56 @@ const EXECUTORES: Partial<Record<Subcomando, Executor>> = {
     for (const b of r.bloqueadas) saida.escrever(`bloqueada ${b.nome}: ${b.motivo}\n`);
     if (r.emDia.length > 0) saida.escrever(`em dia: ${r.emDia.join(", ")}\n`);
     return r.ok ? 0 : 1;
+  },
+
+  /**
+   * Grava o grafo de dependências do plano, um SVG por trabalho.
+   *
+   * `--conferir` calcula e relata sem escrever: é o modo para CI e para o
+   * portão de prontidão da mergex, onde o comando precisa acusar ciclo ou
+   * dependência quebrada sem sujar o working tree.
+   */
+  grafo: async (resto, saida) => {
+    const conferir = resto.includes("--conferir");
+    const trabalho = resto.find((a) => !a.startsWith("--"));
+
+    // A chave só entra quando há filtro: sob `exactOptionalPropertyTypes`,
+    // passar `undefined` não é o mesmo que omitir — a mesma distinção que a
+    // regra R6 faz entre "não se aplica" e "esqueceram de escrever".
+    const r = gerarGrafos({
+      raiz: process.cwd(),
+      simular: conferir,
+      ...(trabalho === undefined ? {} : { trabalho }),
+    });
+
+    if (r.gerados.length === 0 && r.ignorados.length === 0) {
+      saida.escrever("nenhum trabalho encontrado em docs/\n");
+      return 0;
+    }
+
+    let problemas = 0;
+    for (const g of r.gerados) {
+      const marcas: string[] = [];
+      if (g.em_ciclo > 0) marcas.push(`${g.em_ciclo} em ciclo`);
+      if (g.dependencias_quebradas.length > 0) {
+        marcas.push(`dependencia inexistente: ${g.dependencias_quebradas.join(", ")}`);
+      }
+      if (marcas.length > 0) problemas++;
+
+      const sufixo = marcas.length > 0 ? `  [${marcas.join("; ")}]` : "";
+      const verbo = conferir ? "conferido" : "gravado";
+      saida.escrever(
+        `${verbo} ${g.arquivo}  ${g.tasks} tasks, ${g.niveis} niveis, ` +
+          `caminho critico ${g.caminho_critico}${sufixo}\n`,
+      );
+    }
+    for (const i of r.ignorados) {
+      saida.escrever(`ignorado ${i.trabalho_id}: ${i.motivo}\n`);
+    }
+
+    // Só o modo de conferência reprova: gravar o grafo de um plano defeituoso é
+    // justamente o que torna o defeito visível, e não deve falhar a geração.
+    return conferir && problemas > 0 ? 1 : 0;
   },
 
   doctor: async (_resto, saida) => {

@@ -76,7 +76,7 @@ plano: veja [A primeira coisa a rodar](#a-primeira-coisa-a-rodar-depois-do-init)
 | **[As três camadas de garantia](#as-três-camadas-de-garantia)** | skill, hook e agente — da mais fraca à mais forte |
 | **[Os dois contratos](#os-dois-contratos-compartilhados)** | `expx-schema` e `expx-eventos`, o que faz tudo se encaixar |
 | **[O que fica no seu projeto](#o-que-fica-no-seu-projeto)** | cada pasta, quem escreve e quem lê |
-| **[Subcomandos](#subcomandos)** · **[Lock e atualização](#versão-lock-e-atualização)** · **[Doctor](#o-que-o-doctor-verifica)** · **[Painel](#o-painel)** | a referência do CLI |
+| **[Subcomandos](#subcomandos)** · **[Grafo do plano](#o-grafo-do-plano)** · **[Lock e atualização](#versão-lock-e-atualização)** · **[Doctor](#o-que-o-doctor-verifica)** · **[Painel](#o-painel)** | a referência do CLI |
 | **[Anatomia do `init`](#anatomia-do-init-passo-a-passo)** | o que roda, em que ordem, e por quê |
 | **[`/expx:onboarding`](#a-primeira-coisa-a-rodar-depois-do-init)** | o comando que mapeia as camadas instaladas antes do primeiro plano |
 | **[A memória do projeto](#a-memória-do-projeto)** | o que já se sabe sobre este arquivo, antes de mexer nele |
@@ -320,9 +320,53 @@ só.
 | `expx add <skill...>` | Acrescenta skills à seleção e remonta o plugin |
 | `expx remove <skill...>` | Remove skills da seleção e remonta o plugin |
 | `expx update [skill...]` | Atualiza as skills instaladas |
+| `expx grafo [trabalho]` | Grava o `GRAFO.svg` do plano ao lado do `ORQUESTRADOR.md` |
 | `expx doctor` | Diagnostica uma instalação quebrada |
 
 O painel funciona **sem `init`**: ele não precisa de nada instalado.
+
+### O grafo do plano
+
+O painel já sabia que `T-04` depende de `T-02` — o plano declara, e a conformidade confere.
+O que faltava era **ver**: a tabela de violações diz que existe um ciclo, mas não onde ele
+fecha, e a lista de tasks não mostra o que de fato pode rodar em paralelo.
+
+```bash
+npx expxdev grafo              # todos os trabalhos do docs/
+npx expxdev grafo memox-painel # só um
+npx expxdev grafo --conferir   # calcula e relata, sem escrever nada
+```
+
+O artefato é um **SVG auto-contido** — sem script, sem fonte externa, sem imagem embutida — e
+mora em `docs/<trabalho_id>/GRAFO.svg`, junto do plano que ele descreve. Isso é o que faz ele
+viajar no PR: o revisor abre o grafo direto no GitHub, sem subir o painel. O tema acompanha o
+do leitor, claro ou escuro.
+
+Cada nível do desenho é uma **profundidade de dependência**: tudo que está na mesma linha pode
+rodar junto de verdade. O que o grafo marca:
+
+| Marca | O que significa |
+|---|---|
+| contorno laranja, aresta grossa | caminho crítico — a cadeia que nenhum paralelismo encurta |
+| contorno tracejado vermelho | task em ciclo de dependências |
+| aresta tracejada vermelha | `depende_de` apontando para um id que não existe |
+| contorno pontilhado | declarada `paralelizavel` mas com dependência ainda aberta |
+
+O caminho crítico é **calculado**, não lido do frontmatter: o campo `caminho_critico` do
+`ORQUESTRADOR.md` é o que a skill declarou, e o grafo existe justamente para conferir a
+declaração contra a estrutura real das tasks.
+
+`--conferir` não escreve e **sai com código 1** quando encontra ciclo ou dependência
+inexistente — é a forma de usá-lo em CI ou no portão de prontidão da `mergex`. Sem a flag, o
+grafo de um plano defeituoso é gravado assim mesmo, com o defeito à vista: é a mesma decisão
+que faz o painel mostrar violação em vez de esconder o trabalho (regra R6).
+
+A varredura sem argumento ignora `fixtures/` e afins — material de teste não é trabalho do
+projeto. Pedindo pelo id, qualquer trabalho é gerado.
+
+O painel serve o mesmo grafo em `/grafo.svg?trabalho=<id>`, renderizado na hora a partir do
+estado em memória — nunca do arquivo em disco, que estaria velho. Uma implementação, dois
+consumos.
 
 ### Flags do `init`
 
@@ -561,6 +605,9 @@ Além do estado, o painel lê o índice da [`memox`](#a-memória-do-projeto), qu
 o mostra na seção **Memória** — o que já se sabe sobre cada arquivo antes de alguém mexer nele.
 Ele **não** observa `.expx/`: é lá que o índice é gravado, e observá-lo faria a reindexação
 realimentar a recarga da tela sem dado novo nenhum.
+
+No detalhe de cada trabalho há o [grafo do plano](#o-grafo-do-plano), recolhido — o mesmo SVG
+que o `expx grafo` grava, só que renderizado na hora a partir do estado já lido.
 
 ### Ele também aponta violações do método
 

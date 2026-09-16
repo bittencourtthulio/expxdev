@@ -5,6 +5,8 @@ import { lerEstado, type EstadoPainel } from "./estado.js";
 import { lerIndice } from "../parser/memoria/ler.js";
 import { projetar } from "../parser/memoria/projetar.js";
 import { paginaRelatorio, type DadosRelatorio } from "../relatorio/pagina.js";
+import { montarTopologia } from "../grafo/topologia.js";
+import { renderizarSvg } from "../grafo/svg.js";
 
 /**
  * O servidor escuta EXCLUSIVAMENTE em 127.0.0.1.
@@ -128,6 +130,17 @@ export async function criarServidor(op: OpcoesServidor): Promise<ServidorPainel>
       return;
     }
 
+    // Grafo do plano: /grafo.svg?trabalho=<id>
+    //
+    // Renderizado em memória a partir do estado já lido, nunca do GRAFO.svg em
+    // disco. São dois consumos da mesma implementação, e ler o arquivo faria o
+    // painel mostrar um grafo velho de um plano que já mudou — além de quebrar
+    // quando ninguém rodou `expx grafo` ainda.
+    if (caminho === "/grafo.svg") {
+      servirGrafo(estado, url, res);
+      return;
+    }
+
     switch (caminho) {
       case "/api/projeto":
         json(res, estado);
@@ -208,6 +221,30 @@ export async function criarServidor(op: OpcoesServidor): Promise<ServidorPainel>
  * O conteúdo vem do estado já lido — o servidor não volta ao disco aqui, então
  * a página não pode escapar da pasta observada nem por parâmetro manipulado.
  */
+/**
+ * Serve o grafo de dependências de um trabalho como SVG, renderizado na hora a
+ * partir do estado em memória.
+ *
+ * `no-store` porque o estado se atualiza sozinho pelo observador: um SVG
+ * cacheado mostraria o plano de antes da última gravação da skill.
+ */
+function servirGrafo(estado: EstadoPainel, url: URL, res: ServerResponse): void {
+  const id = url.searchParams.get("trabalho");
+  const trabalho = estado.trabalhos.find((t) => t.trabalho_id === id);
+
+  if (!trabalho) {
+    res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+    res.end("trabalho nao encontrado");
+    return;
+  }
+
+  res.writeHead(200, {
+    "content-type": "image/svg+xml; charset=utf-8",
+    "cache-control": "no-store",
+  });
+  res.end(renderizarSvg(montarTopologia(trabalho)));
+}
+
 function servirRelatorio(estado: EstadoPainel, url: URL, comoMd: boolean, res: ServerResponse): void {
   const oc = url.searchParams.get("oc");
   const tipo = url.searchParams.get("tipo") === "uso" ? "uso" : "tecnico";

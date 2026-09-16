@@ -138,6 +138,20 @@ describe("detalhe do trabalho", () => {
     expect(valores).toContain("0");   // F-01.2: 0 de 1
   });
 
+  it("funcional: o grafo do plano é servido pela rota do painel, num img isolado", () => {
+    const { container } = render(<Detalhe estado={ok} id="exportacao-csv" aoVoltar={() => undefined} />);
+    const img = container.querySelector('img[alt*="Grafo"]');
+    expect(img).not.toBeNull();
+    expect(img?.getAttribute("src")).toBe("/grafo.svg?trabalho=exportacao-csv");
+  });
+
+  it("funcional: o grafo vem recolhido, para não empurrar o plano para baixo", () => {
+    const { container } = render(<Detalhe estado={ok} id="exportacao-csv" aoVoltar={() => undefined} />);
+    const bloco = container.querySelector("details");
+    expect(bloco).not.toBeNull();
+    expect(bloco?.hasAttribute("open")).toBe(false);
+  });
+
   it("funcional: caminho crítico e paralelizável têm marcação distinta", () => {
     const { container } = render(<Detalhe estado={ok} id="exportacao-csv" aoVoltar={() => undefined} />);
     expect(container.querySelector(".etiqueta.critico")).not.toBeNull();

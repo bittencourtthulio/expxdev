@@ -32,6 +32,39 @@ function LinhaTask({ t, critico }: { t: Task; critico: boolean }): JSX.Element {
   );
 }
 
+/**
+ * O grafo de dependências do plano, servido pelo próprio painel em
+ * `/grafo.svg`.
+ *
+ * Vem por `<img>` e não inline: o SVG traz a própria folha de estilo, e
+ * injetá-lo no documento faria essas regras vazarem para o painel inteiro.
+ * Dentro de um `<img>` ele é um documento isolado, que é exatamente o que ele é
+ * quando aberto a partir do PR.
+ *
+ * Recolhido por padrão porque o plano é a informação principal da tela; o grafo
+ * responde uma pergunta específica ("o que trava o quê") e quem não a tem não
+ * deveria rolar por cima dele.
+ */
+function GrafoDoPlano({ id, temTask }: { id: string; temTask: boolean }): JSX.Element | null {
+  if (!temTask) return null;
+
+  return (
+    <details className="painel-det">
+      <summary style={{ cursor: "pointer", fontSize: 13, fontWeight: 560 }}>
+        Grafo de dependências
+        <span className="dep"> · o que pode rodar em paralelo, e o que trava o quê</span>
+      </summary>
+      <div style={{ marginTop: 11, overflowX: "auto" }}>
+        <img
+          src={`/grafo.svg?trabalho=${encodeURIComponent(id)}`}
+          alt={`Grafo de dependências das tasks de ${id}`}
+          style={{ maxWidth: "100%", display: "block" }}
+        />
+      </div>
+    </details>
+  );
+}
+
 export function Detalhe({
   estado,
   id,
@@ -76,6 +109,8 @@ export function Detalhe({
           </div>
         ) : null}
       </div>
+
+      <GrafoDoPlano id={t.trabalho_id} temTask={t.sprints.some((s) => s.tasks.length > 0)} />
 
       {abertos.length > 0 ? (
         <div className="painel-det" style={{ borderColor: "var(--alerta)" }}>
